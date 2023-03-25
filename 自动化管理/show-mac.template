@@ -1,0 +1,11 @@
+Value Vlan (\d+)
+Value MAC (\w+\.\w+\.\w+)
+Value Type (\w+)
+Value Port (\w+(\s+[\d/]+)?)
+
+Start
+ ^\s*${Vlan}\s+${MAC}\s+${Type}\s+${Port}  -> Record
+ 
+ 
+ #00E0.4C85.826D     Dynamic     GigabitEthernet 0/23
+ #   12  00E0.4CFF.2C14     Dynamic     GigabitEthernet 0/22     

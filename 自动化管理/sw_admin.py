@@ -1,0 +1,301 @@
+"""
+用python 获取环境内交换机信息
+
+
+arp mac  config 等
+"""
+import telnetlib
+from textfsm import TextFSM
+import re,json
+
+
+
+
+def readCfg(filename):
+    """读取配置文件"""
+    # 读取json文件内容,返回字典格式
+    json_data = {}
+    with open(filename,'r',encoding='utf8')as fp:
+        json_data = json.load(fp)
+    return json_data
+
+
+
+class rgSwInfo:
+    """ 锐捷
+    接口统一  支持大部分管理型交换机
+    获取 华为交换机信息"""
+    def __init__(self,cfg):
+        """ """
+        self.macJson = None
+        self.arpJson = None
+        self.tn = self.login(cfg['user'],cfg['passwd'],cfg['ip'])
+        #print(cfg)
+        self.todo()
+        # self.tn.close()
+
+    def login(self,user,passwd,ip):
+        """登入交换机 返回telnet"""
+        outLs = []
+        tn=telnetlib.Telnet(ip)
+        out = tn.read_until(b"Password:",timeout=5)
+        outLs.append(out)
+        tn.write(user.encode('ascii')+b"\n")
+        ## ------
+        out = tn.read_until(b"Ruijie>",timeout=5)
+        outLs.append(out)
+        tn.write('enable '.encode('ascii')+b"\n")
+        out = tn.read_until(b"Password:",timeout=5)
+        tn.write(passwd.encode('ascii')+b"\n")
+        outs = tn.expect([b"\r\n.+?#"],timeout=5)##等待直到读到预期的值
+        outLs.append(outs[2])
+        #print(outLs)
+        return tn
+
+    def todo(self):
+        """ 实际要执行的内容"""
+        #apr读取并转成rows
+        #------
+        # tabLs = self.arp2tab(self.tn)
+        # self.arpTab = self.list2str(tabLs)
+        # #print(self.arpTab)       
+        # self.arpLs = self.arp2rows(self.arpTab)
+        # # 格式化json美化输出
+        # self.arp2json(self.arpLs)
+        # #mac读取并转成rows
+        tabLs = self.mac2tab(self.tn)
+        self.macTab = self.list2str(tabLs)
+        #print(self.macTab)       
+        self.macLs = self.mac2rows(self.macTab)
+        # 格式化json美化输出
+        self.macJson  = self.mac2json(self.macLs)
+
+    def mac2tab(self,tn):
+        """ 返回交换 arp表"""
+        tabLs = []
+        #tn.write(b" display mac-address\n")
+        tn.write('show mac-address-table '.encode('ascii')+b"\n")
+        while 1 :
+            outs = tn.expect([b"\\x1b\[0m All\s+",b"\\n\\r\\n\\r\\rTotal Entries:.*?\\r\\n\\r\\r\\n\\r.*?#"],timeout=5) 
+            if outs[0] == 0:
+                #还有下一个页
+                tn.write(b" ")
+                tabLs.append(outs[2].decode('ascii'))
+                #print('还有下一个页',outs[2])
+            if outs[0] != 0:
+                # 完成all读取
+                #print('完成all读取',outs[2])
+                tabLs.append(outs[2].decode('ascii'))
+                break
+        return tabLs
+
+
+    def list2str(self,tabLs): 
+        """ 多行合并成字符串"""
+        tabStr = ''.join(tabLs)
+        linp = '----\n\r\r'
+        num = tabStr.find (linp)+len(linp)
+        tabStr = tabStr[num:]
+        tabStr =  re.sub("\\n\\r\\n\\r\\rTotal Entries:.*?\\r\\n\\r\\r\\n\\r.*?#", "", tabStr) #尾巴
+        tabStr =  re.sub("\\x1b\[.*2K\\r\\r", "", tabStr) #翻页字符
+        tabStr =  re.sub("\\r\\r", "", tabStr) #换行
+        return tabStr
+
+
+    def mac2rows(self,tabStr,tpl="show-mac.template"):
+        f = open(tpl)
+        template = TextFSM(f)
+        outTab = template.ParseText(tabStr)
+        return  outTab
+
+
+    def mac2json(self,ls):
+        """  带表头 col """
+        rows = []
+        for row in ls:
+            #print(row)
+            keys = ['vlan','mac','type', 'port']
+            dc = dict(zip(keys, row))
+            # 转换地址格式
+            dc['mac'] =dc['mac'].replace(".", "-").lower()
+            rows.append(dc)
+        macJson = rows
+        #print(macJson)
+        return macJson 
+
+class hwSwInfo:
+    """ 
+    接口统一  支持大部分管理型交换机
+    获取 华为交换机信息"""
+    def __init__(self,cfg):
+        """ """
+        self.macJson = None
+        self.arpJson = None
+        self.tn = self.login(cfg['user'],cfg['passwd'],cfg['ip'])
+        #print(cfg)
+        self.todo()
+        self.tn.close()
+
+    def todo(self):
+        """ 实际要执行的内容"""
+        #apr读取并转成rows
+        tabLs = self.arp2tab(self.tn)
+        self.arpTab = self.list2str(tabLs)
+        #print(self.arpTab)       
+        self.arpLs = self.arp2rows(self.arpTab)
+        # 格式化json美化输出
+        self.arp2json(self.arpLs)
+        #mac读取并转成rows
+        tabLs = self.mac2tab(self.tn)
+        self.macTab = self.list2str(tabLs)
+        #print(self.macTab)       
+        self.macLs = self.mac2rows(self.macTab)
+        # 格式化json美化输出
+        self.macJson  = self.mac2json(self.macLs)
+
+     
+
+    def list2str(self,tabLs): 
+        """ 多行合并成字符串"""
+        tabStr = ''.join(tabLs)
+        tabStr =  re.sub("\s+---- More ----\x1b\[42D\s+\x1b\[42D", "\r\n", tabStr)
+        tabStr =  re.sub("\r\n\s{30,}","  ", tabStr)   
+        return tabStr
+    ##------------arp------------
+    def arp2tab(self,tn):
+        """ 返回交换 arp表 字符串数组"""
+        tabLs = []
+        tn.write(b"display arp\n")
+        while 1 :
+            outLs = tn.expect([b"\r\n<.+?>",b"---- More ----"],timeout=5) 
+            if outLs[0] == 1:
+                #还有下一个页
+                tn.write(b"   ")
+                tabLs.append(outLs[2].decode('ascii'))
+                #print(outLs[2])
+            if outLs[0] <= 0:
+                # 完成读取
+                #print(outLs[2])
+                tabLs.append(outLs[2].decode('ascii'))
+                break
+        return tabLs
+
+    def arp2rows(self,arpTab,tpl="display-arp.template"):
+        """  解析表格字符串  返回json"""
+        f = open(tpl)
+        template = TextFSM(f)
+        outTab = template.ParseText(arpTab)
+        return outTab
+
+    def arp2json(self,ls):
+        """  带表头 col """
+        rows = []
+        for row in ls:
+            #print(row)
+            keys = ['ip', 'mac', 't','port','vlan']
+            dc = dict(zip(keys, row))
+            rows.append(dc)
+        self.arpJson = rows#json.dumps(rows, sort_keys=True, indent=4, separators=(',', ': '))
+        #print(self.arpJson)
+        return self.arpJson 
+
+    ##------------mac------------
+    def mac2tab(self,tn):
+        """ 返回交换 arp表"""
+        tabLs = []
+        tn.write(b" display mac-address\n")
+        while 1 :
+            outLs = tn.expect([b"\r\n<.+?>",b"---- More ----"],timeout=5) 
+            if outLs[0] == 1:
+                #还有下一个页
+                tn.write(b"   ")
+                tabLs.append(outLs[2].decode('ascii'))
+                #print(outLs[2])
+            if outLs[0] <= 0:
+                # 完成读取
+                #print(outLs[2])
+                tabLs.append(outLs[2].decode('ascii'))
+                break
+        return tabLs
+
+
+    def mac2rows(self,tabStr,tpl="display-mac.template"):
+        f = open(tpl)
+        template = TextFSM(f)
+        outTab = template.ParseText(tabStr)
+        return  outTab
+        
+    def mac2json(self,ls):
+        """  带表头 col """
+        rows = []
+        for row in ls:
+            #print(row)
+            keys = ['mac','vlan', 'port']
+            dc = dict(zip(keys, row))
+            rows.append(dc)
+        macJson = rows
+        #print(macJson)
+        return macJson 
+   
+        
+
+
+
+    def login(self,user,passwd,ip):
+        """登入交换机 返回telnet"""
+        tn=telnetlib.Telnet(ip)
+        out = tn.read_until(b"Username:",timeout=5)
+        tn.write(user.encode('ascii')+b"\n")
+        out = tn.read_until(b"Password:",timeout=5)
+        tn.write(passwd.encode('ascii')+b"\n")
+        outLs = tn.expect([b"\r\n<.+?>"],timeout=5)##等待直到读到预期的值
+        #print(outLs[2])
+        return tn
+
+
+
+
+def selectClass(typeName):
+    """ 选择对应的类/交换机 """
+    dc = {}
+    dc["hw.s3700"] = hwSwInfo
+    dc["rg.nbs5552xg"] = rgSwInfo
+ 
+    return dc.get(typeName)
+
+def save2json(dc,fileNmae):
+    """ 把json 存入文件 """
+    with open(fileNmae,"w") as f:
+        json.dump(dc,f, sort_keys=True, indent=4, separators=(',', ': '))
+        print("保存{}文件完成...".format(fileNmae) )
+
+def unitTest():
+    """ 测试 """
+    
+    obj = rgSwInfo(cfgs['交换机列表'][1])
+    #obj.login()
+    #obj.close()
+
+
+    tmp =  json.dumps(obj.macJson, sort_keys=True, indent=4, separators=(',', ': ')) if   obj.macJson else None
+    print(tmp) if obj.macJson else "" 
+
+
+
+
+
+if __name__ == '__main__':
+
+    cfgs = readCfg('./sw_config.json')
+
+    # unitTest()
+    # exit()
+
+    for row in cfgs['交换机列表']:
+        cls = selectClass(row['type'])
+        print('配置文件',row,cls)
+        if cls:
+            obj = cls(row)
+            save2json(obj.arpJson,row['type']+'_'+row['ip']+'arp.json') if obj.arpJson else ""
+            save2json(obj.macJson,row['type']+'_'+row['ip']+'mac.json')  if obj.macJson else ""
+        

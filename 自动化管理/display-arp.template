@@ -1,0 +1,8 @@
+Value Ip (\d+\.\d+\.\d+\.\d+)
+Value MAC (\w+-\w+-\w+|Incomplete)
+Value Type (\w\s?-\s?\d?)
+Value Port (\w+\d+/\d+/\d+|Vlanif\d+)
+Value Vlan (\s+\d+)
+
+Start
+ ^${Ip}\s+${MAC}[\d\s]+${Type}\s+${Port}${Vlan}? -> Record
