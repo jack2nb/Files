@@ -69,6 +69,13 @@ apt install lldpad
 
 ```
 lldptool set-lldp -i enp1s0 adminStatus=rxtx  #设置模式
+export i=enp1s0
+lldptool -T -i $i -V sysName enableTx=yes 
+lldptool -T -i $i -V portDesc enableTx=yes 
+lldptool -T -i $i -V sysDesc enableTx=yes 
+
+
+
 lldptool -t -n -i enp1s0  #需要交换机支持
 ```
 
@@ -95,7 +102,10 @@ Add-WindowsCapability -Online -Name "Rsat.LLDP.Tools~~~~0.0.1.0"
 查询链路信息
 
 ```
+Get-NetLldpAgent
 
-Enable-NetLldpAgent  -NetAdapterName "以太网"
+Enable-NetLldpAgent  -NetAdapterName "本地连接"
+
+
 ```
 
