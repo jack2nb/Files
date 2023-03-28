@@ -83,12 +83,13 @@ show lldp neighbors   #交换机上的发现结果
 Powershell命令安装功能
 
 ```
-
+Get-WindowsCapability -Name RSAT* -Online | Ft Displayname,State,Name #查询可用服务
 
 Enable-WindowsOptionalFeature -Online -FeatureName 'DataCenterBridging'
 
-Install-WindowsFeature RSAT-DataCenterBridging-LLDP-Tools
+Add-WindowsCapability -Online -Name "Rsat.LLDP.Tools~~~~0.0.1.0"  
 
+ 
 ```
 
 查询链路信息
