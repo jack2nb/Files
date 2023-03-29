@@ -112,11 +112,7 @@ Disable-NetLldpAgent  -NetAdapterName "本地连接"
 
 ### 第三方lldp
 
-```
-PS C:\Users\raspi> Add-Type -Path 'C:\Program Files\WinLLDPService\LLDPBase.dll'
-$config = New-Object WinLLDPService.Configuration
-$config
-$config.PortDescription.Add("test")
-$config.ToString()
-Return $config
-```
+LLDP Agent  数据发送软件(HaneWinLLDPService)
+
+LDWin.exe    数据接收软件 
+
