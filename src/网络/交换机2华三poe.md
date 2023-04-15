@@ -6,7 +6,7 @@
 
 S1850-28p-pwr
 
-
+[在线命令查看](https://www.h3c.com/cn/BizPortal/QueryCli/cn_index.aspx)
 
 普通模式下
 
@@ -46,11 +46,34 @@ dis int gi 1/0/1   每个接口都有mac
 
 
 
-设置ip
+#### 设置ip
 
 ```
 interface vlan-interface 1
 ip address 192.168.11.202 255.255.255.0
 
+```
+
+#### 配置默认路由
+
+```
+ip route-static 0.0.0.0  0  192.168.11.1
+```
+
+
+
+### 设置常用服务
+
+#### 发现协议lldp 
+
+```
+lldp enable
+
+```
+
+#### telnet 开启
+
+```
+telnet server enable
 ```
 
