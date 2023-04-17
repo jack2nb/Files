@@ -8,6 +8,14 @@ S1850-28p-pwr
 
 [在线命令查看](https://www.h3c.com/cn/BizPortal/QueryCli/cn_index.aspx)
 
+### 查看版本和运行时间
+
+```
+display version
+```
+
+
+
 普通模式下
 
 重置配置
@@ -75,5 +83,13 @@ lldp enable
 
 ```
 telnet server enable
+```
+
+
+
+#### 查看接口状况
+
+```
+display interface brief
 ```
 
