@@ -44,6 +44,8 @@ npx wrangler pages publish book
 - [数据库mssql备份](./服务器/数据库mssql.md)
 - [电脑配置](./电脑配置.md)
 
+- [工装视频]()
+   - [602-f装配](./视频/602-f装配.md)
 
 
 
