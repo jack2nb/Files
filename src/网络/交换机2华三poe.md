@@ -4,9 +4,13 @@
 
 ## 华三交换机   poe
 
-S1850-28p-pwr
+S1850-28p-pwr  （只读管理建议使用web）
 
 [在线命令查看](https://www.h3c.com/cn/BizPortal/QueryCli/cn_index.aspx)
+
+![](./imgs/poe交换机线缆检查.png)
+
+
 
 ### 查看版本和运行时间
 
@@ -74,10 +78,16 @@ ip route-static 0.0.0.0  0  192.168.11.1
 
 #### 发现协议lldp 
 
-```
+```cmd
 lldp enable
 
+
+display lldp neighbor-information   #显示附近的设备
 ```
+
+
+
+
 
 #### telnet 开启
 
@@ -92,4 +102,14 @@ telnet server enable
 ```
 display interface brief
 ```
+
+
+
+### 统计信息
+
+```
+display interface brief
+```
+
+
 
