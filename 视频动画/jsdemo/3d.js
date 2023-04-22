@@ -6,23 +6,16 @@ mo.addText("四面体"
 ,{y:1 ,scale:0.2}
 )
 mo.addPyramid(
-  {color:"#1abc9c"}
-).rotateTo({duration:10})
+  {color:"#1abc9c",scale:2,y:-0.5}
+).  rotateTo (10,240,0,{duration :3})
 
-mo.cameraMoveTo(
-  {
-    x:0,y:0,z:0
-    ,lookAt:[0,0,0]
-    ,duration :5
-    ,t:0
-  }
-)
-
+ 
 mo.cameraMoveTo(
   {
     x:0,y:1,z:3
-    ,lookAt:[2,1,0]
-    ,duration :5
-    ,t:2
+    ,lookAt:[0,0,0]
+    ,duration :3
+    ,zoom:1.5
+    ,t:">"
   }
 )
