@@ -138,19 +138,19 @@ text.implode2D(ea );
 
 
 
-| 名称      | 用途 | 备注                  |
-| --------- | ---- | --------------------- |
-| fadeIn    | 入场 | 淡入                  |
-| wipeIn    | 入场 | 拉幕效果              |
-| flyIn     | 入场 | 飞入效果              |
-| rotateIn  | 入场 | 旋转效果              |
-| grow      | 入场 | 放大效果              |
-| explode2D | 入场 | 爆炸效果(特别)        |
-| implode2D | 退场 | 缩小效果 （对应grow） |
-| fadeOut   | 退场 | 淡出（对应fadeIn）    |
-| spinning  | 中场 | 交换                  |
-| reveal    | 中场 | 浮出                  |
-| shake2D   | 中场 | 抖动                  |
+| 名称      | 用途 | 备注                   |
+| --------- | ---- | ---------------------- |
+| fadeIn    | 入场 | 淡入                   |
+| wipeIn    | 入场 | 拉幕效果               |
+| flyIn     | 入场 | 飞入效果（前奏有点长） |
+| rotateIn  | 入场 | 旋转效果               |
+| grow      | 入场 | 放大效果               |
+| explode2D | 入场 | 爆炸效果(特别)         |
+| implode2D | 退场 | 缩小效果 （对应grow）  |
+| fadeOut   | 退场 | 淡出（对应fadeIn）     |
+| spinning  | 中场 | 交换                   |
+| reveal    | 中场 | 浮出                   |
+| shake2D   | 中场 | 抖动                   |
 
 ```js
 import * as mo from "movy";
@@ -246,3 +246,20 @@ mo.addGlitch()  //漏电故障效果 全局
 ```
 
 如果有能力可以自己自作特效
+
+## 组合物件
+
+在实际制作中需要将物体与物体保持相对位置不变时就需要用到打包成组。
+
+```js
+const wordGroup = mo.addGroup( );
+
+let img = wordGroup.addImage('abc.png')
+.wipeIn  ()  ;
+//----
+let text = wordGroup.addText("abc" )
+text.reveal( );
+
+wordGroup.moveTo
+```
+

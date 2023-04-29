@@ -1,34 +1,23 @@
 import * as mo from "movy"; 
 
 let word = ["电吹风", "hair dryer"];
-// let ea = {
-//   duration:2,
-//   ease: "slow(0.1, 2, false)"
-// }
 
-// let at = {
-//   color:"red"
-// }
+const wordGroup = mo.addGroup( );
 
+let tm = 0 ;//时间线
 let bg = mo.addRect({z:-1,scale:20,color: "#ffffff" });
 //------
-let img = mo.addImage('./t123456_img/电吹风.png', {x:-5,scale:4})
-.wipeIn  ({ ease: "slow(0.1, 0.8, false)",duration:1.3} )  ;
+let img = wordGroup.addImage('./t123456_img/电吹风.png', {x:-5,scale:3.5})
+.wipeIn  ({ ease: "slow(0.5, 0.8, false)",duration:0.9} )  ;
 
 //----
-let text = mo.addText(word[0],{ y:1,  color:"#000000" })
-text.flyIn( { ease: "slow(0.1, 0.8, false)", t: 10,duration:5});
+let text = wordGroup.addText(word[0],{ y:1,  color:"#2a2a2a" })
+text.reveal( { t:tm+=1.1, duration:1.1});
 //text.  rotateTo (10,240,0,{duration :3})
 //text.fadeOut(ea );
-//text.implode2D(ea );
-//mo.addGlitch()
 
- 
-//bg.fadeOut (ea );
+text = wordGroup.addText(word[1],{ y:-0.5,  color:"#2a2a2a" })
+text.reveal( { t:tm+=1.1, duration:1.1});
 
-// text.show()
-// text.changeOpacity(1) 
-// text.scaleTo(1.5,{duration: 3,ease: ea})
-text.moveTo({x:2,y:2,z:1,duration:3,ease: ea})
 
-//mo.cameraMoveTo({ x:1,zoom:0, duration: 3 }); //横向移动摄像机
+wordGroup.moveTo({ x: 3 , duration: 0.8 ,ease:"power2.inOut"});
