@@ -34,6 +34,18 @@ mo.addText("一段文本")
 mo.addText("一段文本").wipeIn( ); 
 ```
 
+### 改字体
+
+字体丰富度是个短板
+
+```js
+//"en" | "condensed" | "code" | "math" | "arcade" | "zh" | "gdh" 只有这么几个
+
+mo.addText("一段文本",{ font:"zh"} );		
+```
+
+
+
 #### 添加缓动效果
 
 来控制一下时间和动画进度(缓动)
@@ -44,7 +56,7 @@ let ea = {
   duration:2,
   ease: "bounce.out"
 }
-mo.addText("一段文本").wipeIn(ea );  //进度效果
+mo.addText("一段文本",{ font:"zh"} ).wipeIn( ea );  //进度效果
 
 ```
 
@@ -126,16 +138,41 @@ text.implode2D(ea );
 
 
 
-| 入场                                                         | 中段                       | 退场                                   |
-| ------------------------------------------------------------ | -------------------------- | -------------------------------------- |
-| wipeIn , flyIn ,  rotateIn ,  rotateIn ,grow , fadeIn，explode2D | spinning , reveal ,shake2D | fadeOut（淡出）<br /> implode2D (消失) |
-|                                                              |                            |                                        |
+| 名称      | 用途 | 备注                  |
+| --------- | ---- | --------------------- |
+| fadeIn    | 入场 | 淡入                  |
+| wipeIn    | 入场 | 拉幕效果              |
+| flyIn     | 入场 | 飞入效果              |
+| rotateIn  | 入场 | 旋转效果              |
+| grow      | 入场 | 放大效果              |
+| explode2D | 入场 | 爆炸效果(特别)        |
+| implode2D | 退场 | 缩小效果 （对应grow） |
+| fadeOut   | 退场 | 淡出（对应fadeIn）    |
+| spinning  | 中场 | 交换                  |
+| reveal    | 中场 | 浮出                  |
+| shake2D   | 中场 | 抖动                  |
 
-| 名称      | 用途 | 备注       |
-| --------- | ---- | ---------- |
-| implode2D | 退场 | 缩小到消失 |
-| fadeOut   | 退场 | 淡出       |
-| fadeIn    | 入场 | 淡入       |
+```js
+import * as mo from "movy";
+//一次展示多种效果
+let m  = 1.5
+mo.addText("一段文本 fadeIn",{y:m*2})
+    .fadeIn( { duration:2}).changeOpacity(0) ;
+mo.addText("一段文本 wipeIn",{y:m*1})
+    .wipeIn(  { duration:2}).changeOpacity(0) ;;
+mo.addText("一段文本 flyIn",{y:m*0})
+    .flyIn(  { duration:2}).changeOpacity(0) ;;
+//----
+mo.addText("一段文本 rotateIn",{y:-m*1})
+    .rotateIn( { duration:2} ).changeOpacity(0) ;;
+mo.addText("一段文本 grow ",{y:-m*2})
+    .grow( { duration:2} ).changeOpacity(0) ;;
+mo.addText("一段文本 explode2D" ,{y:-m*3})
+    .explode2D(  { duration:2}).changeOpacity(0) ;;
+mo.addText("一段文本 explode2D" ,{y:m*3})
+    .reveal().shake2D().spinning();
+
+```
 
 
 

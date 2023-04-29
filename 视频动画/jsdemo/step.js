@@ -1,23 +1,27 @@
 import * as mo from "movy"; 
+let ea = {
+  duration:2,
+  ease: "slow(0.1, 2, false)"
+}
 
-let word = ["电吹风", "hair dryer"];
-// let ea = {
-//   duration:2,
-//   ease: "slow(0.1, 2, false)"
-// }
-
-// let at = {
-//   color:"red"
-// }
+let at = {
+  color:"red"
+}
 
 let bg = mo.addRect({z:-1,scale:20,color: "#ffffff" });
-//------
+
 let img = mo.addImage('./t123456_img/电吹风.png', {x:-5,scale:4})
 .wipeIn  ({ ease: "slow(0.1, 0.8, false)",duration:1.3} )  ;
 
-//----
-let text = mo.addText(word[0],{ y:1,  color:"#000000" })
-text.flyIn( { ease: "slow(0.1, 0.8, false)", t: 10,duration:5});
+
+let text =mo.addText("一段文本",at)
+// mo.addPyramid(
+//   {color:"#1abc9c"}
+// )
+
+
+//text.scaleTo(1.2)
+text.wipeIn(ea );
 //text.  rotateTo (10,240,0,{duration :3})
 //text.fadeOut(ea );
 //text.implode2D(ea );
