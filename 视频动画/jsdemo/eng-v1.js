@@ -3,6 +3,7 @@ import * as mo from "movy";
 /****
 单词选择 
 
+没有的东西 可以用图片 主要用到movy的动画功能和导出视频
 
 ***/
 let word = ["电吹风", "hair dryer","ˈher-ˌdrī(-ə)r"];

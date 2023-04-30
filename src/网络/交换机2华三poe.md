@@ -18,6 +18,12 @@ S1850-28p-pwr  （只读管理建议使用web）
 display version
 ```
 
+### 改名
+
+```
+sysname  lou5
+```
+
 
 
 普通模式下
@@ -103,6 +109,14 @@ telnet server enable
 display interface brief
 ```
 
+### 修改接口备注
+
+```
+
+interface GigabitEthernet1/0/24
+description string 
+```
+
 
 
 ### 统计信息
@@ -112,4 +126,6 @@ display interface brief
 ```
 
 
+
+### 
 

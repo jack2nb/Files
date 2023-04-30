@@ -19,7 +19,7 @@ let imga = wordGroup.addImage('./t123456_img/电吹风.png', {y:-1,x:-2.5,scale:
 tm+=1;
 //------
 let imgb = wordGroup.addImage('./t123456_img/电熨斗.jpg', {y:-1,x:2.5,scale:2.2})
-.reveal  ({ ease: "expo.Out",duration:0.5} )  ;
+.reveal  ({ ease: "back.out(1)",duration:0.5} )  ;
 //imgb.moveTo({ x: 3 , scale:2.5,duration: 0.8 ,ease:"power2.inOut"});
 
 
