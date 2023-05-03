@@ -158,7 +158,7 @@ RESTORE FILELISTONLY FROM DISK='d:\AbpFirst.bak'
 
 
 
-
+![](./imgs/db/数据备份7.png)
 
 
 

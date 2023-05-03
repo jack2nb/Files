@@ -2,7 +2,7 @@
 
 
 
-## 华三交换机   poe
+## 华三交换机   poe三层
 
 S1850-28p-pwr  （只读管理建议使用web）
 
@@ -123,6 +123,16 @@ description string
 
 ```
 display interface brief
+```
+
+
+
+#### 端口加入vlan
+
+```
+vlan 2
+port GigabitEthernet 1/0/2
+
 ```
 
 
