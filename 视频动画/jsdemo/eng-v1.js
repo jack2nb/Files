@@ -3,13 +3,17 @@ import * as mo from "movy";
 /****
 单词选择 
 
-没有的东西 可以用图片 主要用到movy的动画功能和导出视频
+没有的东西 可以用图片 主要用到movy的动画功能和导出视频  
 
 ***/
 let word = ["电吹风", "hair dryer","ˈher-ˌdrī(-ə)r"];
+//-----背景
+let bgGroup =  mo.addGroup( );
+let bgImga = bgGroup.addImage('./src/bg-card.png', {z:-99,y:0,x:0,scale:7})
+let bg = bgGroup.addRect({z:-100,scale:20,color: "#ffffff" });
 
 
-let bg = mo.addRect({z:-1,scale:20,color: "#ffffff" });
+
 let tm = 0 ;//时间线
 const wordGroup = mo.addGroup( );
 //---
