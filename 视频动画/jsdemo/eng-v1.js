@@ -20,13 +20,13 @@ let bg = bgGroup.addRect({z:-100,scale:20,color: "#ffffff" });
 let tm = 0 ;//时间线
 const wordGroup = mo.addGroup( );
 //---
-//------
+//------两图选择
 let imga = wordGroup.addImage('./t123456_img/电吹风.png', {y:-1,x:-1.5,scale:1.5})
 .reveal  ({ ease: "expo.Out",duration:0.5} )  ;
 //imga.moveTo({ x: -3 , scale:2.5,duration: 0.8 ,ease:"power2.inOut"});
 tm+=1;
 //------
-let imgb = wordGroup.addImage('./t123456_img/电熨斗.jpg', {y:-1,x:1.5,scale:1.5})
+let imgb = wordGroup.addImage('./t123456_img/电熨斗.png', {y:-1,x:1.5,scale:1.2})
 .reveal  ({ ease: "expo.Out",duration:0.5} )  ;
 //imgb.moveTo({ x: 3 , scale:2.5,duration: 0.8 ,ease:"power2.inOut"});
 
@@ -43,18 +43,21 @@ cnText.wipeIn( {  duration:1.3,ease:"power4.out"}); //"up" | "down" | "left" | "
 //text.fadeOut(ea );
 
 
-//----------
-
-imga.changeOpacity(0.1,{ t:">", duration:0.6 ,ease:"power2.in"})
-imga.changeOpacity(1,{ t:">", duration:0.6 ,ease:"power2.Out"})
-
-imga.shake2D({duration:0.2 })
-//-----
-
+//----------  图片提示
+imga.changeOpacity(0.1,{ t:">", duration:0.2 ,ease:"power2.in"})
+imga.changeOpacity(1,{ t:">", duration:0.2 ,ease:"power2.Out"})
+imga.rotateTo(0,0,10,{ t:">", duration:0.15   })
+imga.rotateTo(0,0,-10,{ t:">", duration:0.25   })
+imga.rotateTo(0,0,0,{ t:">", duration:0.1   })
+//imga.shake2D({duration:0.2 })
+//-----  图片提示
 imgb.changeOpacity(0.1,{ t:">", duration:0.6 ,ease:"power2.in"})
 imgb.changeOpacity(1,{ t:">", duration:0.6 ,ease:"power2.Out"})
-imgb.shake2D({duration:0.2 })
-//----
+//imgb.shake2D({duration:0.2 })
+imgb.rotateTo(0,0,10,{ t:">", duration:0.15   })
+imgb.rotateTo(0,0,-10,{ t:">", duration:0.25   })
+imgb.rotateTo(0,0,0,{ t:">", duration:0.1   })
+//----选择结果
 imga.moveTo( { x:0,t:">", duration:0.6 ,ease:"power2.in"})
 imgb.changeOpacity(0,{ t:">", scale:1.5,duration:0.6 ,ease:"power2.Out"})
 //---
