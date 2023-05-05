@@ -232,6 +232,8 @@ text.rotateTo (10,240,0,{duration :3}) //旋转是相对的
 
 ### 镜头动画
 
+通过移动摄像机来营造运动的动画效果
+
 ```js
 mo.cameraMoveTo({ x: 3 , duration: 5 }); //横向移动摄像机
 //还可以加入zoom:2来放大 zoom:-1倒过来显示 zoom:0 小到消失
