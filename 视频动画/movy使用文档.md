@@ -138,19 +138,19 @@ text.implode2D(ea );
 
 
 
-| 名称      | 用途 | 备注                   |
-| --------- | ---- | ---------------------- |
-| fadeIn    | 入场 | 淡入                   |
-| wipeIn    | 入场 | 拉幕效果               |
-| flyIn     | 入场 | 飞入效果（前奏有点长） |
-| rotateIn  | 入场 | 旋转效果               |
-| grow      | 入场 | 放大效果               |
-| explode2D | 入场 | 爆炸效果(特别)         |
-| implode2D | 退场 | 缩小效果 （对应grow）  |
-| fadeOut   | 退场 | 淡出（对应fadeIn）     |
-| spinning  | 中场 | 交换                   |
-| reveal    | 中场 | 浮出                   |
-| shake2D   | 中场 | 抖动                   |
+| 名称      | 用途 | 备注                                         |
+| --------- | ---- | -------------------------------------------- |
+| fadeIn    | 入场 | 淡入                                         |
+| wipeIn    | 入场 | 拉幕效果                                     |
+| flyIn     | 入场 | 飞入效果<br />(前奏有点长)<br />(不支持图片) |
+| rotateIn  | 入场 | 旋转效果                                     |
+| grow      | 入场 | 放大效果                                     |
+| explode2D | 入场 | 爆炸效果(特别)                               |
+| implode2D | 退场 | 缩小效果 （对应grow）                        |
+| fadeOut   | 退场 | 淡出（对应fadeIn）                           |
+| spinning  | 中场 | 交换                                         |
+| reveal    | 中场 | 浮出                                         |
+| shake2D   | 中场 | 抖动                                         |
 
 ```js
 import * as mo from "movy";
@@ -201,10 +201,16 @@ text.scaleTo(1.5)
 text.scaleTo(1.5,{duration: 3,ease: "bounce.out"}) //都支持加入过度效果
 ```
 
-让文本重新显示
+##### 让文本重新显示
 
 ```js
 text.show()  
+```
+
+#### 更改文件
+
+```
+setText
 ```
 
 
