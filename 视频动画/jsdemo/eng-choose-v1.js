@@ -19,7 +19,8 @@ let imgBg  = './src/bg-palnt3.png';//雨雾草 v1
 imgBg =  './src/grass.jpg';//草原 v2
 bgImg = bgGroup.addImage(imgBg, {z:-99,y:0,x:0,scale:7.5})
 
- 
+mo.addText('每天说英语',{ position:[-5.2,-2.6], opacity:0.5,scale:0.15,  color:"#2a2a2a" })
+mo.addText('Speak English Every Day',{ position:[-4.70,-2.8], opacity:0.5,scale:0.13,  color:"#2a2a2a" })
 //imgBg =  './src/grass2.png';//草原  v3
 //bgImg = bgGroup.addImage(imgBg, {z:-99,y:-2.10,x:0,scale:3.1})
 //------卡片
@@ -47,7 +48,7 @@ let imgb = wordGroup.addImage('./t123456_img/电熨斗.png', {y:-1,x:1.5,scale:1
 
 
 //------
-let enText =  wordGroup.addText(word[1],{ y:1.3, scale:1,  color:"#2a2a2a" })
+let enText =  wordGroup.addText(word[1],{ position:[0,1.3], scale:1,  color:"#2a2a2a" })
 enText.reveal( {  direction:"down", duration:1.3,ease:"power4.out"});
 enText.moveTo({  y: 0.8 , scale:0.6 ,duration: 0.8 ,ease:"power2.inOut"});
  //------
@@ -87,7 +88,7 @@ imga.moveTo( { t:"+",x:0, duration:1.2 ,ease:"power2.in"})
 imgb.changeOpacity(0,{ t:"+", scale:1.5,duration:1.2 ,ease:"power2.Out"})
 //---( +> 等待同步执行)
 
-bgImg.changeOpacity(1,{ t:">", duration:2}) //--等待-完成后继续 
+mo.pause(2); //--等待-完成后继续 
 wordGroup.moveTo({ t:"+>",y:-6, scale:0,duration: 1.2 ,ease:"power2.inOut"});
 wordGroup.changeOpacity(0,{ t:"+>", scale:1.5,duration:2 ,ease:"power2.Out"})
 

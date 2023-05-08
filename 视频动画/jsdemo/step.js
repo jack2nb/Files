@@ -1,32 +1,55 @@
-import * as mo from "movy"; 
- //擦除效果
-let ea = {
-  duration:2,
-  ease: "bounce.out"
+import * as mo from "movy";
+
+const GRID_SIZE = 12;
+
+const group = mo.addGroup({ scale: 9 / GRID_SIZE });
+
+const grid = mo.addGrid({
+  gridSize: GRID_SIZE,
+  parent: group,
+  z: 0.01,
+  color: "darkgray",
+});
+grid.wipeIn();
+
+let t = 0.5;
+const texels = generateTriangleTexture();
+for (let i = GRID_SIZE - 1; i >= 0; i--) {
+  for (let j = 0; j < GRID_SIZE; j++) {
+    if (texels[(i * GRID_SIZE + j) * 4 + 3] > 150) {
+      const pixel = mo.addRect({
+        position: [j - GRID_SIZE * 0.5 + 0.5, i - GRID_SIZE * 0.5 + 0.5, 0],
+      //color: 'red',
+        parent: group,
+      });
+      pixel.show({ t:"+" });
+      t += 0.005;
+
+
+      mo.addText("a",{
+        position: [j - GRID_SIZE * 0.5 + 0.5, i - GRID_SIZE * 0.5 + 0.5, 0],
+      color: 'red',
+        parent: group,
+      });
+
+      
+    }
+  }
 }
-let at = {
-    color:"red"
+
+function generateTriangleTexture() {
+  const canvas = document.createElement("canvas");
+  canvas.width = GRID_SIZE;
+  canvas.height = GRID_SIZE;
+  const ctx = canvas.getContext("2d");
+
+  // Draw filled triangle on canvas
+  ctx.beginPath();
+  ctx.moveTo(Math.floor(0.2 * GRID_SIZE), Math.floor(0.4 * GRID_SIZE));
+  ctx.lineTo(Math.floor(0.8 * GRID_SIZE), Math.floor(0.95 * GRID_SIZE));
+  ctx.lineTo(Math.floor(0.7 * GRID_SIZE), Math.floor(0.05 * GRID_SIZE));
+  ctx.fill();
+
+  let data = ctx.getImageData(0, 0, canvas.width, canvas.height).data;
+  return data;
 }
-mo.addText("一段文本",at).wipeIn(ea ); 
-mo.addRect({z:-1,scale:4,color: "#ffffff" });
-// mo.addPyramid(
-//   {color:"#1abc9c"}
-// )a
-
-
-//text.scaleTo(1.2)
-//
-//text.  rotateTo (10,240,0,{duration :3})
-//text.fadeOut(ea );
-//text.implode2D(ea );
-//mo.addGlitch()
-
- 
-//bg.fadeOut (ea );
-
-// text.show()
-// text.changeOpacity(1) 
-// text.scaleTo(1.5,{duration: 3,ease: ea})
-//text.moveTo({x:2,y:2,z:1,duration:3,ease: ea})
-
-//mo.cameraMoveTo({ x:1,zoom:0, duration: 3 }); //横向移动摄像机
