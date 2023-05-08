@@ -13,7 +13,7 @@ mo.cameraMoveTo({ zoom:1.5,  duration: 0 }); //横向移动摄像机
 //-----背景
 let bgGroup =  mo.addGroup( );
 
-bgGroup.addImage('./src/bg-palnt3.png', {z:-99,y:-2.1,x:0,scale:3.6})
+let bgImg = bgGroup.addImage('./src/bg-palnt3.png', {z:-99,y:-2.1,x:0,scale:3.6})
 bgGroup.addImage('./src/bg-card.png', {z:-98,y:0,x:0,scale:5.2})
 
 
@@ -73,11 +73,11 @@ numText = wordGroup.addText("1",numSet).fadeIn({ t:">", duration:0.1   })
 //.implode2D({ t:">", duration:1.2 ,ease:"power2.Out"})
 numText.changeOpacity(0,{ t:">", duration:1.2 ,scale:0.8,ease:"power2.Out"})
 //----选择结果
-imga.moveTo( { x:0,t:"+", duration:1.2 ,ease:"power2.in"})
+imga.moveTo( { t:"+",x:0, duration:1.2 ,ease:"power2.in"})
 imgb.changeOpacity(0,{ t:"+", scale:1.5,duration:1.2 ,ease:"power2.Out"})
-//---
+//---( +> 等待同步执行)
 
-
-wordGroup.moveTo({ y:-6, scale:0,duration: 1.2 ,ease:"power2.inOut"});
-
+bgImg.changeOpacity(1,{ t:">", duration:2}) //--等待-完成后继续 
+wordGroup.moveTo({ t:"+>",y:-6, scale:0,duration: 1.2 ,ease:"power2.inOut"});
+wordGroup.changeOpacity(0,{ t:"+>", scale:1.5,duration:2 ,ease:"power2.Out"})
 
