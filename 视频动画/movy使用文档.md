@@ -115,7 +115,7 @@ mo.addRect({color: "#ffffff" });
 
 出现如下效果
 
-![](./imgs/背景效果1.png)
+![](./imgs/背景效果1.gif)
 
 说好的背景呢？怎么来了一块白色方块。所以要修改一下把它放到后面并且拉大一点
 
@@ -174,7 +174,7 @@ mo.addText("一段文本 explode2D" ,{y:m*3})
 
 ```
 
-
+![](./imgs/文字动画.gif)
 
 #### 变化效果
 
@@ -207,10 +207,10 @@ text.scaleTo(1.5,{duration: 3,ease: "bounce.out"}) //都支持加入过度效果
 text.show()  
 ```
 
-#### 更改文件
+#### 更改文本
 
-```
-setText
+```js
+setText/updateText
 ```
 
 

@@ -13,15 +13,15 @@ mo.cameraMoveTo({ zoom:1.5,  duration: 0 }); //横向移动摄像机
 //-----背景
 let bgImg
 let bgGroup =  mo.addGroup( );
-let imgBg  = './src/bg-palnt3.png';//雨雾草
+let imgBg  = './src/bg-palnt3.png';//雨雾草 v1
 //bgImg = bgGroup.addImage(imgBg, {z:-99,y:-2.1,x:0,scale:3.6})
 
-imgBg =  './src/grass.jpg';//草原
-//bgImg = bgGroup.addImage(imgBg, {z:-99,y:0,x:0,scale:7.5})
+imgBg =  './src/grass.jpg';//草原 v2
+bgImg = bgGroup.addImage(imgBg, {z:-99,y:0,x:0,scale:7.5})
 
-
-imgBg =  './src/grass2.png';//草原
-bgImg = bgGroup.addImage(imgBg, {z:-99,y:-2.10,x:0,scale:3.1})
+ 
+//imgBg =  './src/grass2.png';//草原  v3
+//bgImg = bgGroup.addImage(imgBg, {z:-99,y:-2.10,x:0,scale:3.1})
 //------卡片
 let imgCard  = './src/bg-card.png'; //卡片
 bgGroup.addImage(imgCard, {z:-98,y:0,x:0,scale:5.3})//.changeOpacity(0.9,{  duration:0})

@@ -1,26 +1,21 @@
 import * as mo from "movy"; 
+ //擦除效果
 let ea = {
-  t:0,
-  duration:5,
-  //ease: "power4.in"
+  duration:2,
+  ease: "bounce.out"
 }
-
 let at = {
-  color:"red"
+    color:"red"
 }
-
-let bg = mo.addRect({z:-1,scale:20,color: "#ffffff" });
-
- 
-
-let text =mo.addText("一段文本",at)
+mo.addText("一段文本",at).wipeIn(ea ); 
+mo.addRect({z:-1,scale:4,color: "#ffffff" });
 // mo.addPyramid(
 //   {color:"#1abc9c"}
-// )
+// )a
 
 
 //text.scaleTo(1.2)
-text.reveal(ea );
+//
 //text.  rotateTo (10,240,0,{duration :3})
 //text.fadeOut(ea );
 //text.implode2D(ea );
