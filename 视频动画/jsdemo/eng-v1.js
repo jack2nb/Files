@@ -12,7 +12,7 @@ let word,wordOne,srcPath ;
 word = ["电吹风", "hair dryer","her-drīr"];
 
 srcPath = './t123456_img/'
-wordOne ={"cn":"电吹风","en":"hair dryer","ph":"电吹风-ph.png",img:"电吹风.png","enTm":3} ;
+wordOne ={"cn":"电吹风","en":"hair dryer","ph":"电吹风-ph.png",img:"电吹风.png","enTm":2.5,"enTm":2.5} ;
 
 
 
@@ -51,8 +51,8 @@ let enText = wordGroup.addText(wordOne['en'],{ y:0.9,scale:0.7,  color:"#2a2a2a"
 .wipeIn( { t:"+", duration:1.3,ease:"power4.out"})
 
  //------ph
-let cnText = wordGroup.addImage(srcPath + wordOne['ph'],{ y:1.9,  color:"#2a2a2a", scale:0.6,})
-cnText.wipeIn( { t:"+", duration:1.3,ease:"power4.out"}); //"up" | "down" | "left" | "right"
+let phText = wordGroup.addImage(srcPath + wordOne['ph'],{ y:1.9,  color:"#2a2a2a", scale:0.6,})
+phText.wipeIn( { t:"+", duration:1.3,ease:"power4.out"}); //"up" | "down" | "left" | "right"
 //text.  rotateTo (10,240,0,{duration :3})
 //text.fadeOut(ea );
 //enText.moveTo({  y: 1 , scale:0.6 ,duration: 0.8 ,ease:"power2.inOut"});
@@ -101,33 +101,34 @@ imgb.rotateTo(0,0,10,{ t:">", duration:0.08   })
 imgb.rotateTo(0,0,-10,{ t:">", duration:0.15   })
 imgb.rotateTo(0,0,0,{ t:">", duration:0.06   })
 
-//----选择321倒计时
-
-// let numSet = { y:-0.4, scale:0.8,  color:"#2a2a2a" }
-// let numText =  wordGroup.addText("3",numSet).fadeIn({ t:">", duration:0.1   })
-// //.implode2D({ t:">", duration:1.2 ,ease:"power2.Out"})
-// numText.changeOpacity(0,{ t:">", duration:1.5 ,scale:0.8,ease:"power2.Out"})
-// numText = wordGroup.addText("2",numSet).fadeIn({ t:">", duration:0.1   })
-// //.implode2D({ t:">", duration:1.2 ,ease:"power2.Out"})
-// numText.changeOpacity(0,{ t:">", duration:1.5 ,scale:0.8,ease:"power2.Out"}) 
-// numText = wordGroup.addText("1",numSet).fadeIn({ t:">", duration:0.1   })
-// //.implode2D({ t:">", duration:1.2 ,ease:"power2.Out"})
-// numText.changeOpacity(0,{ t:">", duration:1.5 ,scale:0.8,ease:"power2.Out"})
+//----进度条
 
 wordGroup.addRect({ y:0.2,width:5.5,height: 0.05, color: "#44abda" })
-.wipeIn({  t:">", duration: 4  ,dir: "right",  ease:"power1.inOut"});
+.wipeIn({  t:">", duration: 3  ,dir: "right",  ease:"power1.inOut"});
 //----选择结果----------
 mo.pause(1) //  （上面一个运行完成后同步）
 imga.moveTo( { t:"<",x:0,scale:2.2, duration:1.2 ,ease:"power2.in"})
 imgb.changeOpacity(0,{ t:"<", scale:1.5,duration:1.2 ,ease:"power2.Out"})
 
-//-----朗读
+//-----朗读 en
 mo.pause(2) //等
 enText.changeOpacity(0.5,{ t:">", duration:0.3 ,ease:"power2.in"})
 enText.changeOpacity(1,{ t:">", duration:0.5 ,ease:"power2.Out"})
 mo.pause(wordOne['enTm']); //--等待-完成后继续 
-//---离开( +> 等待同步执行)
 
+enText.rotateTo (0,90,0,{duration :1}) //旋转到消失
+//-----朗读 cn
+let cnText = wordGroup.addText(wordOne['cn'],{ y:0.9,scale:0.7,  color:"#2a2a2a" })
+.rotateTo (0,90,0,{duration :0})
+.rotateTo (0,0,0,{duration :1})
+mo.pause(0.8) //等
+cnText.changeOpacity(0.5,{ t:">", duration:0.3 ,ease:"power2.in"})
+cnText.changeOpacity(1,{ t:">", duration:0.5 ,ease:"power2.Out"})
+mo.pause(wordOne['cnTm']); //--等待-完成后继续 
+
+  
+//---离开( +> 等待同步执行)
+mo.pause(1.5) //等
 wordGroup.moveTo({ t:"+>",y:-6, scale:0,duration: 1.2 ,ease:"power2.inOut"});
 wordGroup.changeOpacity(0,{ t:"+>", scale:1.5,duration:2 ,ease:"power2.Out"})
 
