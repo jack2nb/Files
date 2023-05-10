@@ -74,10 +74,11 @@ mo.pause(3) //朗读时间
 //----选择提示
 let tapGroup =  mo.addGroup( );
 let tap = tapGroup.addRect({z:100,opacity:0.85,color: "#ffffff" });
-tap.scaleXTo(9.5).scaleYTo(5.2)
+//tap.scaleXTo(9.5).scaleYTo(5.2)
+tap.scaleXTo(8).scaleYTo(4.8)
 tap.fadeIn({ t:">", duration:0.2  });
-tapGroup.addText("请选择",{y:1,z:101,scale:0.5,color: "#2a2a2a" }).fadeIn()
-tapGroup.addText("Please choose",{y:-1,z:101,scale:0.5,color: "#2a2a2a" }).fadeIn()
+tapGroup.addText("请选择",{y:0.7,z:101,scale:0.5,color: "#2a2a2a" }).fadeIn()
+tapGroup.addText("Please choose",{y:-0.7,z:101,scale:0.5,color: "#2a2a2a" }).fadeIn()
 
 mo.pause(5) 
 tapGroup.changeOpacity(0,{ t:">", duration:0.4 ,ease:"power2.Out"})
