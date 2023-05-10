@@ -56,8 +56,8 @@ cnText.wipeIn( { t:"+", duration:1.3,ease:"power4.out"}); //"up" | "down" | "lef
 //text.  rotateTo (10,240,0,{duration :3})
 //text.fadeOut(ea );
 //enText.moveTo({  y: 1 , scale:0.6 ,duration: 0.8 ,ease:"power2.inOut"});
-enText.changeOpacity(0.5,{ t:">", duration:0.2 ,ease:"power2.in"})
-enText.changeOpacity(1,{ t:">", duration:0.3 ,ease:"power2.Out"})
+enText.changeOpacity(0.5,{ t:">", duration:0.3 ,ease:"power2.in"})
+enText.changeOpacity(1,{ t:">", duration:0.5 ,ease:"power2.Out"})
 mo.pause(wordOne['enTm']) //朗读时间
 
 //------两图选择
@@ -120,8 +120,8 @@ imgb.changeOpacity(0,{ t:"<", scale:1.5,duration:1.2 ,ease:"power2.Out"})
 
 //-----朗读
 mo.pause(2) //等
-enText.changeOpacity(0.5,{ t:">", duration:0.2 ,ease:"power2.in"})
-enText.changeOpacity(1,{ t:">", duration:0.3 ,ease:"power2.Out"})
+enText.changeOpacity(0.5,{ t:">", duration:0.3 ,ease:"power2.in"})
+enText.changeOpacity(1,{ t:">", duration:0.5 ,ease:"power2.Out"})
 mo.pause(wordOne['enTm']); //--等待-完成后继续 
 //---离开( +> 等待同步执行)
 

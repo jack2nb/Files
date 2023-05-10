@@ -52,8 +52,8 @@ cnText.wipeIn( { t:">0.5", duration:1.3,ease:"power4.out"});
 //text.  rotateTo (10,240,0,{duration :3})
 //text.fadeOut(ea );
 
-cnText.changeOpacity(0.5,{ t:">", duration:0.2 ,ease:"power2.in"})
-cnText.changeOpacity(1,{ t:">", duration:0.3 ,ease:"power2.Out"})
+cnText.changeOpacity(0.5,{ t:">", duration:0.3 ,ease:"power2.in"})
+cnText.changeOpacity(1,{ t:">", duration:0.5 ,ease:"power2.Out"})
 mo.pause(wordOne['cnTm'])//朗读时间
 //------en
 let enText = wordGroup.addText(wordOne['en'],{ x:ttx,y:-0.9,scale:0.7,  color:"#2a2a2a" })
@@ -64,8 +64,8 @@ wordGroup.addImage(srcPath + wordOne['ph'], {x:ttx,y:-0.1,scale:0.4})
 .wipeIn  ({t:"+",duration:1.3,   ease:"power4.out"} )  
  
 
-enText.changeOpacity(0.5,{ t:">", duration:0.2 ,ease:"power2.in"})
-enText.changeOpacity(1,{ t:">", duration:0.3 ,ease:"power2.Out"})
+enText.changeOpacity(0.5,{ t:">", duration:0.3 ,ease:"power2.in"})
+enText.changeOpacity(1,{ t:">", duration:0.5 ,ease:"power2.Out"})
 
 
 // let phText =  wordGroup.addText(word[2],{ y:-2,font:"zh",  color:"#2a2a2a" })
