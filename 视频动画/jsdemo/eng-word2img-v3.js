@@ -1,6 +1,6 @@
 import * as mo from "movy"; 
 
-
+/* seed */
 
 
 mo.cameraMoveTo({ zoom:1.5,  duration: 0 }); //横向移动摄像机
@@ -40,25 +40,27 @@ const wordGroup = mo.addGroup( );
 // phText.reveal( { t:tm+=1.3, duration:1.3,ease:"power4.out"});
 
  
-//------
+//------示意图
 let img = wordGroup.addImage(srcPath + wordOne['img'], {x:0,scale:3.5})
 .wipeIn  ({ direction:'down', ease:  "circ.in",duration:2.1} )  
-.moveTo({ x: -2.2, scale:2.8,duration: 0.8 ,ease:"power2.inOut"});
+.moveTo({ t:">1",x: -2.1, scale:2.8,duration: 0.8 ,ease:"power2.inOut"});
 tm+=1;
+let ttx = 1.8
 //----cn
-let cnText = wordGroup.addText(wordOne['cn'],{ x:1.5,y:1,scale:0.7,  color:"#2a2a2a" })
+let cnText = wordGroup.addText(wordOne['cn'],{ x:ttx,y:1,scale:0.7,  color:"#2a2a2a" })
 cnText.wipeIn( { t:">0.5", duration:1.3,ease:"power4.out"});
 //text.  rotateTo (10,240,0,{duration :3})
 //text.fadeOut(ea );
 
 cnText.changeOpacity(0.7,{ t:">", duration:0.2 ,ease:"power2.in"})
 cnText.changeOpacity(1,{ t:">", duration:0.2 ,ease:"power2.Out"})
+mo.pause(2)//朗读时间
 //------en
-let enText = wordGroup.addText(wordOne['en'],{ x:1.5,y:-0.9,scale:0.7,  color:"#2a2a2a" })
+let enText = wordGroup.addText(wordOne['en'],{ x:ttx,y:-0.9,scale:0.7,  color:"#2a2a2a" })
 enText.wipeIn( { t:"+", duration:1.3,ease:"power4.out"});
 
 //---------音标
-wordGroup.addImage(srcPath + wordOne['ph'], {x:1.5,y:0.1,scale:0.4})
+wordGroup.addImage(srcPath + wordOne['ph'], {x:ttx,y:-0.1,scale:0.4})
 .wipeIn  ({t:"+",duration:1.3,   ease:"power4.out"} )  
  
 
@@ -68,5 +70,5 @@ enText.changeOpacity(1,{ t:">", duration:0.2 ,ease:"power2.Out"})
 
 // let phText =  wordGroup.addText(word[2],{ y:-2,font:"zh",  color:"#2a2a2a" })
 // phText.reveal( { t:tm+=1.3, duration:1.3,ease:"power4.out"});
-
-wordGroup.moveTo({ t:">4", y: -6 , scale:0.01,duration: 0.8 ,ease:"power2.inOut"});
+mo.pause(2) //朗读时间
+wordGroup.moveTo({ t:">1.5", y: -5 , scale:0 ,duration: 1 ,ease:"power2.inOut"});
