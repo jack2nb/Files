@@ -101,12 +101,14 @@ imgb.rotateTo(0,0,10,{ t:">", duration:0.08   })
 imgb.rotateTo(0,0,-10,{ t:">", duration:0.15   })
 imgb.rotateTo(0,0,0,{ t:">", duration:0.06   })
 
-//----进度条
+//----线-进度条
 
-wordGroup.addRect({ y:0.2,width:5.5,height: 0.05, color: "#44abda" })
-.wipeIn({  t:">", duration: 3  ,dir: "right",  ease:"power1.inOut"});
+let lineOne = wordGroup.addRect({ y:0.2,width:5.5,height: 0.05, color: "#44abda" })
+.fadeIn()
+//.wipeIn({  t:">", duration: 4  ,dir: "right",  ease:"power1.inOut"});
+lineOne.scaleXTo(0,{  t:">", duration: 4  ,  ease:"power1.inOut"})
 //----选择结果----------
-mo.pause(1) //  （上面一个运行完成后同步）
+mo.pause(0.5) //  （上面一个运行完成后同步）
 imga.moveTo( { t:"<",x:0,scale:2.2, duration:1.2 ,ease:"power2.in"})
 imgb.changeOpacity(0,{ t:"<", scale:1.5,duration:1.2 ,ease:"power2.Out"})
 
