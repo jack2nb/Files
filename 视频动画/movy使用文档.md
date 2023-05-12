@@ -295,3 +295,37 @@ text.reveal( );
 wordGroup.moveTo
 ```
 
+## 高级共功能
+
+movy\webpack.config.js
+
+```
+npm install --save-dev json-loader
+```
+
+
+
+```
+rules:{
+      test: /\.json$/,
+      loader: "json-loader",
+      type: "javascript/auto", // 需要指定 type
+    },
+```
+
+
+
+
+
+movy\package.json
+
+加入
+
+```
+"dependencies": { "json-loader": "^0.5.5",}
+```
+
+```
+npm install --dependencies
+```
+

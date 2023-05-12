@@ -8,5 +8,11 @@
   "exclude": [
     "node_modules",
     "**/node_modules/*"
-  ]
+  ],
+
+  
+  "resolve": {
+    "extensions": [".js", ".json"], // 注意添加这一行
+  },
+
 }
