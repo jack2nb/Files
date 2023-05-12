@@ -283,6 +283,10 @@ mo.addGlitch()  //漏电故障效果 全局
 
 在实际制作中需要将物体与物体保持相对位置不变时就需要用到打包成组。
 
+
+
+#### 添加组
+
 ```js
 const wordGroup = mo.addGroup( );
 
@@ -295,7 +299,27 @@ text.reveal( );
 wordGroup.moveTo
 ```
 
+
+
+
+
 ## 高级共功能
+
+#### 添加json支持
+
+movy\package.json文件加入
+
+```
+"dependencies": { "json-loader": "^0.5.5",}
+```
+
+```
+npm install --dependencies
+```
+
+
+
+
 
 movy\webpack.config.js
 
@@ -316,16 +340,4 @@ rules:{
 
 
 
-
-movy\package.json
-
-加入
-
-```
-"dependencies": { "json-loader": "^0.5.5",}
-```
-
-```
-npm install --dependencies
-```
 
