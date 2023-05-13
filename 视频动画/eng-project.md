@@ -85,6 +85,14 @@
 
 
 
+### 发音
+
+### 注音
+
+```
+以上英文请用 Merriam-Webster Dictionary  的音标来注解并用json格式输出 例如：{"turtle":"ˈtər-tᵊl "}
+```
+
 
 
 
@@ -120,6 +128,18 @@
 
 
 ### 速度测试
+
+
+
+### 二维码入口
+
+```
+https://eng-seed.17121.top/ser/?p=1&t=123456
+```
+
+
+
+
 
 r2 vs  cdn
 
