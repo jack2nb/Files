@@ -41,10 +41,12 @@ reboot
 restore factory-default
 ```
 
-#### 端口使用查看
+### 回环检查
 
 ```
-display interface brief | include up
+loopback-detection enable
+dis loopback-detection
+
 ```
 
 
