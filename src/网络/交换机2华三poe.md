@@ -24,6 +24,12 @@ display version
 sysname  lou5
 ```
 
+关闭 提示信息
+
+```
+undo info-center enable
+```
+
 
 
 普通模式下
