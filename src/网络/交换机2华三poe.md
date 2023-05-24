@@ -4,7 +4,7 @@
 
 ## 华三交换机   poe三层
 
-S1850-28p-pwr  （只读管理建议使用web）
+S1850-28p-pwr/s5130-28s  （只读管理建议使用web）
 
 [在线命令查看](https://www.h3c.com/cn/BizPortal/QueryCli/cn_index.aspx)
 
@@ -28,7 +28,7 @@ sysname  lou5
 
 普通模式下
 
-重置配置
+### 重置配置
 
 ```cmd
 reset saved-configuration
@@ -39,6 +39,12 @@ reboot
 
 ```
 restore factory-default
+```
+
+#### 端口使用查看
+
+```
+display interface brief | include up
 ```
 
 
