@@ -1,6 +1,6 @@
 # 微软数据库
 
-### 维护
+### 维护维护账号(db_datareader)
 
 [参考](https://developer.aliyun.com/article/868429)
 
@@ -11,7 +11,7 @@ SQL Server 2016 (RTM) - 13.0.1601.5 (X64)    版本
 ```sql
 -- 登入账号
 CREATE LOGIN dbjack   
-    WITH PASSWORD = 'pwd2jack';  
+    WITH PASSWORD = 'Db.jack';  
 GO  
 
 -- 创建用户
