@@ -6,6 +6,20 @@
 
 
 
+### 根据数据建立er模型
+
+
+
+"如何把SQL Server的数据库导为sql文件"
+
+右击数据库-》任务-》生成脚本 -》进入向导
+
+在保持文件的高级选项中：结构和数据
+
+
+
+
+
  微软数据
 
 [金蝶云下载](http://pkgsfile.open.kingdee.com/DVD/V81E/K3Cloud_V8.1_DVD.zip)
