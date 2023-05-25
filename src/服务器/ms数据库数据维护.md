@@ -40,11 +40,11 @@ exec sp_addrolemember 'db_datareader','dbjack';
 
 在保持文件的高级选项中：结构和数据
 
-
+### 库kaoqin
 
 #### 用户数据
 
-```sql
+```mssql
 select t.id, t.name, t.loginno , t.telephone  
 -- ,t.*
 from dbo.T_USER t
@@ -74,6 +74,98 @@ ITEM_ATTDATE,FORMNAME
 from TLK_ATTENDANCEDETAIL t
 where t.author like '11ed-a9b8-191b765e-a8b2-a36392a02a45'
 ```
+
+
+
+操作记录表，DOCUMENT
+
+操作表，ACTORHIS
+
+公出记录，TLK_BUSINESS_PUBLIC_TRIP
+
+流程记录明细,TLK_ATTENDANCEDETAIL
+
+流程进度，TLK_FOR_ATTENDANCE
+
+
+
+### 
+
+### 库ouqi
+
+#### 授权
+
+```mssql
+-- 创建用户
+CREATE USER dbjack FOR LOGIN dbjack;  
+GO
+
+exec sp_addrolemember 'db_datareader','dbjack';
+
+
+```
+
+#### 考勤记录表
+
+我的用户id:  USERID ==  2859
+
+```sql
+select  t.sn 打卡机
+-- , t.*
+from  CHECKINOUT t
+where USERID  = 2859
+and CHECKTIME   = '2023-03-28 12:24:06.000'
+order by checktime desc
+
+
+```
+
+
+
+#### 考勤时间段
+
+```mssql
+select  t.sn 打卡机
+  , t.*
+from  CHECKINOUT t
+where USERID  = 2859
+and CHECKTIME   >= '2023-03-28' and CHECKTIME   <= '2023-03-29'
+order by checktime desc
+
+
+```
+
+#### 用户信息
+
+```mssql
+select *
+from  USERINFO
+where 1=1
+and name  LIKE '蔡金凯'
+and GENDER is not Null
+```
+
+##### 权限差异
+
+```mssql
+select t.privilege  ,t.GENDER
+,t.*
+from  USERINFO t
+where name in  ( '岑凯123' ,'陈肖璇','蔡金凯' )
+
+```
+
+#### 提升权限
+
+```mssql
+select USERID,name,privilege ,GENDER from USERINFO where USERID = 2859;
+
+
+update USERINFO set  privilege=3 ,GENDER='M'
+where USERID = 2859;
+```
+
+
 
 
 
