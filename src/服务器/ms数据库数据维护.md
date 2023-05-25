@@ -32,7 +32,7 @@ exec sp_addrolemember 'db_datareader','dbjack';
 
 ### 根据数据建立er模型
 
-
+### 
 
 "如何把SQL Server的数据库导为sql文件"
 
@@ -40,7 +40,7 @@ exec sp_addrolemember 'db_datareader','dbjack';
 
 在保持文件的高级选项中：结构和数据
 
-### 库kaoqin
+### 库ouqi 
 
 #### 用户数据
 
@@ -89,9 +89,9 @@ where t.author like '11ed-a9b8-191b765e-a8b2-a36392a02a45'
 
 
 
-### 
+ 
 
-### 库ouqi
+### 库kaoqin
 
 #### 授权
 
@@ -165,7 +165,11 @@ update USERINFO set  privilege=3 ,GENDER='M'
 where USERID = 2859;
 ```
 
+#### 重名查看
 
+```
+
+```
 
 
 
