@@ -17,10 +17,100 @@ GO
 
 ```
 
+
+
+```mssql
+grant select 
+on ouqi
+to dbjack;
+```
+
+
+
 ### 拥有**db_datareader**角色
 
-```sql
-exec sp_addrolemember 'db_datareader','dbjack';
+```mssql
+--   exec sp_addrolemember 'db_datareader','dbjack';
+--   exec sp_changedbowner 'dbjack'
+```
+
+### 查询所有者/数据库大小
+
+```mssql
+exec sys.sp_helpdb
+```
+
+### 删除用户
+
+```mssql
+drop user dbjack 
+
+drop login dbjack 
+
+```
+
+
+
+#### 查看表结构
+
+```mssql
+sp_help table_name;           
+
+sp_columns table_name;
+```
+
+#### 字段注解
+
+```mssql
+select column_name name,data_type type 
+from information_schema.columns 
+where table_name = '表名'
+```
+
+```mssql
+SELECT 
+    表名       = case when a.colorder=1 then d.name else '' end,
+    表说明     = case when a.colorder=1 then isnull(f.value,'') else '' end,
+    字段序号   = a.colorder,
+    字段名     = a.name,
+    标识       = case when COLUMNPROPERTY( a.id,a.name,'IsIdentity')=1 then '√'else '' end,
+    主键       = case when exists(SELECT 1 FROM sysobjects where xtype='PK' and parent_obj=a.id and name in (
+                     SELECT name FROM sysindexes WHERE indid in( SELECT indid FROM sysindexkeys WHERE id = a.id AND colid=a.colid))) then '√' else '' end,
+    类型       = b.name,
+    占用字节数 = a.length,
+    长度       = COLUMNPROPERTY(a.id,a.name,'PRECISION'),
+    小数位数   = isnull(COLUMNPROPERTY(a.id,a.name,'Scale'),0),
+    允许空     = case when a.isnullable=1 then '√'else '' end,
+    默认值     = isnull(e.text,''),
+    字段说明   = isnull(g.[value],'')
+FROM 
+    syscolumns a
+left join 
+    systypes b 
+on 
+    a.xusertype=b.xusertype
+inner join 
+    sysobjects d 
+on 
+    a.id=d.id  and d.xtype='U' and  d.name<>'dtproperties'
+left join 
+    syscomments e 
+on 
+    a.cdefault=e.id
+left join 
+sys.extended_properties   g 
+on 
+    a.id=G.major_id and a.colid=g.minor_id  
+left join
+sys.extended_properties f
+on 
+    d.id=f.major_id and f.minor_id=0
+where 
+    d.name='USERINFO'    --如果只查询指定表,加上此where条件，tablename是要查询的表名；去除where条件查询所有的表信息
+order by 
+    a.id,a.colorder
+
+
 
 ```
 
@@ -89,6 +179,10 @@ where t.author like '11ed-a9b8-191b765e-a8b2-a36392a02a45'
 
 
 
+流转关系 ，RELATIONHIS
+
+日志，T_LOG
+
  
 
 ### 库kaoqin
@@ -148,10 +242,11 @@ and GENDER is not Null
 ##### 权限差异
 
 ```mssql
-select t.privilege  ,t.GENDER
+select t.privilege  ,t.GENDER ,t.FSelected 
 ,t.*
 from  USERINFO t
-where name in  ( '岑凯123' ,'陈肖璇','蔡金凯' )
+where name in  ( '岑凯123' ,'陈肖璇','蔡金凯' ,'黄小艳','彭延涛')
+order by  name 
 
 ```
 
@@ -167,8 +262,12 @@ where USERID = 2859;
 
 #### 重名查看
 
-```
-
+```mssql
+select count(name) ct ,t.name 
+from kaoqin..USERINFO   t
+where t.FSelected = 0
+group by name
+order  by ct desc
 ```
 
 
