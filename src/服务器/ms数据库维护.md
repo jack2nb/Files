@@ -8,19 +8,6 @@ SQL Server 2016 (RTM) - 13.0.1601.5 (X64)    版本
 
 
 
-```sql
--- 登入账号
-CREATE LOGIN dbjack   
-    WITH PASSWORD = 'Db.jack';  
-GO  
-
--- 创建用户
-CREATE USER dbjack FOR LOGIN dbjack;  
-GO
-
-
-```
-
 #### 查询版本
 
 
@@ -45,62 +32,6 @@ select loginame,count(0) ct from sys.sysprocesses
 group by loginame
 order by ct desc
 ```
-
-#### 连接执行
-
-```sql
-Select * From sys.dm_exec_connections
-```
-
-
-
-### 命令行访问
-
-支持linux和docker部署
-
-远程连接到数据库
-
-```
-sqlcmd -S 192.168.0.121,1433 -U SA 
-```
-
-
-
-#### 简单查询
-
-```sql
-USE TestDB;
-SELECT * FROM Inventory WHERE quantity > 152;
-
-go
-
-```
-
-必须使用go才执行
-
- 
-
-
-
-## win端管理工具
-
-ssms（sql servier management studio）
-
-直接连接图形化
-
- 
-
-
-
-### 修改某用户的密码
-
-```sql
-alter login dbjack with password='wsf119900'
-```
-
-
-
-
 
 
 
@@ -153,4 +84,60 @@ RESTORE FILELISTONLY FROM DISK='d:\AbpFirst.bak'
 ```
 
 ![](./imgs/db/数据备份7.png)
+
+
+
+
+
+
+
+### 命令行访问
+
+支持linux和docker部署
+
+远程连接到数据库
+
+```
+sqlcmd -S 192.168.0.121,1433 -U SA 
+```
+
+
+
+#### 简单查询
+
+```sql
+USE TestDB;
+SELECT * FROM Inventory WHERE quantity > 152;
+
+go
+
+```
+
+必须使用go才执行
+
+ 
+
+
+
+## win端管理工具
+
+ssms（sql servier management studio）
+
+直接连接图形化
+
+ 
+
+
+
+### 修改某用户的密码
+
+```sql
+alter login dbjack with password='wsf119900'
+```
+
+
+
+
+
+
 
