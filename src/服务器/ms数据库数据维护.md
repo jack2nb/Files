@@ -19,7 +19,7 @@ GO
 
 
 
-```mssql
+```sql
 grant select 
 on ouqi
 to dbjack;
@@ -36,13 +36,13 @@ to dbjack;
 
 ### 查询所有者/数据库大小
 
-```mssql
+```sql
 exec sys.sp_helpdb
 ```
 
 ### 删除用户
 
-```mssql
+```sql
 drop user dbjack 
 
 drop login dbjack 
@@ -53,7 +53,7 @@ drop login dbjack
 
 #### 查看表结构
 
-```mssql
+```sql
 sp_help table_name;           
 
 sp_columns table_name;
@@ -61,13 +61,13 @@ sp_columns table_name;
 
 #### 字段注解
 
-```mssql
+```sql
 select column_name name,data_type type 
 from information_schema.columns 
 where table_name = '表名'
 ```
 
-```mssql
+```sql
 SELECT 
     表名       = case when a.colorder=1 then d.name else '' end,
     表说明     = case when a.colorder=1 then isnull(f.value,'') else '' end,
@@ -134,7 +134,7 @@ order by
 
 #### 用户数据
 
-```mssql
+```sql
 select t.id, t.name, t.loginno , t.telephone  
 -- ,t.*
 from dbo.T_USER t
@@ -189,7 +189,7 @@ where t.author like '11ed-a9b8-191b765e-a8b2-a36392a02a45'
 
 #### 授权
 
-```mssql
+```sql
 -- 创建用户
 CREATE USER dbjack FOR LOGIN dbjack;  
 GO
@@ -218,7 +218,7 @@ order by checktime desc
 
 #### 考勤时间段
 
-```mssql
+```sql
 select  t.sn 打卡机
   , t.*
 from  CHECKINOUT t
@@ -231,7 +231,7 @@ order by checktime desc
 
 #### 用户信息
 
-```mssql
+```sql
 select *
 from  USERINFO
 where 1=1
@@ -241,7 +241,7 @@ and GENDER is not Null
 
 ##### 权限差异
 
-```mssql
+```sql
 select t.privilege  ,t.GENDER ,t.FSelected 
 ,t.*
 from  USERINFO t
@@ -252,7 +252,7 @@ order by  name
 
 #### 提升权限
 
-```mssql
+```sql
 select USERID,name,privilege ,GENDER from USERINFO where USERID = 2859;
 
 
@@ -262,7 +262,7 @@ where USERID = 2859;
 
 #### 重名查看
 
-```mssql
+```sql
 select count(name) ct ,t.name 
 from kaoqin..USERINFO   t
 where t.FSelected = 0
