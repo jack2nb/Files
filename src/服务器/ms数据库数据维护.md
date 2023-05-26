@@ -201,7 +201,13 @@ exec sp_addrolemember 'db_datareader','dbjack';
 
 #### 考勤记录表
 
-我的用户id:  USERID ==  2859
+我的用户id:  USERID ==  2859   
+
+标记号码 ：BADGENUMBER/user_pin ==   1000157
+
+
+
+IDCardNotice  用来是否离职
 
 ```sql
 select  t.sn 打卡机
@@ -279,13 +285,6 @@ order  by ct desc
 [金蝶云下载](http://pkgsfile.open.kingdee.com/DVD/V81E/K3Cloud_V8.1_DVD.zip)
 
 [金蝶云标准版下载](http://pkgsfile.open.kingdee.com/DVD/V81S/K3Cloud_V8.1_Standard_DVD.zip)
-
-## 数据库查询
-
-```sql
-SELECT name, physical_name AS CurrentLocation, state_desc  
-FROM sys.master_files 
-```
 
 
 

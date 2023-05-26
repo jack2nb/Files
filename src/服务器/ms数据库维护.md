@@ -25,6 +25,14 @@ SERVERPROPERTY('ProductLevel')  AS  版本级别,
 @@VERSION  AS  版本信息   
 ```
 
+
+| 实例版本    | 产品版本                    |
+| ----------- | --------------------------- |
+| 12.0.2000.8 | Enterprise Edition (64-bit) |
+|             |                             |
+
+
+
 #### 查询当前连接
 
 ```sql
@@ -33,7 +41,16 @@ group by loginame
 order by ct desc
 ```
 
+![](./imgs/db/db-02.png)
 
+## 数据库查询
+
+```sql
+SELECT name, physical_name AS CurrentLocation, state_desc  
+FROM sys.master_files 
+```
+
+![](./imgs/db/db-01.png)
 
 ## 备份数据库
 
