@@ -1,27 +1,7 @@
 import * as mo from "movy"; 
- 
-/* 做一组，读2遍，seed 
 
-数据来自json文件
-{
-data:[
-        {"cn":"电吹风","en":"hair dryer","ph":"电吹风-ph.png",img:"电吹风.png","enTm":3,"cnTm":2}
-    ]
-imageRoot:"./t123456_img/",
-srcRoot:"./src/",
-rela:"/words/"
-}
-图片大小 1024*1024 png
+/* seed */
 
-
-json-loader  //修改 movy\package.json 安装 npm install --dependencies  
-*/
- 
-//------ 读取 JSON 配置文件
- 
-const srcCfg = require('./src.json');
-//const json = require('json-loader!./src.json');
-console.log(11111 ,srcCfg)
 
 mo.cameraMoveTo({ zoom:1.5,  duration: 0 }); //横向移动摄像机
 
@@ -46,9 +26,10 @@ bgGroup.addImage(imgCard, {z:-98,y:0,x:0,scale:5.3})//.changeOpacity(0.9,{  dura
 let bg = bgGroup.addRect({z:-100,scale:20,color: "#ffffff" });
 
 //---开始
-let wordOne,srcPath ;
+let word,wordOne,srcPath ;
 
- 
+word = ["电吹风", "hair dryer","her-drīr"];
+
 wordOne ={"cn":"电吹风","en":"hair dryer","ph":"电吹风-ph.png",img:"电吹风.png","enTm":3,"cnTm":2} ;
 srcPath = './t123456_img/'
 

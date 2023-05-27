@@ -1,18 +1,10 @@
 {
-    "data": [
-        {
-            "cn": "电吹风",
-            "en": "hair dryer",
-            "ph": "电吹风-ph.png",
-            "img": "电吹风.png",
-            "enTm": 3,
-            "cnTm": 2
-        }
-    ],
+
     "imgRoot": "./t123456_img/",
+     "mp3Root": "./t123456_mp3/",
     "srcRoot": "./src/",
     "relaRoot": "/words/",
-    "test": {
+    "words": {
         "空调": "air conditioner",
         "微波炉": "microwave oven",
         "洗衣机": "washing machine",
@@ -23,5 +15,15 @@
         "电吹风": "hair dryer",
         "电熨斗": "electric iron",
         "电视机": "television"
-    }
+    },
+        "data": [
+        {
+            "cn": "电吹风",
+            "en": "hair dryer",
+            "ph": "电吹风-ph.png",
+            "img": "电吹风.png",
+            "enTm": 3,
+            "cnTm": 2
+        }
+    ]
 }
