@@ -2,7 +2,7 @@
 
 ### 进度图(甘特)
 
-lldp通过 广播发送特定数据包来发现周围设备，所以两端设备都可以发送自己的信息给对方，也可以只接收信息。
+ 
 
 
 
@@ -25,8 +25,14 @@ section 测试
 
 
 ```mermaid
-graph LR;
-id
+flowchart LR
+A -.-> B
+C -.箭头虚线.-> D
+E -.->|箭头虚线| F
+
+
+
+A --- B --文字--> C -.- D -.文字.- E === F ==文字==> G
 ```
 
 ```mermaid
@@ -40,16 +46,27 @@ flowchart LR
     id1(Start)-->id2(Stop)
     style id1 fill:#f9f, stroke:#333, stroke-width:4px
     style id2 fill:#bbf, stroke:#f66, stroke-width:2px, color:#fff, stroke-dasharray: 5 5
-
-
 ```
 
 ```mermaid
+%% graph TD; comment
+graph LR
+Zero
+A(This is A)
+B[This is B]
+C([This is C])
+D[[This is D]]
+E[(Database E)]
+F((This is F))
+G>This is G]
+H{This is H}
+I{{This is I}}
+J[/J/]
+K[\K\]
+L[/L\]
+M[\ M/]
 
-flowchart LR
-H>标签框] --> I{{六角框}} -->J[/平行四边形框/] --> K[\平行四边形框\] --> L[/梯形框\] --> M[\倒梯形框/]
-
-
+Zero --> A --> B --> C --> D --> E --> F --> G --> H --> I --> J --> K --> L --> M
 ```
 
 ```mermaid
