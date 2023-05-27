@@ -15,7 +15,14 @@ import * as mo from "movy";
 mo.run();
 ```
 
-把内容保存成demox.js就可以在命令行movy  demox.js启动它并看到效果
+把内容保存成demox.js就可以在命令行
+
+```
+movy  demox.js
+```
+
+
+启动它并看到效果
 
 ## 入门试手
 
