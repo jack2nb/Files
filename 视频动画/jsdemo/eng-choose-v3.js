@@ -49,7 +49,7 @@ let enText = wordGroup.addText(wordOne['en'],{ y:0.9,scale:0.7,  color:"#2a2a2a"
 .wipeIn( { t:"+", duration:1.3,ease:"power4.out"})
 
  //------ph
-let phText = wordGroup.addImage(srcPath + wordOne['ph'],{ y:1.9,  color:"#2a2a2a", scale:0.6,})
+let phText = wordGroup.addImage(srcPath + wordOne['phImg'],{ y:1.9,  color:"#2a2a2a", scale:0.6,})
 phText.wipeIn( { t:"+", duration:1.3,ease:"power4.out"}); //"up" | "down" | "left" | "right"
 //text.  rotateTo (10,240,0,{duration :3})
 //text.fadeOut(ea );

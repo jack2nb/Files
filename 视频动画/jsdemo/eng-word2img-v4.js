@@ -81,7 +81,7 @@ let enText = wordGroup.addText(wordOne['en'],{ x:ttx,y:-0.9,scale:0.7,  color:"#
 enText.wipeIn( { t:"+", duration:1.3,ease:"power4.out"});//拉幕
 
 //---------音标
-wordGroup.addImage(srcPath + wordOne['ph'], {x:ttx,y:-0.1,scale:0.4})
+wordGroup.addImage(srcPath + wordOne['phImg'], {x:ttx,y:-0.1,scale:0.4})
 .wipeIn  ({t:"+",duration:1.3,   ease:"power4.out"} )  
  
 //闪一下
