@@ -314,7 +314,7 @@ wordGroup.moveTo
 
 #### 添加json支持
 
-movy\package.json文件加入
+movy\package.json;jsdemo/package.json 文件加入   
 
 ```
 "dependencies": { "json-loader": "^0.5.5",}
@@ -328,7 +328,7 @@ npm install --dependencies
 
 
 
-movy\webpack.config.js
+movy\webpack.config.js ; jsdemo/package-lock.json
 
 ```
 npm install --save-dev json-loader
@@ -336,7 +336,7 @@ npm install --save-dev json-loader
 
 
 
-```
+```json
 rules:{
       test: /\.json$/,
       loader: "json-loader",
@@ -345,6 +345,13 @@ rules:{
 ```
 
 
+
+js代码中加入 自动识别
+
+```js
+const srcCfg = require('./src.json');
+console.log(11111 ,srcCfg)
+```
 
 
 

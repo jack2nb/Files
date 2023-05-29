@@ -16,14 +16,5 @@
         "电熨斗": "electric iron",
         "电视机": "television"
     },
-        "data": [
-        {
-            "cn": "电吹风",
-            "en": "hair dryer",
-            "ph": "电吹风-ph.png",
-            "img": "电吹风.png",
-            "enTm": 3,
-            "cnTm": 2
-        }
-    ]
+        "data": [{"cn": "空调", "en": "air conditioner", "ph": "空调-ph.png", "img": "空调.png", "enTm": 1.44, "cnTm": 1.824}, {"cn": "微波炉", "en": "microwave oven", "ph": "微波炉-ph.png", "img": "微波炉.png", "enTm": 1.608, "cnTm": 1.944}, {"cn": "洗衣机", "en": "washing machine", "ph": "洗衣机-ph.png", "img": "洗衣机.png", "enTm": 1.416, "cnTm": 1.896}, {"cn": "吸尘器", "en": "vacuum cleaner", "ph": "吸尘器-ph.png", "img": "吸尘器.png", "enTm": 1.752, "cnTm": 1.872}, {"cn": "电饭煲", "en": "rice cooker", "ph": "电饭煲-ph.png", "img": "电饭煲.png", "enTm": 1.584, "cnTm": 1.728}, {"cn": "电热水壶", "en": "electric kettle", "ph": "电热水壶-ph.png", "img": "电热水壶.png", "enTm": 1.824, "cnTm": 1.8}, {"cn": "电风扇", "en": "electric fan", "ph": "电风扇-ph.png", "img": "电风扇.png", "enTm": 1.608, "cnTm": 1.824}, {"cn": "电吹风", "en": "hair dryer", "ph": "电吹风-ph.png", "img": "电吹风.png", "enTm": 1.608, "cnTm": 1.68}, {"cn": "电熨斗", "en": "electric iron", "ph": "电熨斗-ph.png", "img": "电熨斗.png", "enTm": 1.584, "cnTm": 1.92}, {"cn": "电视机", "en": "television", "ph": "电视机-ph.png", "img": "电视机.png", "enTm": 1.584, "cnTm": 1.656}]
 }
