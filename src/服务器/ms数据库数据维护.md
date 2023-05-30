@@ -114,6 +114,25 @@ order by
 
 ```
 
+## 查询跟踪(profiler)
+
+sql server profiler
+
+### 基于databaseName
+
+```
+select DB_ID ('数据库名称');
+
+```
+
+所有事件+所有列-》事件选择-》列筛选器
+
+databaseName  类似于
+
+TextData  类似于
+
+
+
 
 
 ## OA数据
