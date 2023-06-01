@@ -151,7 +151,18 @@ port GigabitEthernet 1/0/2
 
 
 
-### trunk口
+#### trunk口
+
+```
+#
+interface GigabitEthernet1/0/4
+ port link-type trunk
+ port trunk permit vlan 1 3 to 1024
+ port trunk pvid vlan 2
+ poe enable
+#
+
+```
 
 
 

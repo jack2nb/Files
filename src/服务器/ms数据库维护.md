@@ -6,7 +6,7 @@
 
 SQL Server 2016 (RTM) - 13.0.1601.5 (X64)    版本
 
-
+oa 数据库配置文件 proxool.properties
 
 #### 查询版本
 
