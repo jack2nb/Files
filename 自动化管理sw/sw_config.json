@@ -1,6 +1,9 @@
-{"交换机列表":[{"type":"hw.s3700","ip":"192.168.11.1","user":"admin","passwd":"wsf2010"},
-         {"type":"rg.nbs5552xg","ip":"192.168.11.200","user":"wsf2010","passwd":"wsf2010"}
-         ],
+{"交换机列表":[
+{"type":"hw.s3700","name":"3700","ip":"192.168.11.1","user":"admin","passwd":"wsf2010"},
+{"type":"h3c.s5560s","name":"5560","ip":"192.168.11.205","user":"admin","passwd":"wsf119900"},
+{"type":"h3c.S1850","name":"lou7","ip":"192.168.11.202","user":"admin","passwd":"wsf119900"},
+{"type":"rg.nbs5552xg","name":"rg552","ip":"192.168.11.200","user":"wsf2010","passwd":"wsf2010"}
+],
 "输出路径":"./"
 }
 

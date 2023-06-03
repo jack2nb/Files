@@ -284,12 +284,12 @@ class h3cSwS5560s:
         self.arp2json(self.arpLs)
         #print(self.arpJson)    
         #mac读取并转成rows
-        #tabLs = self.mac2tab(self.tn)
-        #self.macTab = self.list2str(tabLs)
+        tabLs = self.mac2tab(self.tn)
+        self.macTab = self.list2str(tabLs)
         #print(self.macTab)       
-        #self.macLs = self.mac2rows(self.macTab)
+        self.macLs = self.mac2rows(self.macTab)
         # 格式化json美化输出
-        #self.macJson  = self.mac2json(self.macLs)
+        self.macJson  = self.mac2json(self.macLs)
         
         self.tn.close()
      
@@ -342,25 +342,25 @@ class h3cSwS5560s:
 
     ##------------mac------------
     def mac2tab(self,tn):
-        """ 返回交换 arp表"""
+        """ h3c返回交换 arp表"""
         tabLs = []
         tn.write(b" display mac-address\n")
         while 1 :
-            outLs = tn.expect([b"\r\n<.+?>",b"---- More ----"],timeout=5) 
-            if outLs[0] == 1:
+            outLs = tn.expect([b"<.+?>",b"\r\r\n---- More ----"],timeout=5) #//[b"\r\r\n---- More ----"]
+            if outLs[0] >= 0:
                 #还有下一个页
-                tn.write(b"   ")
+                tn.write(b" ")
                 tabLs.append(outLs[2].decode('ascii'))
-                #print(outLs[2])
-            if outLs[0] <= 0:
+                #print(outLs)
+            if outLs[0] < 0:
                 # 完成读取
-                #print(outLs[2])
+                #print(outLs)
                 tabLs.append(outLs[2].decode('ascii'))
                 break
         return tabLs
 
 
-    def mac2rows(self,tabStr,tpl="display-mac.template"):
+    def mac2rows(self,tabStr,tpl="display-mac-s5560s.template"):
         f = open(tpl)
         template = TextFSM(f)
         outTab = template.ParseText(tabStr)
@@ -371,7 +371,7 @@ class h3cSwS5560s:
         rows = []
         for row in ls:
             #print(row)
-            keys = ['mac','vlan', 'port']
+            keys = ['mac','vlan','state', 'port']
             dc = dict(zip(keys, row))
             rows.append(dc)
         macJson = rows
@@ -408,7 +408,7 @@ def save2json(dc,fileNmae):
     """ 把json 存入文件 """
     with open(fileNmae,"w") as f:
         json.dump(dc,f, sort_keys=True, indent=4, separators=(',', ': '))
-        print("保存{}文件完成...".format(fileNmae) )
+        print("保存{}文件完成...".format(fileNmae) ,len(dc) )
 
 def unitTest():
     """ 测试 """
