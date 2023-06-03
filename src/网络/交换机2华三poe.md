@@ -30,6 +30,13 @@ sysname  lou5
 undo info-center enable
 ```
 
+### 修改密码
+
+```
+local-user admin
+password simple admin
+```
+
 
 
 普通模式下
@@ -46,6 +53,10 @@ reboot
 ```
 restore factory-default
 ```
+
+## 二三层设置
+
+
 
 ### 回环检查
 
@@ -94,7 +105,7 @@ ip route-static 0.0.0.0  0  192.168.11.1
 
 
 
-### 设置常用服务
+## 设置常用服务
 
 #### 发现协议lldp 
 
