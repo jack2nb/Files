@@ -1,0 +1,7 @@
+Value MAC (\w+-\w+-\w+)
+Value Vlan (\d+)
+Value State (\w+)
+Value Port (\w+\d/\d/\d+)
+
+Start
+ ^${MAC}\s+${Vlan}\s+${State}\s+${Port}\s+.*? -> Record

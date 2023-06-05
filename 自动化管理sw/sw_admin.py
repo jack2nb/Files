@@ -401,6 +401,148 @@ class h3cSwS5560s:
         return tn
 
 
+class h3cSwS1850:
+    """ 
+    接口统一  支持大部分管理型交换机
+    获取 h3c交换机信息"""
+    def __init__(self,cfg):
+        """ """
+        self.macJson = None
+        self.arpJson = None
+        self.tn = self.login(cfg['user'],cfg['passwd'],cfg['ip'])
+        #print(cfg)
+        #self.todo()
+        #self.tn.close()
+
+    def todo(self):
+        """ 实际要执行的内容"""
+        #apr读取并转成rows
+        #tabLs = self.arp2tab(self.tn)
+        #self.arpTab = self.list2str(tabLs)
+        #print(self.arpTab)       
+        #self.arpLs = self.arp2rows(self.arpTab)
+        #print(self.arpLs)     
+        # 格式化json美化输出
+        #self.arp2json(self.arpLs)
+        #print(self.arpJson)    
+        #mac读取并转成rows
+        tabLs = self.mac2tab(self.tn)
+        self.macTab = self.list2str(tabLs)
+        #print(self.macTab)       
+        self.macLs = self.mac2rows(self.macTab)
+        # 格式化json美化输出
+        self.macJson  = self.mac2json(self.macLs)
+        
+        self.tn.close()
+     
+
+    def list2str(self,tabLs): 
+        """ h3c 多行合并成字符串"""
+        tabStr = ''.join(tabLs)
+        tabStr =  re.sub("  ---- More ----\\x1b\[16D\s+\\x1b\[16D", "", tabStr)
+        tabStr =  re.sub("\r\r\n","\r\n", tabStr)   
+        return tabStr
+
+    ##------------arp------------
+    def arp2tab(self,tn):
+        """ 返回交换 arp表  \r\r\n<5560>"""
+        tabLs = []
+        tn.write(b"display mac-addr \n")
+        while 1 :
+            outs = tn.expect([b"\r\n  ---- More ----"],timeout=5) 
+            if outs[0] >-1 :
+                #还有下一个页
+                tn.write(b" ")
+                #print(outs[2])
+                tabLs.append(outs[2].decode('ascii'))
+                #print(outs[2])
+            if outs[0] < 0:
+                # 完成读取
+                #print(outs[2])
+                tabLs.append(outs[2].decode('ascii'))
+                break
+        return tabLs
+
+    def arp2rows(self,arpTab,tpl="display-mac-s1580.template"): 
+        """  h3c 解析表格字符串  返回json"""
+        f = open(tpl)
+        template = TextFSM(f)
+        outTab = template.ParseText(arpTab)
+        return outTab
+
+    def arp2json(self,ls):
+        """  带表头 col """
+        rows = []
+        for row in ls:
+            #print(row)
+            keys = ['ip', 'mac','vlan',  'port']
+            dc = dict(zip(keys, row))
+            rows.append(dc)
+        self.arpJson = rows#json.dumps(rows, sort_keys=True, indent=4, separators=(',', ': '))
+        print(self.arpJson)
+        return self.arpJson 
+
+    ##------------mac------------
+    def mac2tab(self,tn):
+        """ h3c返回交换 arp表"""
+        tabLs = []
+        tn.write(b" display mac-address\n")
+        while 1 :
+            outLs = tn.expect([b"\r\n  ---- More ----"],timeout=5) #//[b"\r\r\n---- More ----"]
+            if outLs[0]  >-1 :
+                #还有下一个页
+                tn.write(b" ")
+                tabLs.append(outLs[2].decode('ascii'))
+                #print(outLs)
+            if outLs[0] < 0:
+                # 完成读取
+                #print(outLs)
+                tabLs.append(outLs[2].decode('ascii'))
+                break
+        return tabLs
+
+
+    def mac2rows(self,tabStr,tpl="display-mac-s1580.template"):
+        f = open(tpl)
+        template = TextFSM(f)
+        outTab = template.ParseText(tabStr)
+        return  outTab
+        
+    def mac2json(self,ls):
+        """  带表头 col """
+        rows = []
+        for row in ls:
+            #print(row)
+            keys = ['mac','vlan','state', 'port']
+            dc = dict(zip(keys, row))
+            rows.append(dc)
+        macJson = rows
+        #print(macJson)
+        return macJson 
+   
+        
+
+
+
+    def login(self,user,passwd,ip):        
+        """登入h3c poe交换机 返回telnet"""
+        outLs = []
+        tn=telnetlib.Telnet(ip)
+        out = tn.read_until(b"Username:",timeout=5)
+        outLs.append(out)
+        #--输入用户名
+        tn.write(user.encode('ascii')+b"\n")
+        out = tn.read_until(b"Password:",timeout=5)
+        outLs.append(out)
+        #--输入密码
+        tn.write(passwd.encode('ascii')+b"\n")
+        outs = tn.expect([b"<.*?>"],timeout=5)##等待直到读到预期的值
+        outLs.append(outs[2])
+        ## ------
+        #print(outLs)
+        return tn
+
+
 
 
 
@@ -433,6 +575,7 @@ def selectClass(typeName):
     dc["hw.s3700"] = hwSwS3700
     dc["rg.nbs5552xg"] = rgSwInfo
     dc["h3c.s5560s"] = h3cSwS5560s
+    dc["h3c.s1850"] = h3cSwS1850
  
     return dc.get(typeName)
 
