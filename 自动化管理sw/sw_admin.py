@@ -31,6 +31,7 @@ class rgSwInfo:
         """ """
         self.macJson = None
         self.arpJson = None
+        self.cfgStr = None
         self.tn = self.login(cfg['user'],cfg['passwd'],cfg['ip'])
         #print(cfg)
         #self.todo()
@@ -135,6 +136,7 @@ class hwSwS3700:
         """ """
         self.macJson = None
         self.arpJson = None
+        self.cfgStr = None
         self.tn = self.login(cfg['user'],cfg['passwd'],cfg['ip'])
         #print(cfg)
         #self.todo()
@@ -156,9 +158,30 @@ class hwSwS3700:
         self.macLs = self.mac2rows(self.macTab)
         # 格式化json美化输出
         self.macJson  = self.mac2json(self.macLs)
-
+        self.cfg2get(self.tn)
         self.tn.close()
 
+    def cfg2get(self,tn):
+        """ 配置文件  \r\r\n<3700>"""
+        tabLs = []
+        tn.write(b" display current-configuration \n")
+        while 1 :
+            outs = tn.expect([b"--- More ----"],timeout=5) 
+            if outs[0] == 0:
+                #还有下一个页
+                tn.write(b" ")
+                #print(outs[2])
+                tabLs.append(outs[2].decode('ascii'))
+                #print(outs[2])
+            if outs[0] != 0:
+                # 完成读取
+                #print(outs[2])
+                tabLs.append(outs[2].decode('ascii'))
+                break
+        # 保存成属性变量
+        self.cfgStr = self.list2str(tabLs)
+
+        return self.cfgStr
 
     def list2str(self,tabLs): 
         """ 多行合并成字符串"""
@@ -267,6 +290,7 @@ class h3cSwS5560s:
         """ """
         self.macJson = None
         self.arpJson = None
+        self.cfgStr = None
         self.tn = self.login(cfg['user'],cfg['passwd'],cfg['ip'])
         #print(cfg)
         #self.todo()
@@ -290,9 +314,30 @@ class h3cSwS5560s:
         self.macLs = self.mac2rows(self.macTab)
         # 格式化json美化输出
         self.macJson  = self.mac2json(self.macLs)
-        
+        self.cfg2get(self.tn)
         self.tn.close()
      
+    def cfg2get(self,tn):
+        """ 配置文件  \r\r\n<5560>"""
+        tabLs = []
+        tn.write(b" display current-configuration \n")
+        while 1 :
+            outs = tn.expect([b"\r\r\n---- More ----"],timeout=5) 
+            if outs[0] == 0:
+                #还有下一个页
+                tn.write(b" ")
+                #print(outs[2])
+                tabLs.append(outs[2].decode('ascii'))
+                #print(outs[2])
+            if outs[0] != 0:
+                # 完成读取
+                #print(outs[2])
+                tabLs.append(outs[2].decode('ascii'))
+                break
+        # 保存成属性变量
+        self.cfgStr = self.list2str(tabLs)
+
+        return self.cfgStr
 
     def list2str(self,tabLs): 
         """ h3c 多行合并成字符串"""
@@ -409,6 +454,7 @@ class h3cSwS1850:
         """ """
         self.macJson = None
         self.arpJson = None
+        self.cfgStr = None
         self.tn = self.login(cfg['user'],cfg['passwd'],cfg['ip'])
         #print(cfg)
         #self.todo()
@@ -551,7 +597,12 @@ def save2json(dc,fileNmae):
     with open(fileNmae,"w") as f:
         json.dump(dc,f, sort_keys=True, indent=4, separators=(',', ': '))
         print("保存{}文件完成...".format(fileNmae) ,len(dc) )
-
+def save2file(s,fileNmae):
+    """ 把str 存入文件 """
+    print("保存{}文件完成...".format(fileNmae)   )
+    with open(fileNmae, "w", encoding='utf-8') as f:
+        f.write(str(s))
+        f.close()
 def unitTest():
     """ 测试 """
     
@@ -588,7 +639,7 @@ if __name__ == '__main__':
 
     for row in cfgs['交换机列表']:
         cls = selectClass(row['type'])
-        print('配置文件',row,cls)
+        print('配置文件',row['name'],cls)
         if cls:
             obj = cls(row)
             obj.todo()
@@ -596,4 +647,6 @@ if __name__ == '__main__':
             save2json(obj.arpJson,row['name']+'_'+row['ip']+'arp.json') if obj.arpJson else ""
             ## 保存mac
             save2json(obj.macJson,row['name']+'_'+row['ip']+'mac.json')  if obj.macJson else ""
+            ## 保存cfg
+            save2file(obj.cfgStr,row['name']+'_'+row['ip']+'cfg.json')  if obj.cfgStr else ""
         
