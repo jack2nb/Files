@@ -29,6 +29,8 @@
 
 ```
 
+Azure Speech 免费额度 每月5000字
+
 二维码 （回顾本次学习）  最后出现
 
 ### 理念
@@ -118,9 +120,24 @@
 
 
 
+```
+发音选择
 
 
 
+```
+
+| edge | cn             | en     |
+| ---- | -------------- | ------ |
+| m    | yunxia,yunjian | connor |
+| f    | xiaoxiao       | molly, |
+|      |                |        |
+
+| speech | cn                        | en     |
+| ------ | ------------------------- | ------ |
+| m      | 云野(zh-CN-YunyeNeural)   | connor |
+| f      | 晓秋(zh-CN-XiaoqiuNeural) | molly, |
+|        |                           |        |
 
 
 
