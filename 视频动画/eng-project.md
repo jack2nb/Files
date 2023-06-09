@@ -19,10 +19,11 @@
 ```
 
 ```
-10个单词 通过json配置文件  
-创建资料
+创建数据库，
 
 2级别目录生图和男女音频
+
+挑选优秀的男女音
 
 
 
@@ -120,8 +121,6 @@ Azure Speech 免费额度 每月5000字
 
 #### 发音选择
 
-
-
 | edge | cn             | en     |
 | ---- | -------------- | ------ |
 | m    | yunxia,yunjian | connor |
@@ -134,7 +133,11 @@ Azure Speech 免费额度 每月5000字
 | f      | 晓秋(zh-CN-XiaoqiuNeural) | molly, |
 |        |                           |        |
 
-
+| speech | cn                         | en     |
+| ------ | -------------------------- | ------ |
+| m      | 云扬(zh-CN-YunyangNeural)  | connor |
+| f      | 晓晓(zh-CN-XiaoxiaoNeural) | molly, |
+|        |                            |        |
 
 ## 2在线系统
 
