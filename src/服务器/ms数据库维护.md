@@ -31,6 +31,23 @@ SERVERPROPERTY('ProductLevel')  AS  版本级别,
 | 12.0.2000.8 | Enterprise Edition (64-bit) |
 |             |                             |
 
+## LinkedServer（服务器对象->链接服务器）
+
+链接服务器名 . 数据库名 . 用户名（如dbo）. 表名（或其他对象名）
+
+```sql
+select  * from WSND.ASMC.dbo.hzpytmp
+```
+
+#### 创建一个链接
+
+```sql
+exec sp_addlinkedserver '链接服务器名', '', 'SQLOLEDB', '对方实例地址'
+exec sp_addlinkedsrvlogin '链接服务器名', 'false',null,'登录用户名', '密码'
+```
+
+select * from sys.servers;
+
 
 
 #### 查询当前连接
