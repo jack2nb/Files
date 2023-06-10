@@ -2,6 +2,22 @@
 
 ## 库查询数据库文件
 
+#### 开启事务
+
+```
+工具--选项--查询执行--SQL Server--ANSI --勾选SET_IMPLICT_TRANSACTIONS(M)
+
+
+```
+
+```
+commit transaction --提交事务
+
+rollback transaction --回滚事务
+```
+
+
+
 ## 创建只读用户
 
 ```sql
