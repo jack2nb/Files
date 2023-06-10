@@ -5,12 +5,12 @@
 #### 开启事务
 
 ```
-工具--选项--查询执行--SQL Server--ANSI --勾选SET_IMPLICT_TRANSACTIONS(M)
+工具->选项->查询执行->SQL Server->ANSI -> 勾选  SET_IMPLICT_TRANSACTIONS(M)
 
 
 ```
 
-```
+```sql
 commit transaction --提交事务
 
 rollback transaction --回滚事务
@@ -26,11 +26,19 @@ CREATE LOGIN dbjack
     WITH PASSWORD = 'Db.jack';  
 GO  
 
--- 创建用户
+-- 创建用户并关联
 CREATE USER dbjack FOR LOGIN dbjack;  
 GO
 
 
+```
+
+### 修改密码
+
+```sql
+ALTER LOGIN dbjack
+	WITH PASSWORD = 'Pwd4jack119900'; --符合密码规范
+go 
 ```
 
 
@@ -41,14 +49,40 @@ on ouqi
 to dbjack;
 ```
 
+## 登录名/用户名
+
+dbo（用户名）是指以 sa(登录名)
+
+#### 登入名
+
+```sql
+select name,status,createdate from  syslogins 
+```
+
+#### 用户
+
+```sql
+SELECT uid, name ,status FROM Sysusers  where  islogin = 1; 
+```
+
 
 
 ### 拥有**db_datareader**角色
 
-```mssql
---   exec sp_addrolemember 'db_datareader','dbjack';
---   exec sp_changedbowner 'dbjack'
+```sql
+exec sp_addrolemember 'db_datareader','dbjack';
+
+
+GRANT VIEW ANY DATABASE TO dbjack;
+
+
 ```
+
+```sql
+--   exec sp_changedbowner 'dbjack'  --修改db的所有者
+```
+
+
 
 ### 查询所有者/数据库大小
 
