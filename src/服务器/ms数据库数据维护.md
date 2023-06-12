@@ -8,7 +8,7 @@ heidisql
 
 ```
 工具->选项->查询执行->SQL Server->ANSI -> 勾选  SET_IMPLICT_TRANSACTIONS(M)
-
+数据库->属性->文件->所用者设为Sa  ,完成sa到odb的映射
 中文使用nvarchr
 ```
 
