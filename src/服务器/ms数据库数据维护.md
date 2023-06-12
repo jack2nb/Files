@@ -2,18 +2,41 @@
 
 ## 库查询数据库文件
 
+heidisql
+
 #### 开启事务
 
 ```
 工具->选项->查询执行->SQL Server->ANSI -> 勾选  SET_IMPLICT_TRANSACTIONS(M)
 
-
+中文使用nvarchr
 ```
 
 ```sql
+BEGIN TRANSACTION 
+ 
 commit transaction --提交事务
 
 rollback transaction --回滚事务
+```
+
+### 表注解
+
+```sql
+-- 添加表注释
+execute sp_addextendedproperty 'MS_Description','填写你的表注释','user','odb','table','填写表名',null,null;
+ 
+```
+
+### 字段注解
+
+```sql
+--添加
+execute sp_addextendedproperty 'MS_Description','注解内容','user','用户名','table','表名','column','字段名';
+--修改 
+execute sp_updateextendedproperty 'MS_Description','注解内容','user','用户名','table','表名','column','字段名';
+--删除 
+execute sp_dropextendedproperty 'MS_Description','注解内容','user','用户名','table','表名','column' ;
 ```
 
 
@@ -26,7 +49,7 @@ CREATE LOGIN dbjack
     WITH PASSWORD = 'Db.jack';  
 GO  
 
--- 创建用户并关联
+-- 创建用户并关联 (可不做映射)
 CREATE USER dbjack FOR LOGIN dbjack;  
 GO
 
@@ -41,12 +64,14 @@ ALTER LOGIN dbjack
 go 
 ```
 
-
+### 登入名赋予服务器角色
 
 ```sql
-grant select 
-on ouqi
-to dbjack;
+
+
+EXEC sp_addsrvrolemember 'dbjack','sysadmin';
+go
+
 ```
 
 ## 登录名/用户名
@@ -67,19 +92,12 @@ SELECT uid, name ,status FROM Sysusers  where  islogin = 1;
 
 
 
-### 拥有**db_datareader**角色
+### 数据库角色
 
 ```sql
-exec sp_addrolemember 'db_datareader','dbjack';
+exec sp_addrolemember 'db_datareader','dbjack';   -- 先要是数据库用户
 
 
-GRANT VIEW ANY DATABASE TO dbjack;
-
-
-```
-
-```sql
---   exec sp_changedbowner 'dbjack'  --修改db的所有者
 ```
 
 
