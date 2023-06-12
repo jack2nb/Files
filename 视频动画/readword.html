@@ -67,11 +67,10 @@
     <!--抽奖盘-->
     <div class=" container w-100  ">
         <div class=" row glassbga   align-items-center  justify-content-center " style="height: 400px;">
-            <button title="点击开始抽取" ref="rPot" @click=" ocls.showDoIt()" class="  btn btn-danger rounded-circle"
-                :disabled="pd.startBut">开始抽奖</button>
-            <span class=" shadow  position-absolute badge badge-light badge-pill" v-for="im in ocls.showPos"
-                :style="{ 'top': im.y + 'px','height':im.height+ 'px','width':im.width+ 'px', 'left': im.x +  'px' }"
-                :class="{'border border-3 border-danger glassbga':im.cssbg}" v-text="im.name">
+             
+            <span class=" shadow    badge badge-light badge-pill"  >内部
+            </span>
+             <span class=" shadow    badge badge-light badge-pill"  >内部2
             </span>
         </div>
     </div>
@@ -86,68 +85,7 @@
         </div>
         <div class="w-100 mb-5   d-none d-md-block"><!---高度垫子 小设备隐藏--></div>
     </div>
-    <!---名单输入框1--->
-    <div v-if="_.include([1,true],pd['sp'])" style="z-index: 1100  ; " class="modal-dialog  fixed-top">
-        <div class="  mt-5  modal-content text-dark">
-            <div class="modal-header">
-                <h4 class="modal-title">
-                    一行一个
-                </h4>
-                <button @click="oui.spto(0)" type="button" class="close">×</button>
-            </div>
-            <div class="modal-body">
-                <div class="input-group">
-                    <div class="input-group-prepend">
-                        <span class="input-group-text input-lg">请输入</span>
-                    </div>
-                    <textarea v-model="pd.namesText" class="form-control" style="height:150px"></textarea>
-                </div>
-            </div>
-            <div class="modal-footer">
-                <button type="button" @click="oui.spto(0)  " class="btn btn-secondary">关闭
-                </button>
-                <button type="button" @click="ocls.loadNames()" class="btn btn-primary">
-                    载入
-                </button>
-            </div>
-        </div>
-    </div>
-    <!---登入框2--->
-    <div v-if="_.include([2,true],pd['sp'])" style="z-index: 1100  ; " class="modal-dialog  fixed-top">
-        <div class="  mt-5  modal-content text-dark">
-            <div class="modal-header">
-                <h4 class="modal-title">
-                    登入
-                </h4>
-                <button @click="oui.spto(0) " type="button" class="close">×</button>
-            </div>
-            <div class="modal-body">
-                <div class="input-group">
-                    <div class="input-group-prepend">
-                        <span class="input-group-text input-lg">邮箱</span>
-                    </div>
-                
-                </div>
-                <div v-text="pd['login_info']"></div>
-                <!--londing-->
-                <div :class="{'d-none':pd.loginLoding }">
-                    <div class="d-flex justify-content-center">
-                        <div class="spinner-border" role="status">
-                            <span class="sr-only">Loading...</span>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            <div class="  navbar">
-                <button type="button" class="btn-sm   bg-warning">注册
-                </button>
-                <button type="button" class="  btn-sm text-white bg-primary">
-                    登入
-                </button>
-            </div>
-        </div>
-    </div>
-
+ 
  
     <!---遮罩--->
     <div v-if="pd['sp']==0?false:true" style="z-index: 1040  ;" class=" modal-backdrop show "></div>
@@ -258,7 +196,7 @@
                 this.refLucky = ref('幸运儿');//抽奖结果
                 this.waitTimeList = []; //旋转次数
                 //初始列表数据 (有初始化数据除外)
-                this.initNames()
+                //this.initNames()
             }
             initNames() {
                 this.pIdx = 0; //当前选中人
@@ -348,61 +286,7 @@
                 this.重复调用()
                 this.pd.value.startBut = true; //禁用开始按钮
             }
-            重复调用() {
-                //更加时间等待直到尽头
-                var that = gd.ocls
-                that.tsIndex++ //等待时间指向
-                that.pIdx++ //位置指向
-                that.pIdx = that.pIdx >= that.pd.value.nameSize ? 0 : that.pIdx
-                that.luckyPos();//选择抽奖盘
-                let ts = that.waitTimeList[that.tsIndex]
-                if (ts) {//数据还有就继续
-                    console.log('setTimeout=', ts)
-                    setTimeout(that.重复调用, ts * 1000)
-                } else {
-                    //公布结果
-                    that.pd.value.startBut = false;//开始按钮恢复
-                    //延迟动画幸运儿
-                    setTimeout(() => {
-                        that.refLucky.value = that.nameList[that.pIdx];//触发刷新
-                        that.pd.value.showLucky = true;
-                    }, 500)
-                    setTimeout(() => { that.pd.value.showLucky = false }, 1500)
-                }
-                //console.log('重复=', this.tsIndex,ts)
-            }
-            luckyPos() {
-                /*绘制抽奖圆盘，计算圆圈坐标*/
-                let el = this.pd.refPoint//h5元素
-                let topLeft = this.getElxy(); //获取基准位子
-                let width = 60, height = 19;
-                this.showPos = [];//名字列表数组 位子
-                var r = 150//半径
-                var x = topLeft['left'] - width / 2 //减去名字元素的一半
-                var y = topLeft['top'] - height / 2
-                //循环次数 360/60
-                var nameSize = this.pd.value.nameSize //名单数量
-                for (var times = 0; times < nameSize; times++) {
-                    //同时根据量显示不同样子 【Deg2Rad  度到弧度的转化常量】
-                    var hudu = times * (360 / nameSize);//分弧
-                    hudu = hudu * (2 * Math.PI / 360);//弧度
-                    var X = x + Math.sin(hudu) * r + el.value.offsetWidth / 2;
-                    var Y = y + Math.cos(hudu) * r + el.value.offsetHeight / 2;
-                    // 计算位子样式
-                    //console.log(times,this.nameList[times],this.nameList) 
-                    this.showPos[times] = {
-                        "x": X + 0
-                        , "y": Y + 0
-                        , "width": width
-                        , "height": height
-                        , "id": times + 0
-                        , "name": this.nameList[times]
-                        , "cssbg": true ? this.pIdx % nameSize == times : false
-                    };
-                    this.refLucky.value = this.refLucky.value == ' 幸运儿 ' ? '幸运儿' : ' 幸运儿 '//触发刷新
-                }
-                //console.log('重新计算');
-            }
+            
             getElxy(el = null) {
                 el = el ? el : this.pd.refPoint.value
                 //计算某元素top、left坐标
@@ -418,7 +302,7 @@
             resize(e) {
                 //重画
                 console.log('component onresize!', gd, e);
-                gd.ocls.luckyPos()
+                //gd.ocls.luckyPos()
             }
             bindEvt() {
                 let resizeTimer = null;//免重复调用
@@ -447,7 +331,7 @@
                 //gd.oin = oin; //通信逻辑
                 gd.oui = oui; //ui界面
                 onMounted(() => ocls.bindEvt()); //窗口大小变动事件
-                onMounted(() => ocls.luckyPos()); //初始化转盘
+               
                 onMounted(() => oui.remount()); //已经登入刷新处理
                 return { pd,  oui, ocls, "login_manage_emt": pd.refManageEmt, "rPot": pd.refPoint } //去绑定
             }
