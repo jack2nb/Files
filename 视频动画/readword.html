@@ -1,0 +1,465 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <meta name="description" content="单词浏览">
+    <meta name="keywords" content="单词浏览,单词浏览">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    <title>单词浏览</title>
+    <link rel="stylesheet" crossorigin="anonymous" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.5.0/css/bootstrap.min.css">
+ 
+    <style>
+        .glassbga {
+            /*渐变*/
+            background: linear-gradient(to right bottom, rgba(255, 255, 255, 0.7), rgba(255, 255, 255, 0.2));
+            ;
+            border-radius: 1rem;
+            box-shadow: 6px 6px 10px rgba(112, 112, 112, 0.2);
+        }
+
+        .glassbg {
+            background: linear-gradient(to right top, #65dfc9, #6cdbeb);
+            border-radius: 1rem;
+        }
+
+        .circle-ab {
+            background: linear-gradient(to right bottom, rgba(255, 255, 255, 0.7), rgba(255, 255, 255, 0.2));
+            height: 14rem;
+            width: 14rem;
+            position: absolute;
+            border-radius: 50%;
+            opacity: 0.3;
+        }
+
+        .circle1 {
+            top: 0%;
+            right: 13%;
+        }
+
+        .circle2 {
+            bottom: 6%;
+            left: 13%;
+        }
+    </style>
+
+
+</head>
+<!--
+    抽奖功能v1
+    圆形排列
+    8个人名
+-->
+
+<body id="q-app" class="glassbg text-white ">
+    <!--悬浮球-->
+    <div class="circle1 circle-ab"> </div>
+    <div class="circle2 circle-ab"></div>
+    <!---上面的结果框val--->
+    <div class="container ">
+        <div class="mt-1 row justify-content-center  ">
+            <div class="w-100 mb-5   d-none d-md-block"><!---高度垫子 小设备隐藏--></div>
+            <div :class="{'animate__animated  animate__bounceInUp':pd.showLucky}">
+                <h3 v-text="ocls.refLucky.value">幸运儿</h3>
+            </div>
+        </div>
+    </div>
+    <!--抽奖盘-->
+    <div class=" container w-100  ">
+        <div class=" row glassbga   align-items-center  justify-content-center " style="height: 400px;">
+            <button title="点击开始抽取" ref="rPot" @click=" ocls.showDoIt()" class="  btn btn-danger rounded-circle"
+                :disabled="pd.startBut">开始抽奖</button>
+            <span class=" shadow  position-absolute badge badge-light badge-pill" v-for="im in ocls.showPos"
+                :style="{ 'top': im.y + 'px','height':im.height+ 'px','width':im.width+ 'px', 'left': im.x +  'px' }"
+                :class="{'border border-3 border-danger glassbga':im.cssbg}" v-text="im.name">
+            </span>
+        </div>
+    </div>
+    <!--底部按钮-->
+    <div class="fixed-bottom row justify-content-center rounded  ">
+        <div class=" row col-md-5 col-sm-8   bg-warning glassbga  justify-content-around ">
+            <button @click="oui.spto(1)" class="btn shadow-lg shadow btn-danger">输入名单
+                <span class="position-absolute badge badge-light badge-pill" v-text="pd.nameSize"> </span>
+            </button>
+            <button ref="login_manage_emt" @click="oui.spto(2) " class="btn shadow-lg btn-danger">登入
+            </button>
+        </div>
+        <div class="w-100 mb-5   d-none d-md-block"><!---高度垫子 小设备隐藏--></div>
+    </div>
+    <!---名单输入框1--->
+    <div v-if="_.include([1,true],pd['sp'])" style="z-index: 1100  ; " class="modal-dialog  fixed-top">
+        <div class="  mt-5  modal-content text-dark">
+            <div class="modal-header">
+                <h4 class="modal-title">
+                    一行一个
+                </h4>
+                <button @click="oui.spto(0)" type="button" class="close">×</button>
+            </div>
+            <div class="modal-body">
+                <div class="input-group">
+                    <div class="input-group-prepend">
+                        <span class="input-group-text input-lg">请输入</span>
+                    </div>
+                    <textarea v-model="pd.namesText" class="form-control" style="height:150px"></textarea>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" @click="oui.spto(0)  " class="btn btn-secondary">关闭
+                </button>
+                <button type="button" @click="ocls.loadNames()" class="btn btn-primary">
+                    载入
+                </button>
+            </div>
+        </div>
+    </div>
+    <!---登入框2--->
+    <div v-if="_.include([2,true],pd['sp'])" style="z-index: 1100  ; " class="modal-dialog  fixed-top">
+        <div class="  mt-5  modal-content text-dark">
+            <div class="modal-header">
+                <h4 class="modal-title">
+                    登入
+                </h4>
+                <button @click="oui.spto(0) " type="button" class="close">×</button>
+            </div>
+            <div class="modal-body">
+                <div class="input-group">
+                    <div class="input-group-prepend">
+                        <span class="input-group-text input-lg">邮箱</span>
+                    </div>
+                
+                </div>
+                <div v-text="pd['login_info']"></div>
+                <!--londing-->
+                <div :class="{'d-none':pd.loginLoding }">
+                    <div class="d-flex justify-content-center">
+                        <div class="spinner-border" role="status">
+                            <span class="sr-only">Loading...</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="  navbar">
+                <button type="button" class="btn-sm   bg-warning">注册
+                </button>
+                <button type="button" class="  btn-sm text-white bg-primary">
+                    登入
+                </button>
+            </div>
+        </div>
+    </div>
+
+ 
+    <!---遮罩--->
+    <div v-if="pd['sp']==0?false:true" style="z-index: 1040  ;" class=" modal-backdrop show "></div>
+
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/vue/3.2.47/vue.global.prod.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/lodash.js/2.4.2/lodash.min.js"></script>
+
+
+
+
+    <script>
+        const { onMounted, emits, createApp, ref, watch, computed } = Vue
+
+        const gd = {};//全局数据
+        gd.storage = {
+            //本地浏览器 存取组件
+            set(key, value) {
+                localStorage.setItem(key, JSON.stringify(value));
+            },
+            get(key) {
+                return JSON.parse(localStorage.getItem(key));
+            },
+            remove(key) {
+                localStorage.removeItem(key);
+            },
+        }
+     
+        class pgui {
+            /* 界面控制类 初始化界面默认值 */
+            constructor(arg) {
+                this.pd = gd.pd //页面数据
+                this.pd.value.load.unshift('pgui')
+                this.pd.value['sp'] = 0; //遮罩路由 (0.无，1.名单，2.登入 ,3.管理)
+                this.init();
+                this.initLogin();
+                this.initManage();
+            }
+            init() {
+                //初始效果
+                this.pd.value.namesText = ''  //输入框值
+                this.pd.refPoint = ref(null) //引用元素
+                this.pd.value.startBut = false;//开始按钮状态
+                this.pd.value.showLucky = 0;//显示动画
+            }
+            initLogin() {
+                //登入相关界面
+                this.pd.refManageEmt = ref(null);//登入/管理按钮
+                this.pd.value.loginLoding = 1//隐藏
+            }
+            initManage() {
+                //管理相关相关界面
+                this.pd.value.manage = {};//相关数据
+                this.pd.refManageEmt = ref(null);//登入/管理按钮
+                this.pd.value.loginLoding = 1//隐藏
+            }
+            checkName(nameStr) {
+                //检查名单是否有效并超过2个至少3个 返回:真假
+            }
+            remount() {
+                //如果登入和没登入
+                var session = gd.storage.get('us')
+                var email = gd.storage.get('ue')
+                session && email ? this.change2manage() : this.change2login()
+                //自动使用常用名单内
+                var nameLs = gd.storage.get('nameLs')
+                this.pd.value.nameLs = nameLs ? nameLs : {}
+                console.log('remounting');
+
+            }
+            change2manage() {
+                //转向成管理
+                this.pd.value.email = gd.storage.get('ue')
+                var emt = this.pd.refManageEmt.value
+                emt.innerHTML = "管理"
+                emt.onclick = () => { gd.oui.spto(3) }
+            }
+            change2login() {
+                //转向成登入
+                var emt = this.pd.refManageEmt.value
+                emt.innerHTML = "登入"
+                emt.onclick = () => { gd.oui.spto(2) }
+            }
+            spto(n) {
+                /*切换界面*/
+                this.pd.value['sp'] = n
+                //清除提示
+                this.pd.value.login_info = ''
+            }
+            loginLoading(n) {
+                //登入中效果取消
+                this.pd.value.loginLoding = n
+            }
+            watchPg(newValue, oldValue) {
+                //watch
+                console.log('gd pagedata 被修改')
+                //console.log('gd pagedata 被修改\n', newValue, '\n', oldValue)
+            }
+        }
+        /**使用类**/
+        class cls {
+            static st = 0;//静态变量
+            constructor(arg) {
+                //入口构造函数
+                this.pd = gd.pd //页面数据
+                this.pd.value.load.unshift('cls')
+                //----显示类变量
+                this.refLucky = ref('幸运儿');//抽奖结果
+                this.waitTimeList = []; //旋转次数
+                //初始列表数据 (有初始化数据除外)
+                this.initNames()
+            }
+            initNames() {
+                this.pIdx = 0; //当前选中人
+                this.tsIndex = 0;//抽奖动画指向改编号
+                this.nameList = [] //名单
+                //生成名单
+                this.pd.value.nameSize = 16  //名单数
+                this.nameList = Array.from(
+                    Array(this.pd.value.nameSize), (v, k) => { return '幸运儿' + k }
+                );
+                //默认使用的名单内
+                let cfgNameText = gd.storage.get('useNames')//text
+                if (!_.isEmpty(cfgNameText)) {
+                    this.nameList = cfgNameText.split('\n')//list
+                    this.pd.value.nameSize = this.nameList.length //名单数
+                }
+                //用于显示的名单
+                this.pd.value.namesText = this.nameList.join('\n');
+                //console.log('nameList==',this.nameList)
+            }
+            str2list(nameStr) {
+                var nameList = nameStr.split('\n')
+                //this.nameList.value = nameStr.split('\n')
+                nameList = _.compact(nameList);//去空值
+                nameList = _.filter(nameList
+                    , obj => /[^\s]+/.test(obj));//去不可见
+                console.log(nameList)
+                return nameList
+            }
+            loadNames() {
+                /*载入名单  */
+                //获取文字 关联映射
+                console.log(this.pd.value.namesText);
+                this.pd.value['sp'] = 0
+                this.nameList = this.str2list(this.pd.value.namesText)
+                this.pd.value.nameSize = this.nameList.length
+                this.luckyPos();//排列
+            }
+            random(min, max) {
+                //随机数区间
+                return Math.round(Math.random() * (max - min)) + min;
+            }
+            linspace(a, b, n) {
+                // 线性填充 start = 0, stop = 100, num = 5
+                if (typeof n === "undefined") n = Math.max(Math.round(b - a) + 1, 1);
+                if (n < 2) {
+                    return n === 1 ? [a] : [];
+                }
+                var i, ret = Array(n);
+                n--;
+                for (i = n; i >= 0; i--) {
+                    ret[i] = (i * b + (n - i) * a) / n;
+                }
+                return ret;
+            }
+            logspace(a, b, n) {
+                return this.linspace(a, b, n).map(function (x) { return Math.pow(10, x); });
+            }
+            // 开始抽奖动画
+            showDoIt() {
+                /*
+                抽奖要分2套参数 多人和人少
+                按时间停止 【跳动最少 66+a到b的随机数 】
+                */
+                // 
+                let jumpNum = this.pd.value.nameSize < 8 ? 33 : 66;//人多人少
+                jumpNum += this.random(0, this.pd.value.nameSize - 1)
+                console.log('jumpNum=', jumpNum)
+                //曲率  logspace 非线性时间列表
+                this.waitTimeList = this.logspace(1, jumpNum / (jumpNum / 10), jumpNum);
+                this.st = this.waitTimeList[this.waitTimeList.length - 1]
+                //重新计算控制最后一条的时间（控制在1秒左右）
+                this.waitTimeList = this.waitTimeList.map((ts) => {
+                    return ts / this.st / 1.2
+                })
+                //重新计算控制，最慢切换时间
+                this.waitTimeList = this.waitTimeList.map((ts) => {
+                    //人多人少有区别
+                    if (this.pd.value.nameSize < 8) {
+                        return ts < 0.1 ? 0.1 : ts
+                    } else {
+                        return ts < 0.04 ? 0.04 : ts
+                    }
+                })
+                //延迟调用
+                this.tsIndex = 0;
+                this.重复调用()
+                this.pd.value.startBut = true; //禁用开始按钮
+            }
+            重复调用() {
+                //更加时间等待直到尽头
+                var that = gd.ocls
+                that.tsIndex++ //等待时间指向
+                that.pIdx++ //位置指向
+                that.pIdx = that.pIdx >= that.pd.value.nameSize ? 0 : that.pIdx
+                that.luckyPos();//选择抽奖盘
+                let ts = that.waitTimeList[that.tsIndex]
+                if (ts) {//数据还有就继续
+                    console.log('setTimeout=', ts)
+                    setTimeout(that.重复调用, ts * 1000)
+                } else {
+                    //公布结果
+                    that.pd.value.startBut = false;//开始按钮恢复
+                    //延迟动画幸运儿
+                    setTimeout(() => {
+                        that.refLucky.value = that.nameList[that.pIdx];//触发刷新
+                        that.pd.value.showLucky = true;
+                    }, 500)
+                    setTimeout(() => { that.pd.value.showLucky = false }, 1500)
+                }
+                //console.log('重复=', this.tsIndex,ts)
+            }
+            luckyPos() {
+                /*绘制抽奖圆盘，计算圆圈坐标*/
+                let el = this.pd.refPoint//h5元素
+                let topLeft = this.getElxy(); //获取基准位子
+                let width = 60, height = 19;
+                this.showPos = [];//名字列表数组 位子
+                var r = 150//半径
+                var x = topLeft['left'] - width / 2 //减去名字元素的一半
+                var y = topLeft['top'] - height / 2
+                //循环次数 360/60
+                var nameSize = this.pd.value.nameSize //名单数量
+                for (var times = 0; times < nameSize; times++) {
+                    //同时根据量显示不同样子 【Deg2Rad  度到弧度的转化常量】
+                    var hudu = times * (360 / nameSize);//分弧
+                    hudu = hudu * (2 * Math.PI / 360);//弧度
+                    var X = x + Math.sin(hudu) * r + el.value.offsetWidth / 2;
+                    var Y = y + Math.cos(hudu) * r + el.value.offsetHeight / 2;
+                    // 计算位子样式
+                    //console.log(times,this.nameList[times],this.nameList) 
+                    this.showPos[times] = {
+                        "x": X + 0
+                        , "y": Y + 0
+                        , "width": width
+                        , "height": height
+                        , "id": times + 0
+                        , "name": this.nameList[times]
+                        , "cssbg": true ? this.pIdx % nameSize == times : false
+                    };
+                    this.refLucky.value = this.refLucky.value == ' 幸运儿 ' ? '幸运儿' : ' 幸运儿 '//触发刷新
+                }
+                //console.log('重新计算');
+            }
+            getElxy(el = null) {
+                el = el ? el : this.pd.refPoint.value
+                //计算某元素top、left坐标
+                var top = 0, left = 0;
+                var el_now = el //原生元素
+                while (el_now.offsetParent !== null) {//到body 
+                    top += el_now.offsetTop
+                    left += el_now.offsetLeft
+                    el_now = el_now.offsetParent
+                }
+                return { top, left } //位置之和
+            }
+            resize(e) {
+                //重画
+                console.log('component onresize!', gd, e);
+                gd.ocls.luckyPos()
+            }
+            bindEvt() {
+                let resizeTimer = null;//免重复调用
+                window.addEventListener('winResize', gd.ocls.resize);//绑定自定义事件
+                window.onresize = () => {
+                    clearTimeout(resizeTimer);
+                    resizeTimer = setTimeout(() => {
+                        window.dispatchEvent(new CustomEvent('winResize', {})); //调度事件
+                        console.log('component onresize!');
+                    }, 50)
+                }
+            }
+        }
+        //----------开始
+        let appdat = {
+            setup() {
+                var pd = ref({ "load": [] }); //页面数据
+                gd.pd = pd;//page data 页面元素引用"数据"
+                const oui = new pgui(); //界面更改"方法"
+                watch(gd.pd, oui.watchPg, { deep: true });
+                computed(() => { return JSON.parse(JSON.stringify(pd.value)); });
+                //const oin = new login();
+                const ocls = new cls(12);//默认选择
+                //放入全局
+                gd.ocls = ocls; //抽奖类
+                //gd.oin = oin; //通信逻辑
+                gd.oui = oui; //ui界面
+                onMounted(() => ocls.bindEvt()); //窗口大小变动事件
+                onMounted(() => ocls.luckyPos()); //初始化转盘
+                onMounted(() => oui.remount()); //已经登入刷新处理
+                return { pd,  oui, ocls, "login_manage_emt": pd.refManageEmt, "rPot": pd.refPoint } //去绑定
+            }
+        }
+        const app = createApp(appdat)
+        //app.use(Quasar) //vue的ui
+        app.mount('#q-app')
+    </script>
+
+ 
+
+
+
+</body>
+</html>
