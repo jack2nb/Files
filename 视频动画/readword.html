@@ -80,7 +80,7 @@
             <button @click="oui.spto(1)" class="btn shadow-lg shadow btn-danger">输入名单
                 <span class="position-absolute badge badge-light badge-pill" v-text="pd.nameSize"> </span>
             </button>
-            <button ref="login_manage_emt" @click="oui.spto(2) " class="btn shadow-lg btn-danger">登入
+            <button ref="login_manage_emt" @click="er.emit('读取.单词',{a:1}) " class="btn shadow-lg btn-danger">登入
             </button>
         </div>
         <div class="w-100 mb-5   d-none d-md-block"><!---高度垫子 小设备隐藏--></div>
@@ -93,13 +93,14 @@
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/vue/3.2.47/vue.global.prod.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/lodash.js/2.4.2/lodash.min.js"></script>
-
-
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/EventEmitter/5.2.8/EventEmitter.min.js"></script>
+    
 
 
     <script>
+        const er = new EventEmitter //事件线
         const { onMounted, emits, createApp, ref, watch, computed } = Vue
-
+        
         const gd = {};//全局数据
         gd.storage = {
             //本地浏览器 存取组件
@@ -123,6 +124,9 @@
                 this.init();
                 this.initLogin();
                 this.initManage();
+                //绑定事件
+                er.on("读取.单词",this.getRow)
+                er.on('收到.单词',this.signing)
             }
             init() {
                 //初始效果
@@ -144,18 +148,53 @@
             }
             checkName(nameStr) {
                 //检查名单是否有效并超过2个至少3个 返回:真假
+                console.log('nameStr=',nameStr)
             }
             remount() {
                 //如果登入和没登入
-                var session = gd.storage.get('us')
-                var email = gd.storage.get('ue')
-                session && email ? this.change2manage() : this.change2login()
-                //自动使用常用名单内
-                var nameLs = gd.storage.get('nameLs')
-                this.pd.value.nameLs = nameLs ? nameLs : {}
-                console.log('remounting');
+                console.log('remount..........')
+    
+                
+            }
+            getRow(){
+                 //获取数据，发送请求
+                var url = "http://127.0.0.1:2028/jsonapi/get";
+                var ja = {}
+                var data = {"单个词表":ja};
+                ja['@limit'] = 1
+                var opt = {
+                    method: 'POST',
+                    mode: 'cors',
+                    cache: 'no-cache',
+                    body: JSON.stringify(data),
+                    "headers": {
+                        'Content-Type': 'application/json'
+                    }
+                }
+                //发送
+                fetch(url, opt)
+                    .then(res => res.json())
+                    .catch(this.signErr)
+                    .then(dat=> er.emit('收到.单词',dat))
+                    ;
+                //动画效果
+          
+                gd.oui.loginLoading(0)
 
             }
+            signErr(error) {
+                //登入错误处理
+                var that = gd.oin
+                that.pd.value['login_info'] = "登入出现错误"
+                console.log('Error:', error);
+                gd.oui.loginLoading(1)   //loading
+            }
+            signing(dat) {
+                console.log('Sign已经请求',dat);
+                gd.oui.loginLoading(1) //loading 
+                
+            }
+
             change2manage() {
                 //转向成管理
                 this.pd.value.email = gd.storage.get('ue')
@@ -333,7 +372,7 @@
                 onMounted(() => ocls.bindEvt()); //窗口大小变动事件
                
                 onMounted(() => oui.remount()); //已经登入刷新处理
-                return { pd,  oui, ocls, "login_manage_emt": pd.refManageEmt, "rPot": pd.refPoint } //去绑定
+                return {er, pd,  oui, ocls, "login_manage_emt": pd.refManageEmt, "rPot": pd.refPoint } //去绑定
             }
         }
         const app = createApp(appdat)
