@@ -4,7 +4,7 @@
 
 ## 华三交换机   poe三层
 
-S1850-28p-pwr/s5130-28s  （只读管理建议使用web）
+S1850-28p-pwr/S5130S-28P-PWR-EI  （只读管理建议使用web）
 
 [在线命令查看](https://www.h3c.com/cn/BizPortal/QueryCli/cn_index.aspx)
 
