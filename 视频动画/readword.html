@@ -77,10 +77,10 @@
     <!--底部按钮-->
     <div class="fixed-bottom row justify-content-center rounded  ">
         <div class=" row col-md-5 col-sm-8   bg-warning glassbga  justify-content-around ">
-            <button @click="oui.spto(1)" class="btn shadow-lg shadow btn-danger">输入名单
+            <button @click="er.emit('遮罩',1) " class="btn shadow-lg shadow btn-danger">输入名单
                 <span class="position-absolute badge badge-light badge-pill" v-text="pd.nameSize"> </span>
             </button>
-            <button ref="login_manage_emt" @click="er.emit('读取.单词',{a:1}) " class="btn shadow-lg btn-danger">登入
+            <button ref="ref_login_manage" @click="er.emit('读取.单词',this) " class="btn shadow-lg btn-danger">登入
             </button>
         </div>
         <div class="w-100 mb-5   d-none d-md-block"><!---高度垫子 小设备隐藏--></div>
@@ -88,7 +88,7 @@
  
  
     <!---遮罩--->
-    <div v-if="pd['sp']==0?false:true" style="z-index: 1040  ;" class=" modal-backdrop show "></div>
+    <div v-if="pd.sp==0?false:true" @click="er.emit('遮罩',0) "  style="z-index: 1040  ;" class=" modal-backdrop show "></div>
 
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/vue/3.2.47/vue.global.prod.min.js"></script>
@@ -101,7 +101,9 @@
         const er = new EventEmitter //事件线
         const { onMounted, emits, createApp, ref, watch, computed } = Vue
         
-        const gd = {};//全局数据
+        const gd = {};//全局数据 解决调用引用问题
+        const pd = ref({ "load": [] }); //特殊变量，页面数据
+        gd.pd = pd;//page data 页面元素引用"数据"
         gd.storage = {
             //本地浏览器 存取组件
             set(key, value) {
@@ -114,51 +116,40 @@
                 localStorage.removeItem(key);
             },
         }
-     
+
         class pgui {
             /* 界面控制类 初始化界面默认值 */
             constructor(arg) {
                 this.pd = gd.pd //页面数据
-                this.pd.value.load.unshift('pgui')
-                this.pd.value['sp'] = 0; //遮罩路由 (0.无，1.名单，2.登入 ,3.管理)
+                this.pd.value.load.unshift('pgui')//从开头添加一个值
+                this.pd.value.sp = 0; //遮罩路由 (0.无，1.名单，2.登入 ,3.管理)
                 this.init();
-                this.initLogin();
+       
                 this.initManage();
                 //绑定事件
                 er.on("读取.单词",this.getRow)
                 er.on('收到.单词',this.signing)
+                er.on('遮罩',this.spto)
             }
             init() {
                 //初始效果
                 this.pd.value.namesText = ''  //输入框值
-                this.pd.refPoint = ref(null) //引用元素
                 this.pd.value.startBut = false;//开始按钮状态
                 this.pd.value.showLucky = 0;//显示动画
             }
-            initLogin() {
-                //登入相关界面
-                this.pd.refManageEmt = ref(null);//登入/管理按钮
-                this.pd.value.loginLoding = 1//隐藏
-            }
+
             initManage() {
                 //管理相关相关界面
                 this.pd.value.manage = {};//相关数据
-                this.pd.refManageEmt = ref(null);//登入/管理按钮
-                this.pd.value.loginLoding = 1//隐藏
+                this.pd.refManageEmt = ref(null);//登入/管理按钮元素
+       
             }
-            checkName(nameStr) {
-                //检查名单是否有效并超过2个至少3个 返回:真假
-                console.log('nameStr=',nameStr)
-            }
-            remount() {
-                //如果登入和没登入
-                console.log('remount..........')
-    
-                
-            }
-            getRow(){
-                 //获取数据，发送请求
+            
+            getRow(e){
+                //console.log('getRow==',e,this.$refs,e.$refs)
+                //获取数据，发送请求
                 var url = "http://127.0.0.1:2028/jsonapi/get";
+                //url = "http://127.0.0.1:2028/jsonapi";
                 var ja = {}
                 var data = {"单个词表":ja};
                 ja['@limit'] = 1
@@ -181,6 +172,17 @@
           
                 gd.oui.loginLoading(0)
 
+            }
+            loginLoading(n) {
+                //登入中效果
+                this.pd.value.loginLoding = n
+            }
+            spto(n) {
+                var that = gd.oin
+                /*切换界面*/
+                gd.pd.value.sp = n
+                //清除提示
+                gd.pd.value.login_info = ''
             }
             signErr(error) {
                 //登入错误处理
@@ -208,16 +210,8 @@
                 emt.innerHTML = "登入"
                 emt.onclick = () => { gd.oui.spto(2) }
             }
-            spto(n) {
-                /*切换界面*/
-                this.pd.value['sp'] = n
-                //清除提示
-                this.pd.value.login_info = ''
-            }
-            loginLoading(n) {
-                //登入中效果取消
-                this.pd.value.loginLoding = n
-            }
+  
+
             watchPg(newValue, oldValue) {
                 //watch
                 console.log('gd pagedata 被修改')
@@ -358,21 +352,25 @@
         //----------开始
         let appdat = {
             setup() {
-                var pd = ref({ "load": [] }); //页面数据
-                gd.pd = pd;//page data 页面元素引用"数据"
+               
                 const oui = new pgui(); //界面更改"方法"
-                watch(gd.pd, oui.watchPg, { deep: true });
-                computed(() => { return JSON.parse(JSON.stringify(pd.value)); });
-                //const oin = new login();
                 const ocls = new cls(12);//默认选择
-                //放入全局
+                //-----放入全局解决this问题
                 gd.ocls = ocls; //抽奖类
                 //gd.oin = oin; //通信逻辑
                 gd.oui = oui; //ui界面
+                
+                
+                watch(pd, oui.watchPg, { deep: true });
+                computed(() => { return JSON.parse(JSON.stringify(pd.value)); });
+                //const oin = new login();
+                
+                
                 onMounted(() => ocls.bindEvt()); //窗口大小变动事件
                
-                onMounted(() => oui.remount()); //已经登入刷新处理
-                return {er, pd,  oui, ocls, "login_manage_emt": pd.refManageEmt, "rPot": pd.refPoint } //去绑定
+                //onMounted(() => oui.remount()); //已经登入刷新处理
+                //变量到html的绑定 js访问要加.value
+                return {er, pd,  oui, ocls, "ref_login_manage": pd.refManageEmt,  } 
             }
         }
         const app = createApp(appdat)
