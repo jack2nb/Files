@@ -9,6 +9,8 @@
     <title>单词浏览</title>
     <link rel="stylesheet" crossorigin="anonymous"
         href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.6.0/css/bootstrap.min.css">
+    <link rel="stylesheet" crossorigin="anonymous"
+        href="https://cdnjs.cloudflare.com/ajax/libs/aplayer/1.10.1/APlayer.min.css">
     <style>
         .glassbga {
             /*渐变*/
@@ -65,13 +67,17 @@
     <div class=" container   glassbga ">
         <div class=" row   align-items-center   justify-content-around  pt-5 ">
 
-          <img     v-bind:src="pd.row.img"   style="max-width:100%;overflow:hidden;" class="img-fluid" alt="..."> 
+            <img v-bind:src="pd.row.img" style="max-width:100%;overflow:hidden;" class="img-fluid" alt="...">
 
         </div>
         <div class=" row   align-items-center   justify-content-center" style="height: 80px;">
 
-            <span class=" mx-5 p-2 shadow align-middle badge-secondary badge   badge-pill"><h5> {{pd.row.cn  ||  中文}} </h5></span>
-            <span class=" mx-5  p-2 shadow   badge-info badge   badge-pill"><h5>{{pd.row.en || 英文}} </h5> </span>
+            <span class=" mx-5 p-2 shadow align-middle badge-secondary badge   badge-pill">
+                <h5> {{pd.row.cn || 中文}} </h5>
+            </span>
+            <span class=" mx-5  p-2 shadow   badge-info badge   badge-pill">
+                <h5>{{pd.row.en || 英文}} </h5>
+            </span>
 
 
         </div>
@@ -87,7 +93,9 @@
 
             <span class="  mx-5  shadow    badge badge-light badge-pill">中女 </span>
 
-            <span class="  mx-5  shadow   badge-info badge   badge-pill">英女 </span>
+            <span class="  mx-5  shadow   badge-info badge   badge-pill">
+                <div id="emt-aplayer"></div>
+            </span>
 
 
         </div>
@@ -96,7 +104,7 @@
     <div class="fixed-bottom row justify-content-center rounded   ">
         <div class=" d-flex  col-md-5 col-sm-8   bg-warning glassbga  justify-content-around ">
             <label for="exampleInputPassword1" class="text-dark d-flex  align-items-center  ">页码</label>
-            <input type="text"   v-model="pd.page" class="w-25 form-control">
+            <input type="text" v-model="pd.page" class="w-25 form-control">
             <button ref="ref_login_manage" @click="er.emit('翻页',0) " class="btn shadow-lg btn-danger">跳转
             </button>
             <button @click="er.emit('翻页',-1) " class="btn shadow-lg shadow btn-danger">上一个
@@ -120,6 +128,7 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/vue/3.2.47/vue.global.prod.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/lodash.js/2.4.2/lodash.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/EventEmitter/5.2.8/EventEmitter.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/aplayer/1.10.1/APlayer.min.js"></script>
 
     <script>
         const er = new EventEmitter //事件线
@@ -161,8 +170,8 @@
             }
             init() {
                 //初始效果
-                pvs.page = gd.storage.get ('page') ? gd.storage.get ('page') :  0 ;//显示动画
-             
+                pvs.page = gd.storage.get('page') ? gd.storage.get('page') : 0;//显示动画
+
             }
 
             initManage() {
@@ -175,10 +184,10 @@
                 //翻页
                 const that = gd.oui
                 //pvs.page = gd.storage.get ('page')
-                pvs.page = parseInt( pvs.page) + n;
-                if(pvs.page<=0){pvs.page=0}
-                gd.storage.set ('page',pvs.page)
-                console.log("page=",pvs.page)
+                pvs.page = parseInt(pvs.page) + n;
+                if (pvs.page <= 0) { pvs.page = 0 }
+                gd.storage.set('page', pvs.page)
+                console.log("page=", pvs.page)
                 that.getRow(1)
             }
 
@@ -233,18 +242,30 @@
                 const that = gd.oui
                 console.log('请求返回数据', dat);
 
-                
+
                 //词展示++++
                 that.loginLoading(0) //loading 
                 that.spto(0) //loading 
-                if (typeof(dat) == "undefined" || dat['单个词表'].length==0){return} //没数据
+                if (typeof (dat) == "undefined" || dat['单个词表'].length == 0) { return } //没数据
 
                 //设置数据
                 console.log(dat['单个词表'][0])
                 pvs.row = dat['单个词表'][0]
                 //pvs.row.img = '/en500word/h/e/健康.png' //  /en500word/h/e/健康.png
-                pvs.row.img = `/en500word/${pvs.row.en.substring(0,1)}/${pvs.row.en.substring(1,2)}/${pvs.row.cn}.png` //  /en500word/h/e/健康.png
- 
+                pvs.row.img = `/en500word/${pvs.row.en.substring(0, 1)}/${pvs.row.en.substring(1, 2)}/${pvs.row.cn}.png` //  /en500word/h/e/健康.png
+                //设置 mp3
+                const ap = new APlayer({
+                    container: document.getElementById('emt-aplayer'),
+                    audio: [{
+                      
+            
+                        url: "/en500word/h/e/健康_cn4m.mp3",
+                     
+                    }]
+                });
+
+
+
             }
 
 
