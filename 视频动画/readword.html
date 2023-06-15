@@ -9,7 +9,6 @@
     <title>单词浏览</title>
     <link rel="stylesheet" crossorigin="anonymous"
         href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.6.0/css/bootstrap.min.css">
-
     <style>
         .glassbga {
             /*渐变*/
@@ -43,13 +42,9 @@
             left: 13%;
         }
     </style>
-
-
 </head>
 <!--
-    抽奖功能v1
-    圆形排列
-    8个人名
+     
 -->
 
 <body id="q-app" class="glassbg text-white  ">
@@ -68,19 +63,31 @@
     </div>
     <!--抽奖盘-->
     <div class=" container   glassbga ">
-        <div class=" d-flex    align-items-center  justify-content-center " style="height: 200px;">
+        <div class=" row   align-items-center   justify-content-around  pt-5 ">
 
-            <span class=" shadow    badge badge-light badge-pill">内部 </span>
-            <span class=" shadow   badge-primary  badge   badge-pill">内部2 </span>
-            <span class=" shadow   badge-info badge   badge-pill">内部2 </span>
+          <img     v-bind:src="pd.row.img"   style="max-width:100%;overflow:hidden;" class="img-fluid" alt="..."> 
+
+        </div>
+        <div class=" row   align-items-center   justify-content-center" style="height: 80px;">
+
+            <span class=" mx-5 p-2 shadow align-middle badge-secondary badge   badge-pill"><h5> {{pd.row.cn  ||  中文}} </h5></span>
+            <span class=" mx-5  p-2 shadow   badge-info badge   badge-pill"><h5>{{pd.row.en || 英文}} </h5> </span>
 
 
         </div>
-        <div class=" d-flex     align-items-center  justify-content-center " style="height: 200px;">
+        <div class=" d-flex    align-items-center  justify-content-center " style="height: 80px;">
 
-            <span class=" shadow    badge badge-light badge-pill">内部 </span>
-            <span class="    badge-secondary badge   badge-pill">内部2 </span>
-            <span class=" shadow   badge-info badge   badge-pill">内部2 </span>
+            <span class="  mx-5 w-25 shadow    badge badge-light badge-pill">中男 </span>
+
+            <span class="   mx-5  w-25 shadow   badge-info badge   badge-pill">英男 </span>
+
+
+        </div>
+        <div class=" d-flex     align-items-center  justify-content-center " style="height: 80px;">
+
+            <span class="  mx-5  shadow    badge badge-light badge-pill">中女 </span>
+
+            <span class="  mx-5  shadow   badge-info badge   badge-pill">英女 </span>
 
 
         </div>
@@ -89,13 +96,17 @@
     <div class="fixed-bottom row justify-content-center rounded   ">
         <div class=" d-flex  col-md-5 col-sm-8   bg-warning glassbga  justify-content-around ">
             <label for="exampleInputPassword1" class="text-dark d-flex  align-items-center  ">页码</label>
-            <input type="text" class="w-25 form-control">
-            <button ref="ref_login_manage" @click="er.emit('读取.单词',this) " class="btn shadow-lg btn-danger">跳转
+            <input type="text"   v-model="pd.page" class="w-25 form-control">
+            <button ref="ref_login_manage" @click="er.emit('翻页',0) " class="btn shadow-lg btn-danger">跳转
             </button>
-            <button @click="er.emit('遮罩',1) " class="btn shadow-lg shadow btn-danger">输入名单
+            <button @click="er.emit('翻页',-1) " class="btn shadow-lg shadow btn-danger">上一个
                 <span class="position-absolute badge badge-light badge-pill" v-text="pd.nameSize"> </span>
             </button>
-     
+
+            <button @click="er.emit('翻页',1) " class="btn shadow-lg shadow btn-danger">下一个
+                <span class="position-absolute badge badge-light badge-pill" v-text="pd.nameSize"> </span>
+            </button>
+
         </div>
         <div class="w-100 mb-5   d-none d-md-block"><!---高度垫子 小设备隐藏--></div>
     </div>
@@ -109,8 +120,6 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/vue/3.2.47/vue.global.prod.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/lodash.js/2.4.2/lodash.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/EventEmitter/5.2.8/EventEmitter.min.js"></script>
-
-
 
     <script>
         const er = new EventEmitter //事件线
@@ -139,6 +148,7 @@
                 this.pd = gd.pd //页面数据
                 pvs.load.unshift('pgui')//从开头添加一个值
                 pvs.sp = 0; //遮罩路由 (0.无，1.名单，2.登入 ,3.管理)
+                pvs.row = {};//单词数据的一行
                 this.init();
 
                 this.initManage();
@@ -146,12 +156,13 @@
                 er.on("读取.单词", this.getRow)
                 er.on('收到.单词', this.signing)
                 er.on('遮罩', this.spto)
+
+                er.on('翻页', this.nextPage)
             }
             init() {
                 //初始效果
-                pvs.namesText = ''  //输入框值
-                pvs.startBut = false;//开始按钮状态
-                pvs.showLucky = 0;//显示动画
+                pvs.page = gd.storage.get ('page') ? gd.storage.get ('page') :  0 ;//显示动画
+             
             }
 
             initManage() {
@@ -159,6 +170,16 @@
                 pvs.manage = {};//相关数据
                 this.pd.refManageEmt = ref(null);//登入/管理按钮元素
 
+            }
+            nextPage(n) {
+                //翻页
+                const that = gd.oui
+                //pvs.page = gd.storage.get ('page')
+                pvs.page = parseInt( pvs.page) + n;
+                if(pvs.page<=0){pvs.page=0}
+                gd.storage.set ('page',pvs.page)
+                console.log("page=",pvs.page)
+                that.getRow(1)
             }
 
             getRow(e) {
@@ -169,6 +190,7 @@
                 var ja = {}
                 var data = { "单个词表": ja };
                 ja['@limit'] = 1
+                ja['@page'] = pvs.page
                 var opt = {
                     method: 'POST',
                     mode: 'cors',
@@ -185,9 +207,8 @@
                     .then(dat => er.emit('收到.单词', dat))
                     ;
                 //动画效果
-
-                gd.oui.loginLoading(0)
-
+                gd.oui.loginLoading(1)
+                gd.oui.spto(1) //loading 
             }
             loginLoading(n) {
                 //登入中效果
@@ -205,27 +226,25 @@
                 var that = gd.oin
                 pvs.login_info = "登入出现错误"
                 console.log('Error:', error);
-                gd.oui.loginLoading(1)   //loading
+                that.loginLoading(0)   //loading
             }
             signing(dat) {
-                console.log('Sign已经请求', dat);
-                gd.oui.loginLoading(1) //loading 
+                console.log('请求返回数据', dat);
 
+                
+                //词展示++++
+                gd.oui.loginLoading(0) //loading 
+                gd.oui.spto(0) //loading 
+                if (dat['单个词表'].length==0){return} //没数据
+
+                //设置数据
+                console.log(dat['单个词表'][0])
+                pvs.row = dat['单个词表'][0]
+                //pvs.row.img = '/en500word/h/e/健康.png' //  /en500word/h/e/健康.png
+                pvs.row.img = `/en500word/${pvs.row.en.substring(0,1)}/${pvs.row.en.substring(1,2)}/${pvs.row.cn}.png` //  /en500word/h/e/健康.png
+ 
             }
 
-            change2manage() {
-                //转向成管理
-                pvs.email = gd.storage.get('ue')
-                var emt = this.pd.refManageEmt.value
-                emt.innerHTML = "管理"
-                emt.onclick = () => { gd.oui.spto(3) }
-            }
-            change2login() {
-                //转向成登入
-                var emt = this.pd.refManageEmt.value
-                emt.innerHTML = "登入"
-                emt.onclick = () => { gd.oui.spto(2) }
-            }
 
 
             watchPg(newValue, oldValue) {
@@ -249,13 +268,9 @@
 
                 watch(pd, oui.watchPg, { deep: true });
                 //computed(() => { return JSON.parse(JSON.stringify(pvs)); }); //对值二次计算
-                //const oin = new login();
-
-
                 //onMounted(() => ocls.bindEvt()); //窗口大小变动事件
-
                 //onMounted(() => oui.remount()); //已经登入刷新处理
-                //--变量到html的绑定 js访问要加.value
+                //--变量关联到html的映射 js访问要加.value
                 return { er, pd, oui, "ref_login_manage": pd.refManageEmt, }
             }
         }
