@@ -183,7 +183,7 @@
             }
 
             getRow(e) {
-                //console.log('getRow==',e,this.$refs,e.$refs)
+                const that = gd.oui
                 //获取数据，发送请求
                 var url = "http://127.0.0.1:2028/jsonapi/get";
                 //url = "http://127.0.0.1:2028/jsonapi";
@@ -207,15 +207,15 @@
                     .then(dat => er.emit('收到.单词', dat))
                     ;
                 //动画效果
-                gd.oui.loginLoading(1)
-                gd.oui.spto(1) //loading 
+                that.loginLoading(1)
+                that.spto(1) //loading 
             }
             loginLoading(n) {
                 //登入中效果
-                this.pd.value.loginLoding = n
+                pvs.loginLoding = n
             }
             spto(n) {
-                var that = gd.oin
+                const that = gd.oui
                 /*切换界面*/
                 pvs.sp = n
                 //清除提示
@@ -223,19 +223,21 @@
             }
             signErr(error) {
                 //登入错误处理
-                var that = gd.oin
+                const that = gd.oui
                 pvs.login_info = "登入出现错误"
                 console.log('Error:', error);
-                that.loginLoading(0)   //loading
+                that.loginLoading(0) //loading 
+                that.spto(0) //loading  
             }
             signing(dat) {
+                const that = gd.oui
                 console.log('请求返回数据', dat);
 
                 
                 //词展示++++
-                gd.oui.loginLoading(0) //loading 
-                gd.oui.spto(0) //loading 
-                if (dat['单个词表'].length==0){return} //没数据
+                that.loginLoading(0) //loading 
+                that.spto(0) //loading 
+                if (typeof(dat) == "undefined" || dat['单个词表'].length==0){return} //没数据
 
                 //设置数据
                 console.log(dat['单个词表'][0])
@@ -270,6 +272,7 @@
                 //computed(() => { return JSON.parse(JSON.stringify(pvs)); }); //对值二次计算
                 //onMounted(() => ocls.bindEvt()); //窗口大小变动事件
                 //onMounted(() => oui.remount()); //已经登入刷新处理
+                onMounted(() => oui.nextPage(0)); //已经登入刷新处理
                 //--变量关联到html的映射 js访问要加.value
                 return { er, pd, oui, "ref_login_manage": pd.refManageEmt, }
             }
