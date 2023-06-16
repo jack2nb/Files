@@ -9,8 +9,7 @@
     <title>单词浏览</title>
     <link rel="stylesheet" crossorigin="anonymous"
         href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.6.0/css/bootstrap.min.css">
-    <link rel="stylesheet" crossorigin="anonymous"
-        href="https://cdnjs.cloudflare.com/ajax/libs/aplayer/1.10.1/APlayer.min.css">
+
     <style>
         .glassbga {
             /*渐变*/
@@ -72,29 +71,45 @@
         </div>
         <div class=" row   align-items-center   justify-content-center" style="height: 80px;">
 
-            <span class=" mx-5 p-2 shadow align-middle badge-secondary badge   badge-pill">
+            <span class=" mx-5   w-25 shadow align-middle badge-secondary badge   badge-pill">
                 <h5> {{pd.row.cn || 中文}} </h5>
             </span>
-            <span class=" mx-5  p-2 shadow   badge-info badge   badge-pill">
+            <span class=" mx-5 w-25   shadow   badge-info badge   badge-pill">
                 <h5>{{pd.row.en || 英文}} </h5>
             </span>
 
 
         </div>
+        <!---nan-->
         <div class=" d-flex    align-items-center  justify-content-center " style="height: 80px;">
 
-            <span class="  mx-5 w-25 shadow    badge badge-light badge-pill">中男 </span>
+            <span class="  mx-5   shadow    badge badge-light badge-pill">
+                <audio controls="controls" v-bind:src="pd.row.cn4m">
+                    Your browser does not support the audio element.
+                </audio>
+            </span>
 
-            <span class="   mx-5  w-25 shadow   badge-info badge   badge-pill">英男 </span>
+            <span class="   mx-5    shadow   badge-info badge   badge-pill">
+                <audio controls="controls" v-bind:src="pd.row.en4m">
+                    Your browser does not support the audio element.
+                </audio>
+            </span>
 
 
         </div>
+        <!---nv-->
         <div class=" d-flex     align-items-center  justify-content-center " style="height: 80px;">
 
-            <span class="  mx-5  shadow    badge badge-light badge-pill">中女 </span>
+            <span class="  mx-5  shadow    badge badge-light badge-pill">
+                <audio controls="controls" v-bind:src="pd.row.cn4f">
+                    Your browser does not support the audio element.
+                </audio>
+            </span>
 
             <span class="  mx-5  shadow   badge-info badge   badge-pill">
-                <div id="emt-aplayer"></div>
+                <audio controls="controls" v-bind:src="pd.row.en4f">
+                    Your browser does not support the audio element.
+                </audio>
             </span>
 
 
@@ -128,7 +143,7 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/vue/3.2.47/vue.global.prod.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/lodash.js/2.4.2/lodash.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/EventEmitter/5.2.8/EventEmitter.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/aplayer/1.10.1/APlayer.min.js"></script>
+
 
     <script>
         const er = new EventEmitter //事件线
@@ -253,16 +268,14 @@
                 pvs.row = dat['单个词表'][0]
                 //pvs.row.img = '/en500word/h/e/健康.png' //  /en500word/h/e/健康.png
                 pvs.row.img = `/en500word/${pvs.row.en.substring(0, 1)}/${pvs.row.en.substring(1, 2)}/${pvs.row.cn}.png` //  /en500word/h/e/健康.png
+
+                pvs.row.cn4m = `/en500word/${pvs.row.en.substring(0, 1)}/${pvs.row.en.substring(1, 2)}/${pvs.row.cn}_cn4m.mp3` //   
+                pvs.row.en4m = `/en500word/${pvs.row.en.substring(0, 1)}/${pvs.row.en.substring(1, 2)}/${pvs.row.cn}_en4m.mp3` //  
+                pvs.row.cn4f = `/en500word/${pvs.row.en.substring(0, 1)}/${pvs.row.en.substring(1, 2)}/${pvs.row.cn}cn4f.mp3` //  没下划线
+                pvs.row.en4f = `/en500word/${pvs.row.en.substring(0, 1)}/${pvs.row.en.substring(1, 2)}/${pvs.row.cn}en4f.mp3` //  没下划线
+
+
                 //设置 mp3
-                const ap = new APlayer({
-                    container: document.getElementById('emt-aplayer'),
-                    audio: [{
-                      
-            
-                        url: "/en500word/h/e/健康_cn4m.mp3",
-                     
-                    }]
-                });
 
 
 
