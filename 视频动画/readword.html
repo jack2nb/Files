@@ -71,25 +71,25 @@
         </div>
         <div class=" row   align-items-center   justify-content-center" style="height: 80px;">
 
-            <span class=" mx-5   w-25 shadow align-middle badge-secondary badge   badge-pill">
-                <h5> {{pd.row.cn || 中文}} </h5>
-            </span>
-            <span class=" mx-5 w-25   shadow   badge-info badge   badge-pill">
-                <h5>{{pd.row.en || 英文}} </h5>
-            </span>
+            <button @click="er.emit('播放',0) " class="btn mx-5   w-25 shadow align-middle badge-secondary badge   badge-pill">
+                <h3> {{pd.row.cn || 中文}} </h3>
+            </button>
+            <button @click="er.emit('播放',1) " class="btn mx-5 w-25    shadow   badge-info badge   badge-pill">
+                <h3>{{pd.row.en || 英文}} </h3>
+            </button>
 
 
         </div>
         <!---nan-->
         <div class=" d-flex    align-items-center  justify-content-center " style="height: 80px;">
 
-            <span class="  mx-5   shadow    badge badge-light badge-pill">
+            <span class="  mx-4   shadow   badge-info   badge badge-pill">
                 <audio controls="controls" v-bind:src="pd.row.cn4m">
                     Your browser does not support the audio element.
                 </audio>
             </span>
 
-            <span class="   mx-5    shadow   badge-info badge   badge-pill">
+            <span class="   mx-4    shadow   badge-info badge   badge-pill">
                 <audio controls="controls" v-bind:src="pd.row.en4m">
                     Your browser does not support the audio element.
                 </audio>
@@ -100,13 +100,13 @@
         <!---nv-->
         <div class=" d-flex     align-items-center  justify-content-center " style="height: 80px;">
 
-            <span class="  mx-5  shadow    badge badge-light badge-pill">
+            <span class="  mx-4  shadow    badge badge-light badge-pill">
                 <audio controls="controls" v-bind:src="pd.row.cn4f">
                     Your browser does not support the audio element.
                 </audio>
             </span>
 
-            <span class="  mx-5  shadow   badge-info badge   badge-pill">
+            <span class="  mx-4  shadow   badge-light badge   badge-pill">
                 <audio controls="controls" v-bind:src="pd.row.en4f">
                     Your browser does not support the audio element.
                 </audio>
@@ -143,7 +143,9 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/vue/3.2.47/vue.global.prod.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/lodash.js/2.4.2/lodash.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/EventEmitter/5.2.8/EventEmitter.min.js"></script>
+   
 
+    
 
     <script>
         const er = new EventEmitter //事件线
@@ -180,6 +182,7 @@
                 er.on("读取.单词", this.getRow)
                 er.on('收到.单词', this.signing)
                 er.on('遮罩', this.spto)
+                er.on('播放', this.play)
 
                 er.on('翻页', this.nextPage)
             }
@@ -205,7 +208,13 @@
                 console.log("page=", pvs.page)
                 that.getRow(1)
             }
+            play(n){
+                //播
+                console.log('播放=',n)
+                //播放指定 document.querySelectorAll('audio')[0].play()
+                document.querySelectorAll('audio')[n].play()
 
+            }
             getRow(e) {
                 const that = gd.oui
                 //获取数据，发送请求
@@ -268,14 +277,14 @@
                 pvs.row = dat['单个词表'][0]
                 //pvs.row.img = '/en500word/h/e/健康.png' //  /en500word/h/e/健康.png
                 pvs.row.img = `/en500word/${pvs.row.en.substring(0, 1)}/${pvs.row.en.substring(1, 2)}/${pvs.row.cn}.png` //  /en500word/h/e/健康.png
-
+                //设置 mp3
                 pvs.row.cn4m = `/en500word/${pvs.row.en.substring(0, 1)}/${pvs.row.en.substring(1, 2)}/${pvs.row.cn}_cn4m.mp3` //   
                 pvs.row.en4m = `/en500word/${pvs.row.en.substring(0, 1)}/${pvs.row.en.substring(1, 2)}/${pvs.row.cn}_en4m.mp3` //  
                 pvs.row.cn4f = `/en500word/${pvs.row.en.substring(0, 1)}/${pvs.row.en.substring(1, 2)}/${pvs.row.cn}cn4f.mp3` //  没下划线
                 pvs.row.en4f = `/en500word/${pvs.row.en.substring(0, 1)}/${pvs.row.en.substring(1, 2)}/${pvs.row.cn}en4f.mp3` //  没下划线
+                
 
-
-                //设置 mp3
+                
 
 
 
