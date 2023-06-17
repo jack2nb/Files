@@ -78,8 +78,6 @@
             <button @click="er.emit('播放',1) " class="btn mx-5 w-25    shadow   badge-info badge   badge-pill">
                 <h3>{{pd.row.en || 英文}} </h3>
             </button>
-
-
         </div>
         <!---nan-->
         <div class=" d-flex    align-items-center  justify-content-center " style="height: 80px;">
@@ -116,6 +114,30 @@
 
         </div>
     </div>
+
+    <!---设置-->
+    <div class=" container  glassbga  mt-3 ">
+        <div class=" row  justify-content-around">
+            <div class="   d-flex  align-items-center col-md-5 col-sm-8   ">英标</div>
+
+            <div class="    align-items-center col-md-5 col-sm-8    "><select class="form-select   " multiple
+                    aria-label="multiple select example">
+
+                    <option value="1">男</option>
+                    <option value="2">女</option>
+                  
+                </select></div>
+
+            <div class="     ">
+                <select class="form-select   " multiple aria-label="multiple select example">
+
+                    <option value="1">One</option>
+                    <option value="2">Two</option>
+                    <option value="3">Three</option>
+                </select>
+            </div>
+        </div>
+    </div>
     <!--底部按钮-->
     <div class="fixed-bottom row justify-content-center rounded   ">
         <div class=" d-flex  col-md-5 col-sm-8   bg-warning glassbga  justify-content-around ">
@@ -134,23 +156,12 @@
         </div>
         <div class="w-100 mb-5   d-none d-md-block"><!---高度垫子 小设备隐藏--></div>
     </div>
-
-    <div class=" container mt-2  glassbga ">
-        <div class=" d-flex      justify-content-around ">
-            <select class="form-select   " multiple aria-label="multiple select example">
-
-                <option value="1">One</option>
-                <option value="2">Two</option>
-                <option value="3">Three</option>
-            </select>
-        </div>
-    </div>
     <!---遮罩--->
     <div v-if="pd.sp==0?false:true" @click="er.emit('遮罩',0) " style="z-index: 1040  ;" class=" modal-backdrop show ">
     </div>
 
     <!---提醒-->
- 
+
     <div class="    p-3" style="z-index: 150; right: 0; bottom: 0;">
         <div id="liveToast" class="toast  " role="toast" aria-live="assertive" aria-atomic="true" data-delay="5000">
 
@@ -168,12 +179,13 @@
         </div>
     </div>
 
-<!---提醒2-->
-    <div class="toast hidden   hide" id="myToast" data-delay="5000" role="toast" >
+    <!---提醒2-->
+    <div class="toast hidden   hide" id="myToast" data-delay="5000" role="toast">
         <div class="toast-header">
             <strong class="me-auto"><i class="bi-gift-fill"></i> We miss you!</strong>
             <small>10 mins ago</small>
-            <button type="button" class="btn-close" data-bs-dismiss="toast" aria-label="Close" ><span aria-hidden="true">&times;</span></button>
+            <button type="button" class="btn-close" data-bs-dismiss="toast" aria-label="Close"><span
+                    aria-hidden="true">&times;</span></button>
         </div>
         <div class="toast-body">
             It's been a long time since you visited us. We've something special for you. <a href="#">Click here!</a>
@@ -182,15 +194,10 @@
         </div>
     </div>
 
+    <span class=" d-flex  fixed-top justify-content-end rounded   " style="font-size:32px">⚙</span>
 
+    <!---$(".alert").fadeOut();   $('.alert').delay(900).slideUp(500) ; -->
 
-<!---$(".alert").fadeOut();   $('.alert').delay(900).slideUp(500) ; -->
-    <div class="alert alert-warning alert-dismissible fade  fixed-top show"   role="alert">
-        <strong>Holy guacamole!</strong> You should check in on some of those fields below.
-        <button type="button" class="close" data-dismiss="alert" aria-label="Close">
-            <span aria-hidden="true">&times;</span>
-        </button>
-    </div>
 
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/vue/3.2.47/vue.global.prod.min.js"></script>
