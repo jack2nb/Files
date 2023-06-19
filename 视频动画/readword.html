@@ -52,8 +52,8 @@
     <!--悬浮球-->
     <div class="circle1 circle-ab"> </div>
     <div class="circle2 circle-ab"></div>
-        <!-- 齿轮 --->
-        <span class=" d-flex  fixed-top justify-content-end rounded   " style="font-size:32px;  filter: grayscale(100%); ">⚙</span>
+        <!-- 齿轮修改 --->
+        <span @click="er.emit('修改',0) "  class=" btn d-flex  fixed-top justify-content-end      " style="font-size:32px;  filter: grayscale(100%); ">⚙</span>
 
     <!---上面的结果框val--->
     <div class="container ">
@@ -118,8 +118,8 @@
         </div>
     </div>
 
-    <!---设置-->
-    <div class=" container    glassbga  mt-4  mb-4   pt-3  pb-3">
+    <!---修改-->
+    <div id="toChange" class="     container    glassbga  mt-4  mb-4   pt-3  pb-3">
         <div class=" row  align-items-center  justify-items-around">
             <div class="   d-flex col-md-5 col-sm-8   ">英标</div>
             <div class="   d-flex col-md-5 col-sm-8   ">英标</div>
@@ -143,11 +143,23 @@
             <div>    <button ref="ref_login_manage" @click="er.emit('翻页',0) " class="btn shadow-lg btn-danger">跳转
             </button></div>
         </div>
+        <div class="row">
+            <div class="dropdown">
+                <button type="button" class="btn btn-primary dropdown-toggle" data-toggle="dropdown">
+                  Dropdown button
+                </button>
+                <div class="dropdown-menu">
+                  <a class="dropdown-item" href="#">Link 1</a>
+                  <a class="dropdown-item" href="#">Link 2</a>
+                  <a class="dropdown-item" href="#">Link 3</a>
+                </div>
+              </div>
+        </div>
     </div>
     <!--底部按钮-->
     <div class="fixed-bottom row justify-content-center rounded   ">
         <div class=" d-flex  col-md-5 col-sm-8   bg-warning glassbga  justify-content-around ">
-            <label for="exampleInputPassword1" class="text-dark d-flex  align-items-center  ">页码</label>
+            <label  class="text-dark d-flex  align-items-center  ">页码</label>
             <input type="text" v-model="pd.page" class="w-25 form-control">
             <button ref="ref_login_manage" @click="er.emit('翻页',0) " class="btn shadow-lg btn-danger">跳转
             </button>
@@ -168,7 +180,7 @@
 
     <!---提醒-->
 
-    <div class="    p-3" style="z-index: 150; right: 0; bottom: 0;">
+    <div class="   p-3" style="z-index: 150; right: 0; bottom: 0;">
         <div id="liveToast" class="toast  " role="toast" aria-live="assertive" aria-atomic="true" data-delay="5000">
 
             <div class="toast-header">
@@ -186,7 +198,7 @@
     </div>
 
     <!---提醒2-->
-    <div class="toast hidden   hide" id="myToast" data-delay="5000" role="toast">
+    <div class="toast  d-none     " id="myToast" data-delay="5000" role="toast">
         <div class="toast-header">
             <strong class="me-auto"><i class="bi-gift-fill"></i> We miss you!</strong>
             <small>10 mins ago</small>
@@ -205,14 +217,17 @@
 
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/vue/3.2.47/vue.global.prod.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/lodash.js/2.4.2/lodash.min.js"></script>
+    <!--script src="https://cdnjs.cloudflare.com/ajax/libs/lodash.js/2.4.2/lodash.min.js"></script--->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/EventEmitter/5.2.8/EventEmitter.min.js"></script>
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.5/umd/popper.min.js"></script>
+
     <script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.6.1/js/bootstrap.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/axios/1.4.0/axios.min.js"></script>
     
 
+    
     <script>
         const er = new EventEmitter //事件线
         const { onMounted, emits, createApp, ref, watch, computed } = Vue
@@ -241,6 +256,7 @@
                 pvs.load.unshift('pgui')//从开头添加一个值
                 pvs.sp = 0; //遮罩路由 (0.无，1.名单，2.登入 ,3.管理)
                 pvs.row = {};//单词数据的一行
+                pvs.shwoChange = 0;//设置显示
                 this.init();
 
                 this.initManage();
@@ -251,6 +267,8 @@
                 er.on('播放', this.play)
 
                 er.on('翻页', this.nextPage)
+                er.on('修改', this.toChange)
+                
             }
             init() {
                 //初始效果
@@ -279,6 +297,23 @@
                 console.log('播放=', n)
                 //播放指定 document.querySelectorAll('audio')[0].play()
                 document.querySelectorAll('audio')[n].play()
+
+            }
+            toChange(n){
+                //设置
+                //$('#toChange').removeClass("d-none");
+                console.log('修改')
+                if (pvs.shwoChange==1){
+                    pvs.shwoChange = 0
+                    
+                    $('#toChange').slideUp(300)
+                }else{
+                    pvs.shwoChange = 1
+                    $('#toChange').slideDown(300)
+                }
+                //$('#toChange').removeClass("d-none");
+                
+                
 
             }
             getRow(e) {
