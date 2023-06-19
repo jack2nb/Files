@@ -52,6 +52,9 @@
     <!--悬浮球-->
     <div class="circle1 circle-ab"> </div>
     <div class="circle2 circle-ab"></div>
+        <!-- 齿轮 --->
+        <span class=" d-flex  fixed-top justify-content-end rounded   " style="font-size:32px;  filter: grayscale(100%); ">⚙</span>
+
     <!---上面的结果框val--->
     <div class="container ">
         <div class="mt-2 row justify-content-center  ">
@@ -63,8 +66,8 @@
         </div>
     </div>
     <!--卡片-->
-    <div class=" container   glassbga ">
-        <div class=" row   align-items-center   justify-content-around  pt-5 ">
+    <div class=" container   glassbga  pt-5  pb-5">
+        <div class=" row   align-items-center   justify-content-around   ">
 
             <img v-bind:src="pd.row.img" style="max-width:100%;overflow:hidden;" class="img-fluid" alt="...">
 
@@ -116,11 +119,12 @@
     </div>
 
     <!---设置-->
-    <div class=" container  glassbga  mt-3 ">
-        <div class=" row  justify-content-around">
-            <div class="   d-flex  align-items-center col-md-5 col-sm-8   ">英标</div>
-
-            <div class="    align-items-center col-md-5 col-sm-8    "><select class="form-select   " multiple
+    <div class=" container    glassbga  mt-4  mb-4   pt-3  pb-3">
+        <div class=" row  align-items-center  justify-items-around">
+            <div class="   d-flex col-md-5 col-sm-8   ">英标</div>
+            <div class="   d-flex col-md-5 col-sm-8   ">英标</div>
+            <div class="   d-flex col-md-5 col-sm-8   ">英标</div>
+            <div class="        "><select class="form-select w-100   " multiple
                     aria-label="multiple select example">
 
                     <option value="1">男</option>
@@ -128,14 +132,16 @@
                   
                 </select></div>
 
-            <div class="     ">
-                <select class="form-select   " multiple aria-label="multiple select example">
+            <div class="  d-flex  justify-content-around   ">
+                <select class="form-select w-100   " multiple aria-label="multiple select example">
 
                     <option value="1">One</option>
                     <option value="2">Two</option>
                     <option value="3">Three</option>
                 </select>
             </div>
+            <div>    <button ref="ref_login_manage" @click="er.emit('翻页',0) " class="btn shadow-lg btn-danger">跳转
+            </button></div>
         </div>
     </div>
     <!--底部按钮-->
@@ -194,8 +200,6 @@
         </div>
     </div>
 
-    <span class=" d-flex  fixed-top justify-content-end rounded   " style="font-size:32px">⚙</span>
-
     <!---$(".alert").fadeOut();   $('.alert').delay(900).slideUp(500) ; -->
 
 
@@ -206,9 +210,8 @@
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.6.1/js/bootstrap.min.js"></script>
-
-
-
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/axios/1.4.0/axios.min.js"></script>
+    
 
     <script>
         const er = new EventEmitter //事件线
