@@ -3,10 +3,10 @@
 
 <head>
     <meta charset="utf-8">
-    <meta name="description" content="单词浏览">
-    <meta name="keywords" content="单词浏览,单词浏览">
+    <meta name="description" content="单词学习">
+    <meta name="keywords" content="单词学习 练习">
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
-    <title>单词浏览</title>
+    <title>英语 培训 单词学习</title>
     <link rel="stylesheet" crossorigin="anonymous"
         href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.6.1/css/bootstrap.min.css">
 
@@ -52,16 +52,37 @@
     <!--悬浮球-->
     <div class="circle1 circle-ab"> </div>
     <div class="circle2 circle-ab"></div>
+    <div class="  fixed-top ">
         <!-- 齿轮修改 --->
-        <span @click="er.emit('修改',0) "  class=" btn d-flex  fixed-top justify-content-end      " style="font-size:32px;  filter: grayscale(100%); ">⚙</span>
-
-    <!---上面的结果框val--->
+        <span @click="er.emit('修改',0) " class=" btn d-flex  fixed-top justify-content-end      "
+            style="font-size:32px;  filter: grayscale(100%); ">⚙</span>
+        <!---载入--->
+            <div class="row d-flex    justify-content-center  ">
+            <div class="spinner-border   "></div>
+        </div>
+    </div><!---上面的结果框val--->
     <div class="container ">
         <div class="mt-2 row justify-content-center  ">
             <div class="w-100 mb-5   d-none d-md-block"><!---高度垫子 小设备隐藏--></div>
-            <div :class="{'animate__animated  animate__bounceInUp':pd.showLucky}">
-                <h3>检查</h3>
+
+
+            <div class="container   ">
+             
+                <ul class="nav nav-tabs">
+                    <li class="nav-item">
+                        <a class="nav-link shadow   bg-info text-white   mx-1 active " href="#">学一学</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link shadow   bg-secondary text-white  mx-1 " href="#">练一练</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link shadow   bg-secondary  text-white  mx-1 " href="#">试一试</a>
+                    </li>
+
+                </ul>
             </div>
+
+
             <div class="w-100 mb-5   d-none d-md-block"><!---高度垫子 小设备隐藏--></div>
         </div>
     </div>
@@ -97,72 +118,20 @@
                 </audio>
             </span>
 
-
+          
         </div>
-        <!---nv-->
-        <div class=" d-flex     align-items-center  justify-content-center " style="height: 80px;">
 
-            <span class="  mx-4  shadow    badge badge-light badge-pill">
-                <audio controls="controls" v-bind:src="pd.row.cn4f">
-                    Your browser does not support the audio element.
-                </audio>
-            </span>
-
-            <span class="  mx-4  shadow   badge-light badge   badge-pill">
-                <audio controls="controls" v-bind:src="pd.row.en4f">
-                    Your browser does not support the audio element.
-                </audio>
-            </span>
-
-
-        </div>
     </div>
-
-    <!---修改-->
-    <div id="toChange" class="     container-md    glassbga  mt-4  mb-4   pt-3  pb-3">
-        <div class=" row  align-items-center  justify-items-around">
-            <div class="   d-flex col-md-5 col-sm-8   ">英标</div>
-            <div class="   d-flex col-md-5 col-sm-8   ">英标</div>
-            <div class="   d-flex col-md-5 col-sm-8   ">英标</div>
-            <div class="        "><select class="form-select w-100   " multiple
-                    aria-label="multiple select example">
-
-                    <option value="1">男</option>
-                    <option value="2">女</option>
-                  
-                </select></div>
-
-            <div class="  d-flex  justify-content-around   ">
-                <select class="form-select w-100   " multiple aria-label="multiple select example">
-
-                    <option value="1">One</option>
-                    <option value="2">Two</option>
-                    <option value="3">Three</option>
-                </select>
-            </div>
-            <div>    <button ref="ref_login_manage" @click="er.emit('翻页',0) " class="btn shadow-lg btn-danger">跳转
-            </button></div>
-        </div>
-        <div class="row">
-            <div class="dropdown">
-                <button type="button" class="btn btn-primary dropdown-toggle" data-toggle="dropdown">
-                  Dropdown button
-                </button>
-                <div class="dropdown-menu">
-                  <a class="dropdown-item" href="#">Link 1</a>
-                  <a class="dropdown-item" href="#">Link 2</a>
-                  <a class="dropdown-item" href="#">Link 3</a>
-                </div>
-              </div>
-        </div>
-    </div>
+    <div class=" container" >  <p>看：韦氏英标 结合发音 听：中英对照建立关联</p></div>
+ 
+ 
     <!--底部按钮-->
-    <div class="fixed-bottom row justify-content-center     ">
+    <div class="fixed-bottom row justify-content-center rounded   ">
         <div class=" d-flex  col-md-5 col-sm-8   bg-warning glassbga  justify-content-around ">
-            <label  class="text-dark d-flex  align-items-center  ">页码</label>
-            <input type="text" v-model="pd.page" class="w-25 form-control">
-            <button ref="ref_login_manage" @click="er.emit('翻页',0) " class="btn shadow-lg btn-danger">跳转
-            </button>
+            <label class="text-dark d-flex  align-items-center  ">当前第</label>
+            <input type="text" v-model="pd.page" class="w-25 form-control"> <label
+                class="text-dark d-flex  align-items-center  ">个</label>
+
             <button @click="er.emit('翻页',-1) " class="btn shadow-lg shadow btn-danger">上一个
                 <span class="position-absolute badge badge-light badge-pill" v-text="pd.nameSize"> </span>
             </button>
@@ -178,39 +147,7 @@
     <div v-if="pd.sp==0?false:true" @click="er.emit('遮罩',0) " style="z-index: 1040  ;" class=" modal-backdrop show ">
     </div>
 
-    <!---提醒-->
 
-    <div class="   p-3" style="z-index: 150; right: 0; bottom: 0;">
-        <div id="liveToast" class="toast  " role="toast" aria-live="assertive" aria-atomic="true" data-delay="5000">
-
-            <div class="toast-header">
-                <strong class="mr-auto">Bootstrap</strong>
-                <small>11 mins ago</small>
-                <button type="button" class="close" data-dismiss="toast" aria-label="Close">
-                    <span aria-hidden="true">&times;</span>
-                </button>
-            </div>
-            <div class="toast-body   bg-light  text-dark">
-                Hello, world! This is a toast message.
-                <button type="button" class="btn btn-secondary btn-sm" data-bs-dismiss="toast">Close</button>
-            </div>
-        </div>
-    </div>
-
-    <!---提醒2-->
-    <div class="toast  d-none     " id="myToast" data-delay="5000" role="toast">
-        <div class="toast-header">
-            <strong class="me-auto"><i class="bi-gift-fill"></i> We miss you!</strong>
-            <small>10 mins ago</small>
-            <button type="button" class="btn-close" data-bs-dismiss="toast" aria-label="Close"><span
-                    aria-hidden="true">&times;</span></button>
-        </div>
-        <div class="toast-body">
-            It's been a long time since you visited us. We've something special for you. <a href="#">Click here!</a>
-            data-bs-dismiss
-            <button type="button" class="btn btn-secondary btn-sm" data-bs-dismiss="toast">Close</button>
-        </div>
-    </div>
 
     <!---$(".alert").fadeOut();   $('.alert').delay(900).slideUp(500) ; -->
 
@@ -221,13 +158,13 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/EventEmitter/5.2.8/EventEmitter.min.js"></script>
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.5/umd/popper.min.js"></script>
+
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.6.1/js/bootstrap.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/axios/1.4.0/axios.min.js"></script>
-    
 
-    
+
+
     <script>
         const er = new EventEmitter //事件线
         const { onMounted, emits, createApp, ref, watch, computed } = Vue
@@ -267,8 +204,8 @@
                 er.on('播放', this.play)
 
                 er.on('翻页', this.nextPage)
-                er.on('修改', this.toChange)
-                
+
+
             }
             init() {
                 //初始效果
@@ -299,23 +236,7 @@
                 document.querySelectorAll('audio')[n].play()
 
             }
-            toChange(n){
-                //设置
-                //$('#toChange').removeClass("d-none");
-                console.log('修改')
-                if (pvs.shwoChange==1){
-                    pvs.shwoChange = 0
-                    
-                    $('#toChange').slideUp(300)
-                }else{
-                    pvs.shwoChange = 1
-                    $('#toChange').slideDown(300)
-                }
-                //$('#toChange').removeClass("d-none");
-                
-                
 
-            }
             getRow(e) {
                 const that = gd.oui
                 //获取数据，发送请求
