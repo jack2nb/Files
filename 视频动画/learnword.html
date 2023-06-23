@@ -71,7 +71,7 @@
 
     <!--卡片-->
     <div class=" container-md   glassbga  pt-5  pb-5">
-    
+
         <div class=" row   align-items-center   justify-content-around   ">
 
             <img v-bind:src="pd.row.img" style="max-width:100%;overflow:hidden;" class="img-fluid" alt="...">
@@ -117,7 +117,8 @@
             <div class="container   ">
                 <ul class="nav nav-tabs">
                     <li class="nav-item">
-                        <a class="nav-link shadow   bg-info text-white  px-lg-5 mx-md-2 mx-lg-5  active " href="#">学一学</a>
+                        <a class="nav-link shadow   bg-info text-white  px-lg-5 mx-md-2 mx-lg-5  active "
+                            href="#">学一学</a>
                     </li>
                     <li class="nav-item">
                         <a class="nav-link shadow   bg-secondary text-white  px-lg-5 mx-md-2 mx-lg-5" href="#">练一练</a>
@@ -138,7 +139,7 @@
             </button>
             <label class="text-dark d-flex  align-items-center  ">当前第</label>
             <input type="text" v-model="pd.page" class="w-25 form-control"> <label
-                class="text-dark d-flex  align-items-center  ">个</label>
+                class="text-dark d-flex  align-items-center  ">个共{{ pd.total }}</label>
 
 
 
@@ -170,9 +171,9 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/axios/1.4.0/axios.min.js"></script>
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/URI.js/1.19.11/URI.min.js"></script>
-    
 
-    <script type="text/javascript" onload="console.log(10000)" onerror="console.log(55555)" src="https://disk.17121.top/camb_word/6/5/365/cfg_365.json"></script>
+
+    <!--script type="text/javascript" onload="console.log(10000)" onerror="console.log(55555)" src="https://disk.17121.top/camb_word/6/5/365/cfg_365.json"></script-->
 
     <script>
         const er = new EventEmitter //事件线
@@ -204,11 +205,12 @@
                 pvs.row = {};//单词数据的一行
                 pvs.shwoChange = 0;//设置显示
                 this.init();
-
-                this.initManage();
+                pvs.total = 0 
+                pvs.page = gd.storage.get('page') ? gd.storage.get('page') : 0;//显示动画
+                //this.initManage();
                 //绑定事件
-                er.on("读取.单词", this.getRow)
-                er.on('收到.单词', this.signing)
+                //er.on("读取.单词", this.getRow)
+                //er.on('收到.单词', this.signing)
                 er.on('遮罩', this.spto)
                 er.on('播放', this.play)
 
@@ -218,28 +220,52 @@
             }
             init() {
                 //初始效果
-                
-                pvs.page = gd.storage.get('page') ? gd.storage.get('page') : 0;//显示动画
 
+               
 
             }
 
             initManage() {
-                //管理相关相关界面
-                pvs.manage = {};//相关数据
-                this.pd.refManageEmt = ref(null);//登入/管理按钮元素
+                //一次性加载 json数据
+
+                const that = gd.oui
+                //document.getElementById('dataFromJson').remove ()
+                // delete  dataFromJSON .data
+                //on mount 
+                var st = document.createElement("script");
+                st.id = 'dataFromJson';
+                st.src = 'https://disk.17121.top/camb_word/6/5/365/cfg_365.json';
+                st.onerror = that.signErr;
+                st.onload = that.signing;
+                //console.log(dataFromJSON)
+                document.body.appendChild(st);
+                console.log("添加script标签=", pvs.page)
+                   //词展示++++
+                that.loginLoading(1) //loading 
+                that.spto(1) //loading 
+
+                 
 
             }
             nextPage(n) {
-                //on mount 
-                //翻页
+                //内部翻页
                 const that = gd.oui
-                //pvs.page = gd.storage.get ('page')
+                //document.getElementById('dataFromJson').remove ()
+                // delete  dataFromJSON .data
+                //on mount 
+             
+
+
+                //限定page的范围
                 pvs.page = parseInt(pvs.page) + n;
                 if (pvs.page <= 0) { pvs.page = 0 }
+                if (pvs.page >= pvs.total ) { pvs.page =  pvs.total  }
                 gd.storage.set('page', pvs.page)
-                console.log("page=", pvs.page)
-                that.getRow(1)
+
+                //
+                that.signing(0)
+                
+            
             }
             play(n) {
                 //播
@@ -249,35 +275,7 @@
 
             }
 
-            getRow(e) {
-                const that = gd.oui
-                //获取数据，发送请求
-                ////https://disk.17121.top/camb_word/6/5/365/cfg_365.json
-                var url = "http://127.0.0.1:2028/jsonapi/get";
-                //url = "http://127.0.0.1:2028/jsonapi";
-                var ja = {}
-                var data = { "单个词表": ja };
-                ja['@limit'] = 1
-                ja['@page'] = pvs.page
-                var opt = {
-                    method: 'POST',
-                    mode: 'cors',
-                    cache: 'no-cache',
-                    body: JSON.stringify(data),
-                    "headers": {
-                        'Content-Type': 'application/json'
-                    }
-                }
-                //发送
-                fetch(url, opt)
-                    .then(res => res.json())
-                    .catch(this.signErr)
-                    .then(dat => er.emit('收到.单词', dat))
-                    ;
-                //动画效果
-                that.loginLoading(1)
-                that.spto(1) //loading 
-            }
+          
             loginLoading(n) {
                 //登入中效果
                 pvs.loginLoding = n
@@ -292,36 +290,30 @@
             signErr(error) {
                 //登入错误处理
                 const that = gd.oui
-                pvs.login_info = "登入出现错误"
+                pvs.login_info = "无法加载到数据，刷新重试"
                 console.log('Error:', error);
                 that.loginLoading(0) //loading 
                 that.spto(0) //loading  
             }
             signing(dat) {
+                //读取数据到页面
                 const that = gd.oui
-                console.log('请求返回数据', dat);
-
-
                 //词展示++++
                 that.loginLoading(0) //loading 
                 that.spto(0) //loading 
-                if (typeof (dat) == "undefined" || dat['单个词表'].length == 0) { return } //没数据
+                if (typeof (dataFromJSON) == "undefined" || dataFromJSON.data.length == 0) { return } //没数据
+                pvs.total = dataFromJSON.data.length
 
                 //设置数据
-                console.log(dat['单个词表'][0])
-                pvs.row = dat['单个词表'][0]
+                console.log(dataFromJSON.src,dataFromJSON.data[pvs.page])
+                var row = dataFromJSON.data[pvs.page]
                 //pvs.row.img = '/en500word/h/e/健康.png' //  /en500word/h/e/健康.png
-                pvs.row.img = `/en500word/${pvs.row.en.substring(0, 1)}/${pvs.row.en.substring(1, 2)}/${pvs.row.cn}.png` //  /en500word/h/e/健康.png
+                pvs.row.img = dataFromJSON.src + row.img .substring(1) //  /en500word/h/e/健康.png
                 //设置 mp3
-                pvs.row.cn4m = `/en500word/${pvs.row.en.substring(0, 1)}/${pvs.row.en.substring(1, 2)}/${pvs.row.cn}_cn4m.mp3` //   
-                pvs.row.en4m = `/en500word/${pvs.row.en.substring(0, 1)}/${pvs.row.en.substring(1, 2)}/${pvs.row.cn}_en4m.mp3` //  
-                pvs.row.cn4f = `/en500word/${pvs.row.en.substring(0, 1)}/${pvs.row.en.substring(1, 2)}/${pvs.row.cn}cn4f.mp3` //  没下划线
-                pvs.row.en4f = `/en500word/${pvs.row.en.substring(0, 1)}/${pvs.row.en.substring(1, 2)}/${pvs.row.cn}en4f.mp3` //  没下划线
-
-
-
-
-
+                pvs.row.cn4m =  dataFromJSON.src + row.cn4m2mp3 .substring(1)    
+                pvs.row.en4m = dataFromJSON.src + row.en4m2mp3 .substring(1)   //  
+                pvs.row.cn =  row.cn   
+                pvs.row.en = row.en
 
             }
 
@@ -329,7 +321,9 @@
 
             watchPg(newValue, oldValue) {
                 //watch
-                console.log('gd pagedata 被修改')
+                console.log('gd pagedata 被修改',newValue.page, oldValue.page)
+
+
                 //console.log('gd pagedata 被修改\n', newValue, '\n', oldValue)
             }
         }
@@ -347,10 +341,11 @@
 
 
                 watch(pd, oui.watchPg, { deep: true });
+                
                 //computed(() => { return JSON.parse(JSON.stringify(pvs)); }); //对值二次计算
                 //onMounted(() => ocls.bindEvt()); //窗口大小变动事件
                 //onMounted(() => oui.remount()); //已经登入刷新处理
-                onMounted(() => oui.nextPage(0)); //已经登入刷新处理
+                onMounted(() => oui.initManage(0)); //已经登入刷新处理
                 //--变量关联到html的映射 js访问要加.value
                 return { er, pd, oui, "ref_login_manage": pd.refManageEmt, }
             }
