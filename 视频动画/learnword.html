@@ -70,39 +70,36 @@
     </div>
 
     <!--卡片-->
-    <div class=" container-md   glassbga  pt-5  pb-5">
+    <div class=" container-sm   glassbga  pt-5  pb-5">
 
         <div class=" row   align-items-center   justify-content-around   ">
 
             <img v-bind:src="pd.row.img" style="max-width:100%;overflow:hidden;" class="img-fluid" alt="...">
 
         </div>
-        <div class=" row   align-items-center   justify-content-center" style="height: 80px;">
+        <div class=" row   align-items-center   justify-content-around" style="height: 80px;">
 
             <button @click="er.emit('播放',0) "
-                class="btn mx-5   w-25 shadow align-middle badge-secondary badge   badge-pill">
-                <h3> {{pd.row.cn || 中文}} </h3>
+                class="btn ml-sm-5 mx-sm-2   px-sm-5 shadow  badge-secondary badge   badge-pill">
+                <h3 class="text-nowrap"> {{pd.row.cn || 中文}} </h3>
             </button>
-            <button @click="er.emit('播放',1) " class="btn mx-5 w-25    shadow   badge-info badge   badge-pill">
-                <h3>{{pd.row.en || 英文}} </h3>
+            <button @click="er.emit('播放',1) " class="btn mr-sm-5 mx-sm-2   px-sm-5    shadow   badge-info badge   badge-pill">
+                <h3  class="text-nowrap">{{pd.row.en || 英文}} </h3>
             </button>
         </div>
         <!---nan-->
-        <div class=" d-flex    align-items-center  justify-content-center " style="height: 80px;">
+        <div class=" d-flex    align-items-center  justify-content-around " style="height: 80px;">
 
-            <span class="  mx-4   shadow   badge-info   badge badge-pill">
-                <audio controls="controls" v-bind:src="pd.row.cn4m">
+            <span class="  w-50  ml-sm-5 mx-sm-2     shadow   badge-info   badge badge-pill">
+                <audio  class="  w-100   " controls="controls" v-bind:src="pd.row.cn4m">
                     Your browser does not support the audio element.
                 </audio>
             </span>
-
-            <span class="   mx-4    shadow   badge-info badge   badge-pill">
-                <audio controls="controls" v-bind:src="pd.row.en4m">
+            <span class="  w-50    mr-sm-5 mx-sm-2     shadow   badge-info badge   badge-pill">
+                <audio class="  w-100   "controls="controls" v-bind:src="pd.row.en4m">
                     Your browser does not support the audio element.
                 </audio>
             </span>
-
-
         </div>
 
     </div>
@@ -168,8 +165,7 @@
 
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.6.1/js/bootstrap.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/axios/1.4.0/axios.min.js"></script>
-
+  
     <script src="https://cdnjs.cloudflare.com/ajax/libs/URI.js/1.19.11/URI.min.js"></script>
 
 
@@ -205,7 +201,7 @@
                 pvs.row = {};//单词数据的一行
                 pvs.shwoChange = 0;//设置显示
                 this.init();
-                pvs.total = 0 
+                pvs.total = 0
                 pvs.page = gd.storage.get('page') ? gd.storage.get('page') : 1;//显示动画
                 //this.initManage();
                 //绑定事件
@@ -221,7 +217,7 @@
             init() {
                 //初始效果
 
-               
+
 
             }
 
@@ -240,11 +236,11 @@
                 //console.log(dataFromJSON)
                 document.body.appendChild(st);
                 console.log("添加script标签=", pvs.page)
-                   //词展示++++
+                //词展示++++
                 that.loginLoading(1) //loading 
                 that.spto(1) //loading 
 
-                 
+
 
             }
             nextPage(n) {
@@ -253,19 +249,19 @@
                 //document.getElementById('dataFromJson').remove ()
                 // delete  dataFromJSON .data
                 //on mount 
-             
+
 
 
                 //限定page的范围
                 pvs.page = parseInt(pvs.page) + n;
                 if (pvs.page <= 0) { pvs.page = 1 }
-                if (pvs.page >= pvs.total ) { pvs.page =  pvs.total   }
+                if (pvs.page >= pvs.total) { pvs.page = pvs.total }
                 gd.storage.set('page', pvs.page)
 
                 //
                 that.signing(0)
-                
-            
+
+
             }
             play(n) {
                 //播
@@ -275,7 +271,7 @@
 
             }
 
-          
+
             loginLoading(n) {
                 //登入中效果
                 pvs.loginLoding = n
@@ -291,7 +287,9 @@
                 //登入错误处理
                 const that = gd.oui
                 pvs.login_info = "无法加载到数据，刷新重试"
-                console.log('Error:', error);
+                console.log('Error:', error); //提示框
+
+
                 that.loginLoading(0) //loading 
                 that.spto(0) //loading  
             }
@@ -303,16 +301,16 @@
                 that.spto(0) //loading 
                 if (typeof (dataFromJSON) == "undefined" || dataFromJSON.data.length == 0) { return } //没数据
                 pvs.total = dataFromJSON.data.length
-
+                if (pvs.page >= pvs.total) { pvs.page = pvs.total - 1 }
                 //设置数据
-                console.log(dataFromJSON.src,dataFromJSON.data[pvs.page-1])
-                var row = dataFromJSON.data[pvs.page-1]
+                console.log(dataFromJSON.src, dataFromJSON.data[pvs.page - 1])
+                var row = dataFromJSON.data[pvs.page - 1]
                 //pvs.row.img = '/en500word/h/e/健康.png' //  /en500word/h/e/健康.png
-                pvs.row.img = dataFromJSON.src + row.img .substring(1) //  /en500word/h/e/健康.png
+                pvs.row.img = dataFromJSON.src + row.img.substring(1) //  /en500word/h/e/健康.png
                 //设置 mp3
-                pvs.row.cn4m =  dataFromJSON.src + row.cn4m2mp3 .substring(1)    
-                pvs.row.en4m = dataFromJSON.src + row.en4m2mp3 .substring(1)   //  
-                pvs.row.cn =  row.cn   
+                pvs.row.cn4m = dataFromJSON.src + row.cn4m2mp3.substring(1)
+                pvs.row.en4m = dataFromJSON.src + row.en4m2mp3.substring(1)   //  
+                pvs.row.cn = row.cn
                 pvs.row.en = row.en
 
             }
@@ -321,7 +319,7 @@
 
             watchPg(newValue, oldValue) {
                 //watch
-                console.log('gd pagedata 被修改',newValue.page, oldValue.page)
+                console.log('gd pagedata 被修改', newValue.page, oldValue.page)
 
 
                 //console.log('gd pagedata 被修改\n', newValue, '\n', oldValue)
@@ -341,7 +339,7 @@
 
 
                 watch(pd, oui.watchPg, { deep: true });
-                
+
                 //computed(() => { return JSON.parse(JSON.stringify(pvs)); }); //对值二次计算
                 //onMounted(() => ocls.bindEvt()); //窗口大小变动事件
                 //onMounted(() => oui.remount()); //已经登入刷新处理
