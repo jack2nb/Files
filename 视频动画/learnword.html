@@ -206,7 +206,7 @@
                 pvs.shwoChange = 0;//设置显示
                 this.init();
                 pvs.total = 0 
-                pvs.page = gd.storage.get('page') ? gd.storage.get('page') : 0;//显示动画
+                pvs.page = gd.storage.get('page') ? gd.storage.get('page') : 1;//显示动画
                 //this.initManage();
                 //绑定事件
                 //er.on("读取.单词", this.getRow)
@@ -258,8 +258,8 @@
 
                 //限定page的范围
                 pvs.page = parseInt(pvs.page) + n;
-                if (pvs.page <= 0) { pvs.page = 0 }
-                if (pvs.page >= pvs.total ) { pvs.page =  pvs.total  }
+                if (pvs.page <= 0) { pvs.page = 1 }
+                if (pvs.page >= pvs.total ) { pvs.page =  pvs.total   }
                 gd.storage.set('page', pvs.page)
 
                 //
@@ -305,8 +305,8 @@
                 pvs.total = dataFromJSON.data.length
 
                 //设置数据
-                console.log(dataFromJSON.src,dataFromJSON.data[pvs.page])
-                var row = dataFromJSON.data[pvs.page]
+                console.log(dataFromJSON.src,dataFromJSON.data[pvs.page-1])
+                var row = dataFromJSON.data[pvs.page-1]
                 //pvs.row.img = '/en500word/h/e/健康.png' //  /en500word/h/e/健康.png
                 pvs.row.img = dataFromJSON.src + row.img .substring(1) //  /en500word/h/e/健康.png
                 //设置 mp3
