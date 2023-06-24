@@ -63,7 +63,7 @@
     <div class="circle1 circle-ab"> </div>
     <div class="circle2 circle-ab"></div>
     <div class="  fixed-top ">
-    
+
 
 
     </div><!---上面的结果框val--->
@@ -126,7 +126,8 @@
                             href="./learnword.html">学一学</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link shadow  bg-info text-white  px-lg-5 mx-md-2 mx-lg-5 active" href="./pracword.html">练一练</a>
+                        <a class="nav-link shadow  bg-info text-white  px-lg-5 mx-md-2 mx-lg-5 active"
+                            href="./pracword.html">练一练</a>
                     </li>
                     <li class="nav-item">
                         <a class="nav-link shadow   bg-secondary  text-white  px-lg-5 mx-md-2 mx-lg-5" href="#">试一试</a>
@@ -138,21 +139,23 @@
     <!--翻页-->
     <div class="  row fixed-top   justify-content-center     ">
         <div class="w-100 mt-5   d-none d-md-block"><!---高度垫子 小设备隐藏--></div>
-          
+
         <div class=" row  col-md-10 col-sm-12 flex-wrap  bg-warning glassbga    ">
-            <span  v-for="(site, index) in pd.wordLs" 
-            :class="[{'text-warning': (index  == pd.page )}, {' text-center': (index  != pd.page )}]" 
-            class="col-1 badge   badge-secondary mx-1  px-1 my-1">{{index+1}}</span>
-            
-            
-          
+            <span v-for="(site, index) in pd.wordLs"
+                :class="[{'text-warning': (index  == pd.page )}, {' text-center': (index  != pd.page )}]"
+                class="btn  col-1 badge   badge-secondary mx-1  px-1 my-1"
+                @click="er.emit('跳转',index) "
+                >{{index+1}}</span>
+
+
+
 
         </div>
 
     </div>
-  
-     <!---info提示信息--->
-     <transition mode="out-in" enter-active-class="animated pulse" leave-active-class="animated bounceOutRight">
+
+    <!---info提示信息--->
+    <transition mode="out-in" enter-active-class="animated pulse" leave-active-class="animated bounceOutRight">
         <div id="obj-alert" class=" container-sm  fixed-top    " style="z-index: 1083 ;" v-for="site in pd.info_list">
             <div class="alert  alert-warning alert-dismissible fade show" role="alert">
                 <strong>{{site.type}}</strong>{{ site.info }}
@@ -162,21 +165,22 @@
             </div>
         </div>
     </transition>
-      <!---遮罩1024--->
-      <div v-if="pd.sp==0?false:true" @click="er.emit('遮罩',0) " style="z-index: 1081  ;" class=" modal-backdrop show ">
+    <!---遮罩1024--->
+    <div v-if="pd.sp==0?false:true" @click="er.emit('遮罩',0) " style="z-index: 1081  ;" class=" modal-backdrop show ">
 
-      </div>
+    </div>
     <!---载入动画--->
-    <div v-if="pd.sp==0?false:true" class="center w-100 mt-5  px-3  row d-flex  clearfix  align-items-center  justify-content-center  "
+    <div v-if="pd.sp==0?false:true"
+        class="center w-100 mt-5  px-3  row d-flex  clearfix  align-items-center  justify-content-center  "
         style="z-index: 1082  ;">
         <div class="spinner-border   "></div>
     </div>
-   
+
     <!---进度条---->
-    <div v-if="pd.vprogress>98?false:true" class="center w-100   px-3   "  style="z-index: 1082 ; "  >
+    <div v-if="pd.vprogress>98?false:true" class="center w-100   px-3   " style="z-index: 1082 ; ">
         <div class="progress">
             <div class=" progress-bar  progress-bar-striped progress-bar-animated  "
-                v-bind:style="{ width: pd.vprogress+'%' , }" >{{pd.vprogress}}%</div>
+                v-bind:style="{ width: pd.vprogress+'%' , }">{{pd.vprogress}}%</div>
         </div>
     </div>
 
@@ -247,6 +251,7 @@
                 er.on('遮罩', this.spto)
                 er.on('播放', this.play)
                 er.on('翻页', this.nextPage)
+                er.on('跳转', this.toPage)
                 er.on('进度', this.progress)
 
 
@@ -273,6 +278,15 @@
                 that.loginLoading(1) //loading 
                 that.spto(1) //loading 
 
+
+
+            }
+            toPage(n) {
+                const that = gd.oui
+                //跳转到某页面
+                pvs.page = parseInt(n);
+                //载入数据 
+                that.signing(1)
 
 
             }
