@@ -142,10 +142,9 @@
 
         <div class=" row  col-md-10 col-sm-12 flex-wrap  bg-warning glassbga    ">
             <span v-for="(site, index) in pd.wordLs"
-                :class="[{'text-warning': (index  == pd.page )}, {' text-center': (index  != pd.page )}]"
+                :class="[{'text-warning': (index+1  == pd.page )}, {' text-center': (index  != pd.page )}]"
                 class="btn  col-1 badge   badge-secondary mx-1  px-1 my-1"
-                @click="er.emit('跳转',index) "
-                >{{index+1}}</span>
+                @click="er.emit('跳转',index+1) ">{{index+1}}</span>
 
 
 
@@ -285,6 +284,11 @@
                 const that = gd.oui
                 //跳转到某页面
                 pvs.page = parseInt(n);
+
+                //---处理
+                gd.storage.set('page', pvs.page)
+                pvs.vprogress = 6
+
                 //载入数据 
                 that.signing(1)
 
@@ -307,7 +311,7 @@
                 if (pvs.page > pvs.total) { pvs.page = pvs.total; that.showInfo("已经到头", '翻页'); return; }
                 //---处理
                 gd.storage.set('page', pvs.page)
-                pvs.vprogress = 0
+                pvs.vprogress = 6
 
 
                 //载入数据 
