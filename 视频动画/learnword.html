@@ -45,6 +45,13 @@
             bottom: 6%;
             left: 13%;
         }
+
+        .center {
+            position: absolute;
+            left: 50%;
+            top: 10%;
+            transform: translate(-50%, -50%);
+        }
     </style>
 </head>
 <!--
@@ -150,18 +157,9 @@
         </div>
 
     </div>
-    <!---遮罩1024--->
-    <div v-if="pd.sp==0?false:true" @click="er.emit('遮罩',0) " style="z-index: 1081  ;" class=" modal-backdrop show ">
-
-
-    </div>
-    <!---载入圈--->
-    <div v-if="pd.sp==0?false:true" class="row d-flex  clearfix  align-items-center  justify-content-center  "
-        style="z-index: 1082  ;">
-        <div class="spinner-border   "></div>
-    </div>
-    <!---info提示信息--->
-    <transition mode="out-in" enter-active-class="animated pulse" leave-active-class="animated bounceOutRight">
+  
+     <!---info提示信息--->
+     <transition mode="out-in" enter-active-class="animated pulse" leave-active-class="animated bounceOutRight">
         <div id="obj-alert" class=" container-sm  fixed-top    " style="z-index: 1083 ;" v-for="site in pd.info_list">
             <div class="alert  alert-warning alert-dismissible fade show" role="alert">
                 <strong>{{site.type}}</strong>{{ site.info }}
@@ -171,8 +169,18 @@
             </div>
         </div>
     </transition>
+      <!---遮罩1024--->
+      <div v-if="pd.sp==0?false:true" @click="er.emit('遮罩',0) " style="z-index: 1081  ;" class=" modal-backdrop show ">
+
+      </div>
+    <!---载入动画--->
+    <div v-if="pd.sp==0?false:true" class="center w-100 mt-5  px-3  row d-flex  clearfix  align-items-center  justify-content-center  "
+        style="z-index: 1082  ;">
+        <div class="spinner-border   "></div>
+    </div>
+   
     <!---进度条---->
-    <div v-if="pd.vprogress>98?false:true" class=" container-sm    pt-5  pb-5">
+    <div v-if="pd.vprogress>98?false:true" class="center w-100   px-3   "    >
         <div class="progress">
             <div class=" progress-bar  progress-bar-striped progress-bar-animated  "
                 v-bind:style="{ width: pd.vprogress+'%' , }" style="z-index: 1082 ; ">{{pd.vprogress}}%</div>
@@ -277,22 +285,22 @@
             nextPage(n) {
                 //内部翻页
                 const that = gd.oui
-             
+
 
 
                 //document.getElementById('dataFromJson').remove ()
                 // delete  dataFromJSON .data
                 //on mount 
-                console.log('内部翻页',pvs.page, n)
+                console.log('内部翻页', pvs.page, n)
                 //限定page的范围
                 pvs.page = parseInt(pvs.page) + n;
-                console.log('内部翻页',pvs.page, n)
-                if (pvs.page <= 0) { pvs.page = 1; that.showInfo("已经到头",'翻页') ;return  ;}
-                if (pvs.page > pvs.total) { pvs.page = pvs.total ;that.showInfo("已经到头",'翻页') ;return;}
+                console.log('内部翻页', pvs.page, n)
+                if (pvs.page <= 0) { pvs.page = 1; that.showInfo("已经到头", '翻页'); return; }
+                if (pvs.page > pvs.total) { pvs.page = pvs.total; that.showInfo("已经到头", '翻页'); return; }
                 //---处理
                 gd.storage.set('page', pvs.page)
                 pvs.vprogress = 0
-              
+
 
                 //载入数据 
                 that.signing(1)
@@ -371,11 +379,11 @@
                     pvs.total = dataFromJSON.data.length
                 }
 
-                if (typeof (dataFromJSON) == "undefined" || dataFromJSON.data.length == 0) { that.showInfo("没找到数据",'翻页') ;return; } //没数据
-                
-                
+                if (typeof (dataFromJSON) == "undefined" || dataFromJSON.data.length == 0) { that.showInfo("没找到数据", '翻页'); return; } //没数据
+
+
                 //设置数据
-                console.log(dataFromJSON.src,pvs.page, dataFromJSON.data[pvs.page - 1])
+                console.log(dataFromJSON.src, pvs.page, dataFromJSON.data[pvs.page - 1])
                 var row = dataFromJSON.data[pvs.page - 1]
                 //pvs.row.img = '/en500word/h/e/健康.png' //  /en500word/h/e/健康.png
                 pvs.row.img = dataFromJSON.src + row.img.substring(1) //  /en500word/h/e/健康.png
