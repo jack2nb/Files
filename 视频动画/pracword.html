@@ -63,9 +63,7 @@
     <div class="circle1 circle-ab"> </div>
     <div class="circle2 circle-ab"></div>
     <div class="  fixed-top ">
-        <!-- 齿轮修改 --->
-        <span @click="er.emit('修改',0) " class="  d-none  d-md-flex btn   fixed-top justify-content-end      "
-            style="font-size:32px;  filter: grayscale(100%); ">⚙</span>
+    
 
 
     </div><!---上面的结果框val--->
@@ -124,11 +122,11 @@
             <div class="container   ">
                 <ul class="nav nav-tabs">
                     <li class="nav-item">
-                        <a class="nav-link shadow   bg-info text-white  px-lg-5 mx-md-2 mx-lg-5  active "
-                            href="#">学一学</a>
+                        <a class="nav-link shadow  bg-secondary   text-white  px-lg-5 mx-md-2 mx-lg-5   "
+                            href="./learnword.html">学一学</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link shadow   bg-secondary text-white  px-lg-5 mx-md-2 mx-lg-5" href="#">练一练</a>
+                        <a class="nav-link shadow  bg-info text-white  px-lg-5 mx-md-2 mx-lg-5 active" href="./pracword.html">练一练</a>
                     </li>
                     <li class="nav-item">
                         <a class="nav-link shadow   bg-secondary  text-white  px-lg-5 mx-md-2 mx-lg-5" href="#">试一试</a>
@@ -138,21 +136,16 @@
         </div>
     </div>
     <!--翻页-->
-    <div class="fixed-top row justify-content-center rounded   ">
+    <div class="  row fixed-top   justify-content-center     ">
         <div class="w-100 mt-5   d-none d-md-block"><!---高度垫子 小设备隐藏--></div>
-        <div class=" d-flex  col-md-5 col-sm-8   bg-warning glassbga  justify-content-around ">
-            <button @click="er.emit('翻页',-1) " class="btn shadow-lg shadow btn-danger">上一个
-                <span class="position-absolute badge badge-light badge-pill" v-text="pd.nameSize"> </span>
-            </button>
-            <label class="text-dark d-flex  align-items-center  ">当前第</label>
-            <input type="text" v-model="pd.page" class="w-25 form-control"> <label
-                class="text-dark d-flex  align-items-center  ">个共{{ pd.total }}</label>
-
-
-
-            <button @click="er.emit('翻页',1) " class="btn shadow-lg shadow btn-danger">下一个
-                <span class="position-absolute badge badge-light badge-pill" v-text="pd.nameSize"> </span>
-            </button>
+          
+        <div class=" row  col-md-10 col-sm-12 flex-wrap  bg-warning glassbga    ">
+            <span  v-for="(site, index) in pd.wordLs" 
+            :class="[{'text-warning': (index  == pd.page )}, {' text-center': (index  != pd.page )}]" 
+            class="col-1 badge   badge-secondary mx-1  px-1 my-1">{{index+1}}</span>
+            
+            
+          
 
         </div>
 
@@ -241,6 +234,7 @@
                 pvs.info_list = []//{info:"2",type:"2"}
 
                 pvs.vprogress = 100 //进度条
+                pvs.wordLs = []
                 //this.initManage();
                 //绑定事件
                 //er.on("读取.单词", this.getRow)
@@ -377,6 +371,7 @@
                     that.spto(1) //loading 
                     pvs.vprogress = 0
                     pvs.total = dataFromJSON.data.length
+                    pvs.wordLs = dataFromJSON.data
                 }
 
                 if (typeof (dataFromJSON) == "undefined" || dataFromJSON.data.length == 0) { that.showInfo("没找到数据", '翻页'); return; } //没数据
