@@ -9,6 +9,9 @@
     <title>英语 培训 单词学习</title>
     <link rel="stylesheet" crossorigin="anonymous"
         href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.6.1/css/bootstrap.min.css">
+    <link rel="stylesheet" crossorigin="anonymous"
+        href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.5.1/animate.min.css">
+
 
     <style>
         .glassbga {
@@ -42,6 +45,7 @@
             bottom: 6%;
             left: 13%;
         }
+       
     </style>
 </head>
 <!--
@@ -54,12 +58,10 @@
     <div class="circle2 circle-ab"></div>
     <div class="  fixed-top ">
         <!-- 齿轮修改 --->
-        <span @click="er.emit('修改',0) " class=" btn d-flex  fixed-top justify-content-end      "
+        <span @click="er.emit('修改',0) " class="  d-none  d-md-flex btn   fixed-top justify-content-end      "
             style="font-size:32px;  filter: grayscale(100%); ">⚙</span>
-        <!---载入--->
-        <div class="row d-flex    justify-content-center  ">
-            <div class="spinner-border   "></div>
-        </div>
+
+
     </div><!---上面的结果框val--->
     <div class="container ">
         <div class="w-100 mb-5   d-none d-md-block"><!---高度垫子 小设备隐藏--></div>
@@ -83,20 +85,21 @@
                 class="btn ml-sm-5 mx-sm-2   px-sm-5 shadow  badge-secondary badge   badge-pill">
                 <h3 class="text-nowrap"> {{pd.row.cn || 中文}} </h3>
             </button>
-            <button @click="er.emit('播放',1) " class="btn mr-sm-5 mx-sm-2   px-sm-5    shadow   badge-info badge   badge-pill">
-                <h3  class="text-nowrap">{{pd.row.en || 英文}} </h3>
+            <button @click="er.emit('播放',1) "
+                class="btn mr-sm-5 mx-sm-2   px-sm-5    shadow   badge-info badge   badge-pill">
+                <h3 class="text-nowrap">{{pd.row.en || 英文}} </h3>
             </button>
         </div>
         <!---nan-->
         <div class=" d-flex    align-items-center  justify-content-around " style="height: 80px;">
 
             <span class="  w-50  ml-sm-5 mx-sm-2     shadow   badge-info   badge badge-pill">
-                <audio  class="  w-100   " controls="controls" v-bind:src="pd.row.cn4m">
+                <audio class="  w-100   " controls="controls" v-bind:src="pd.row.cn4m">
                     Your browser does not support the audio element.
                 </audio>
             </span>
             <span class="  w-50    mr-sm-5 mx-sm-2     shadow   badge-info badge   badge-pill">
-                <audio class="  w-100   "controls="controls" v-bind:src="pd.row.en4m">
+                <audio class="  w-100   " controls="controls" v-bind:src="pd.row.en4m">
                     Your browser does not support the audio element.
                 </audio>
             </span>
@@ -147,11 +150,33 @@
         </div>
 
     </div>
-    <!---遮罩--->
-    <div v-if="pd.sp==0?false:true" @click="er.emit('遮罩',0) " style="z-index: 1040  ;" class=" modal-backdrop show ">
+    <!---遮罩1024--->
+    <div v-if="pd.sp==0?false:true" @click="er.emit('遮罩',0) " style="z-index: 1024  ;" class=" modal-backdrop show ">
+
+
     </div>
-
-
+    <!---载入圈--->
+    <div v-if="pd.sp==0?false:true" class="row d-flex  clearfix  align-items-center  justify-content-center  "
+        style="z-index: 1041  ;">
+        <div class="spinner-border   "></div>
+    </div>
+    <!---info提示信息--->
+    <transition mode="out-in" enter-active-class="animated pulse" leave-active-class="animated bounceOutRight">
+        <div id="obj-alert" class=" container-sm  fixed-top    " style="z-index: 1026 ;" v-for="site in pd.info_list">
+            <div class="alert  alert-warning alert-dismissible fade show" role="alert">
+                <strong>{{site.type}}</strong>{{ site.info }}
+                <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+        </div>
+    </transition>
+    <!---进度条---->
+    <div class=" container-sm    pt-5  pb-5">
+        <div class="progress">
+            <div class=" progress-bar  progress-bar-striped progress-bar-animated  " v-bind:style="{ width: pd.vprogress+'%' , }" style="z-index: 1025 ; ">{{pd.vprogress}}%</div>
+        </div>
+    </div>
 
     <!---$(".alert").fadeOut();   $('.alert').delay(900).slideUp(500) ; -->
 
@@ -165,7 +190,7 @@
 
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.6.1/js/bootstrap.min.js"></script>
-  
+
     <script src="https://cdnjs.cloudflare.com/ajax/libs/URI.js/1.19.11/URI.min.js"></script>
 
 
@@ -200,22 +225,25 @@
                 pvs.sp = 0; //遮罩路由 (0.无，1.名单，2.登入 ,3.管理)
                 pvs.row = {};//单词数据的一行
                 pvs.shwoChange = 0;//设置显示
-                this.init();
+
                 pvs.total = 0
                 pvs.page = gd.storage.get('page') ? gd.storage.get('page') : 1;//显示动画
+
+                pvs.info_list = []//{info:"2",type:"2"}
+
+                pvs.vprogress = 60 //进度条
                 //this.initManage();
                 //绑定事件
                 //er.on("读取.单词", this.getRow)
                 //er.on('收到.单词', this.signing)
-                er.on('遮罩', this.spto)
-                er.on('播放', this.play)
-
-                er.on('翻页', this.nextPage)
-
-
+                this.init();
             }
             init() {
-                //初始效果
+                //初始 效果
+
+                er.on('遮罩', this.spto)
+                er.on('播放', this.play)
+                er.on('翻页', this.nextPage)
 
 
 
@@ -227,10 +255,12 @@
                 const that = gd.oui
                 //document.getElementById('dataFromJson').remove ()
                 // delete  dataFromJSON .data
-                //on mount 
+                // 添加数据json元素
+
                 var st = document.createElement("script");
                 st.id = 'dataFromJson';
                 st.src = 'https://disk.17121.top/camb_word/6/5/365/cfg_365.json';
+                // 'https://p_disk.17121.top/camb_word/6/5/365/cfg_365.json'; //经过代理
                 st.onerror = that.signErr;
                 st.onload = that.signing;
                 //console.log(dataFromJSON)
@@ -249,15 +279,11 @@
                 //document.getElementById('dataFromJson').remove ()
                 // delete  dataFromJSON .data
                 //on mount 
-
-
-
                 //限定page的范围
                 pvs.page = parseInt(pvs.page) + n;
                 if (pvs.page <= 0) { pvs.page = 1 }
                 if (pvs.page >= pvs.total) { pvs.page = pvs.total }
                 gd.storage.set('page', pvs.page)
-
                 //
                 that.signing(0)
 
@@ -277,21 +303,35 @@
                 pvs.loginLoding = n
             }
             spto(n) {
-                const that = gd.oui
+                //遮罩和二级界面
                 /*切换界面*/
                 pvs.sp = n
-                //清除提示
-                pvs.login_info = ''
+
+            }
+            showInfo(info, type = '') {
+                //结果提示信息 （数据驱动）
+
+                //添加数据，来添加提示
+
+                pvs.info_list.push({ "info": info, "type": type })
+                //缺少动效
+                setTimeout(function () { pvs.info_list.splice(0, 1); }, 4000);
+
+
+
             }
             signErr(error) {
                 //登入错误处理
                 const that = gd.oui
-                pvs.login_info = "无法加载到数据，刷新重试"
+                //pvs.login_info = "无法加载到数据，刷新重试"
                 console.log('Error:', error); //提示框
 
 
                 that.loginLoading(0) //loading 
                 that.spto(0) //loading  
+                that.showInfo('无法加载到数据，刷新重试', '载入数据：') //loading  
+
+
             }
             signing(dat) {
                 //读取数据到页面
