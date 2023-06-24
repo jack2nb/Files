@@ -45,7 +45,6 @@
             bottom: 6%;
             left: 13%;
         }
-       
     </style>
 </head>
 <!--
@@ -76,7 +75,8 @@
 
         <div class=" row   align-items-center   justify-content-around   ">
 
-            <img v-bind:src="pd.row.img" style="max-width:100%;overflow:hidden;" class="img-fluid" alt="...">
+            <img onload="er.emit('进度',32) " v-bind:src="pd.row.img" style="max-width:100%;overflow:hidden;"
+                class="img-fluid" alt="...">
 
         </div>
         <div class=" row   align-items-center   justify-content-around" style="height: 80px;">
@@ -94,12 +94,12 @@
         <div class=" d-flex    align-items-center  justify-content-around " style="height: 80px;">
 
             <span class="  w-50  ml-sm-5 mx-sm-2     shadow   badge-info   badge badge-pill">
-                <audio class="  w-100   " controls="controls" v-bind:src="pd.row.cn4m">
+                <audio onloadeddata="er.emit('进度',33) " class="  w-100   " controls="controls" v-bind:src="pd.row.cn4m">
                     Your browser does not support the audio element.
                 </audio>
             </span>
             <span class="  w-50    mr-sm-5 mx-sm-2     shadow   badge-info badge   badge-pill">
-                <audio class="  w-100   " controls="controls" v-bind:src="pd.row.en4m">
+                <audio onloadeddata="er.emit('进度',34) " class="  w-100   " controls="controls" v-bind:src="pd.row.en4m">
                     Your browser does not support the audio element.
                 </audio>
             </span>
@@ -151,18 +151,18 @@
 
     </div>
     <!---遮罩1024--->
-    <div v-if="pd.sp==0?false:true" @click="er.emit('遮罩',0) " style="z-index: 1024  ;" class=" modal-backdrop show ">
+    <div v-if="pd.sp==0?false:true" @click="er.emit('遮罩',0) " style="z-index: 1081  ;" class=" modal-backdrop show ">
 
 
     </div>
     <!---载入圈--->
     <div v-if="pd.sp==0?false:true" class="row d-flex  clearfix  align-items-center  justify-content-center  "
-        style="z-index: 1041  ;">
+        style="z-index: 1082  ;">
         <div class="spinner-border   "></div>
     </div>
     <!---info提示信息--->
     <transition mode="out-in" enter-active-class="animated pulse" leave-active-class="animated bounceOutRight">
-        <div id="obj-alert" class=" container-sm  fixed-top    " style="z-index: 1026 ;" v-for="site in pd.info_list">
+        <div id="obj-alert" class=" container-sm  fixed-top    " style="z-index: 1083 ;" v-for="site in pd.info_list">
             <div class="alert  alert-warning alert-dismissible fade show" role="alert">
                 <strong>{{site.type}}</strong>{{ site.info }}
                 <button type="button" class="close" data-dismiss="alert" aria-label="Close">
@@ -172,9 +172,10 @@
         </div>
     </transition>
     <!---进度条---->
-    <div class=" container-sm    pt-5  pb-5">
+    <div v-if="pd.vprogress>98?false:true" class=" container-sm    pt-5  pb-5">
         <div class="progress">
-            <div class=" progress-bar  progress-bar-striped progress-bar-animated  " v-bind:style="{ width: pd.vprogress+'%' , }" style="z-index: 1025 ; ">{{pd.vprogress}}%</div>
+            <div class=" progress-bar  progress-bar-striped progress-bar-animated  "
+                v-bind:style="{ width: pd.vprogress+'%' , }" style="z-index: 1082 ; ">{{pd.vprogress}}%</div>
         </div>
     </div>
 
@@ -231,7 +232,7 @@
 
                 pvs.info_list = []//{info:"2",type:"2"}
 
-                pvs.vprogress = 60 //进度条
+                pvs.vprogress = 100 //进度条
                 //this.initManage();
                 //绑定事件
                 //er.on("读取.单词", this.getRow)
@@ -244,7 +245,7 @@
                 er.on('遮罩', this.spto)
                 er.on('播放', this.play)
                 er.on('翻页', this.nextPage)
-
+                er.on('进度', this.progress)
 
 
             }
@@ -276,16 +277,25 @@
             nextPage(n) {
                 //内部翻页
                 const that = gd.oui
+             
+
+
                 //document.getElementById('dataFromJson').remove ()
                 // delete  dataFromJSON .data
                 //on mount 
+                console.log('内部翻页',pvs.page, n)
                 //限定page的范围
                 pvs.page = parseInt(pvs.page) + n;
-                if (pvs.page <= 0) { pvs.page = 1 }
-                if (pvs.page >= pvs.total) { pvs.page = pvs.total }
+                console.log('内部翻页',pvs.page, n)
+                if (pvs.page <= 0) { pvs.page = 1; that.showInfo("已经到头",'翻页') ;return  ;}
+                if (pvs.page > pvs.total) { pvs.page = pvs.total ;that.showInfo("已经到头",'翻页') ;return;}
+                //---处理
                 gd.storage.set('page', pvs.page)
-                //
-                that.signing(0)
+                pvs.vprogress = 0
+              
+
+                //载入数据 
+                that.signing(1)
 
 
             }
@@ -308,6 +318,19 @@
                 pvs.sp = n
 
             }
+            progress(n) {
+                const that = gd.oui
+                //进度  0 和 100 都隐藏
+                console.log("进度", n)
+                pvs.vprogress = pvs.vprogress + n
+
+                if (pvs.vprogress > 98) {
+                    that.spto(0)
+                    that.loginLoading(0)
+                }
+
+            }
+
             showInfo(info, type = '') {
                 //结果提示信息 （数据驱动）
 
@@ -334,16 +357,25 @@
 
             }
             signing(dat) {
-                //读取数据到页面
+                // 读取数据到 json/翻页    页面
+                console.log('dat==', dat)
                 const that = gd.oui
                 //词展示++++
-                that.loginLoading(0) //loading 
-                that.spto(0) //loading 
-                if (typeof (dataFromJSON) == "undefined" || dataFromJSON.data.length == 0) { return } //没数据
-                pvs.total = dataFromJSON.data.length
-                if (pvs.page >= pvs.total) { pvs.page = pvs.total - 1 }
+                if (dat == 1) {
+                    that.loginLoading(1) //内部翻页 
+                    that.spto(1) //loading 
+                } else {
+                    that.loginLoading(1) //json加载 
+                    that.spto(1) //loading 
+                    pvs.vprogress = 0
+                    pvs.total = dataFromJSON.data.length
+                }
+
+                if (typeof (dataFromJSON) == "undefined" || dataFromJSON.data.length == 0) { that.showInfo("没找到数据",'翻页') ;return; } //没数据
+                
+                
                 //设置数据
-                console.log(dataFromJSON.src, dataFromJSON.data[pvs.page - 1])
+                console.log(dataFromJSON.src,pvs.page, dataFromJSON.data[pvs.page - 1])
                 var row = dataFromJSON.data[pvs.page - 1]
                 //pvs.row.img = '/en500word/h/e/健康.png' //  /en500word/h/e/健康.png
                 pvs.row.img = dataFromJSON.src + row.img.substring(1) //  /en500word/h/e/健康.png
@@ -359,7 +391,7 @@
 
             watchPg(newValue, oldValue) {
                 //watch
-                console.log('gd pagedata 被修改', newValue.page, oldValue.page)
+                //console.log('gd pagedata 被修改', newValue.page, oldValue.page)
 
 
                 //console.log('gd pagedata 被修改\n', newValue, '\n', oldValue)
