@@ -60,12 +60,11 @@
     <!--悬浮球-->
     <div class="circle1 circle-ab"> </div>
     <div class="circle2 circle-ab"></div>
-    <!-- 齿轮修改 --->
-    <span @click="pd.shwoChange = !pd.shwoChange  " class=" btn d-flex  fixed-top justify-content-end      "
-        style="font-size:32px;  filter: grayscale(100%); ">⚙</span>
+    <!--  修改 --->
 
 
-    </div><!---上面的结果框val--->
+
+    <!---上面的结果框val--->
     <div class="container ">
         <div class="mt-2 row justify-content-center  ">
             <div class="w-100 mb-5   d-none d-md-block"><!---高度垫子 小设备隐藏--></div>
@@ -106,25 +105,39 @@
                     Your browser does not support the audio element.
                 </audio>
             </span>
+            
 
+        </div>
+        <div class=" d-flex     align-items-center  justify-content-around "  >
+            <span class="text-dark  mx-4        ">
+                {{ pd.row.s4zh4m}}    <span  v-if="pd.row.s4zh4m"  class=" btn "  style="font-size:22px;    ">✔</span>
+            </span>
 
+            <span class=" text-dark  mx-4         ">
+                {{ pd.row.s4en4m}}    <span  v-if="pd.row.s4en4m"  class=" btn "  style="font-size:22px;    ">✔</span>
+            </span>
         </div>
         <!---nv-->
         <div class=" d-flex     align-items-center  justify-content-center " style="height: 80px;">
-
             <span class="  mx-4  shadow    badge badge-light badge-pill">
                 <audio controls="controls" v-bind:src="pd.row.zh4f">
                     Your browser does not support the audio element.
                 </audio>
             </span>
-
-            <span class="  mx-4  shadow   badge-light badge   badge-pill">
+            <span class="  mx-4  shadow    badge-light badge   badge-pill">
                 <audio controls="controls" v-bind:src="pd.row.en4f">
                     Your browser does not support the audio element.
                 </audio>
             </span>
+        </div>
+        <div class=" d-flex     align-items-center  justify-content-around "  >
+            <span class="text-dark  mx-4        ">
+                {{ pd.row.s4zh4f}}    <span  v-if="pd.row.s4zh4f"  class=" btn "  style="font-size:22px;    ">✔</span>
+            </span>
 
-
+            <span class=" text-dark  mx-4         ">
+                {{ pd.row.s4en4f}}    <span  v-if="pd.row.s4en4f"  class=" btn "  style="font-size:22px;    ">✔</span>
+            </span>
         </div>
     </div>
 
