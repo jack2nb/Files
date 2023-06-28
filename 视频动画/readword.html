@@ -217,7 +217,7 @@
     </div>
     <!---载入动画--->
     <div v-if="pd.sp==0?false:true"
-        class="center w-100 mt-5  px-3  row d-flex  clearfix  align-items-center  justify-content-center  "
+        class="center w-100 mt-5   row d-flex     align-items-center  justify-content-center  "
         style="z-index: 1082  ;">
         <div class="spinner-border   "></div>
     </div>
@@ -568,12 +568,11 @@
                 er.on('翻页', this.nextPage)
                 er.on('修改', this.toChange)
                 er.on('更新', this.toUpdate)
+                er.on('更新.发音', this.toUpdated)
                 //初始效果
 
 
             }
-
-
             nextPage(n) {
                 //翻页
                 const that = gd.oui
@@ -635,7 +634,7 @@
                 that.spto(1) //loading 
             }
 
-
+         
             getRow(e) {
                 const that = gd.oui
                 //获取数据，发送请求
@@ -697,10 +696,7 @@
             signErr(error) {
                 //登入错误处理
                 const that = gd.oui
-
                 console.log('Error:', error);
-
-
                 that.loginLoading(0) //loading 
                 that.spto(0) //loading  
                 that.showInfo('无法加载到数据，刷新重试', '载入数据：') //loading  
@@ -708,10 +704,8 @@
             }
             signing(dat) {
                 // 读取数据到 json/翻页    页面
-
                 const that = gd.oui
                 console.log('请求返回数据', dat);
-
 
                 //词展示++++
                 that.loginLoading(0) //loading 
@@ -730,7 +724,16 @@
                 pvs.row.en4f = `/en500word/${pvs.row.en.substring(0, 1)}/${pvs.row.en.substring(1, 2)}/${pvs.row.zh}en4f.mp3` //  没下划线
             }
 
+            toUpdated(dat){
+                //更新后
+                const that = gd.oui
+                console.log('请求返回数据', dat);
+                  //词展示++++
+                  that.loginLoading(0) //loading 
+                that.spto(0) //loading 
+                that.showInfo(dat['@msg'], '更新音标：') //loading  
 
+            }
 
             watchPg(newValue, oldValue) {
                 //watch
