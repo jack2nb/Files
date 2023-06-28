@@ -78,7 +78,7 @@
 
             <button @click="er.emit('播放',0) "
                 class="btn mx-5   w-25 shadow align-middle badge-secondary badge   badge-pill">
-                <h3> {{pd.row.cn || 中文}} </h3>
+                <h3> {{pd.row.zh || 中文}} </h3>
             </button>
             <button @click="er.emit('播放',1) " class="btn mx-5 w-25    shadow   badge-info badge   badge-pill">
                 <h3>{{pd.row.en || 英文}} </h3>
@@ -88,7 +88,7 @@
         <div class=" d-flex    align-items-center  justify-content-center " style="height: 80px;">
 
             <span class="  mx-4   shadow   badge-info   badge badge-pill">
-                <audio controls="controls" v-bind:src="pd.row.cn4m">
+                <audio controls="controls" v-bind:src="pd.row.zh4m">
                     Your browser does not support the audio element.
                 </audio>
             </span>
@@ -105,7 +105,7 @@
         <div class=" d-flex     align-items-center  justify-content-center " style="height: 80px;">
 
             <span class="  mx-4  shadow    badge badge-light badge-pill">
-                <audio controls="controls" v-bind:src="pd.row.cn4f">
+                <audio controls="controls" v-bind:src="pd.row.zh4f">
                     Your browser does not support the audio element.
                 </audio>
             </span>
@@ -152,17 +152,19 @@
                 </div>
 
                 <div class="    d-flex col-md-5 col-sm-5     ">
-                    <select class="form-select w-100   " v-model="pd.selected" multiple aria-label="multiple    ">
+                    <select class="form-select w-100   " v-model="pd.selected"   aria-label="multiple">
                         <option v-for=" op  in  pd.opList " :value="op.ShortName"  >{{op.LocalName}}  （{{op.ShortName}}）</option>
                     </select>
                 </div>
 
 
                 <div>
-                    <button ref="ref_login_manage" class="btn shadow-lg btn-danger">更新</button>
+                    <button  @click="er.emit('更新' ) " class="btn shadow-lg btn-danger">更新</button>
                 </div>
             </div>
+ 
 
+</div>
         </div>
     </transition>
     <!--底部按钮-->
@@ -538,14 +540,11 @@
                 pvs.row = {};//单词数据的一行
                 pvs.shwoChange = 1;//设置显示
                 this.init();
-
                 //this.initManage();
                 pvs.page = gd.storage.get('page') ? gd.storage.get('page') : 0;//当前页码
-
-
                 //发音选择
                 pvs.mknew = { "gender": "男","genderCode": "Female", "lang": "英","langCode": "en-US" }
-                pvs.selected = '女'
+                pvs.selected = 'en-US-JennyNeural'
                 pvs.selectList = ailist
                 //pvs.opList = ailist
             }
@@ -559,6 +558,7 @@
 
                 er.on('翻页', this.nextPage)
                 er.on('修改', this.toChange)
+                er.on('更新', this.toUpdate)
                 //初始效果
 
 
@@ -583,9 +583,17 @@
 
             }
             toChange(dc) {
-                // 设置 修改值
+                // 设置 修改选择框 男女、中英
 
                 pvs.mknew = Object.assign({}, pvs.mknew, dc);
+            }
+            toUpdate(dc) {
+                // 设置 修改选择框 男女、中英
+                var col ='s4'+ pvs.mknew.langCode.substring(0,2) +'4'+ pvs.mknew.genderCode.substring(0,1)
+                col = col.toLowerCase()
+                console.log(col,pvs.row.id,pvs.selected,pvs.row.ph,pvs.mknew)
+
+
             }
             getRow(e) {
                 const that = gd.oui
@@ -648,12 +656,12 @@
                 console.log(dat['单个词表'][0])
                 pvs.row = dat['单个词表'][0]
                 //pvs.row.img = '/en500word/h/e/健康.png' //  /en500word/h/e/健康.png
-                pvs.row.img = `/en500word/${pvs.row.en.substring(0, 1)}/${pvs.row.en.substring(1, 2)}/${pvs.row.cn}.png` //  /en500word/h/e/健康.png
+                pvs.row.img = `/en500word/${pvs.row.en.substring(0, 1)}/${pvs.row.en.substring(1, 2)}/${pvs.row.zh}.png` //  /en500word/h/e/健康.png
                 //设置 mp3
-                pvs.row.cn4m = `/en500word/${pvs.row.en.substring(0, 1)}/${pvs.row.en.substring(1, 2)}/${pvs.row.cn}_cn4m.mp3` //   
-                pvs.row.en4m = `/en500word/${pvs.row.en.substring(0, 1)}/${pvs.row.en.substring(1, 2)}/${pvs.row.cn}_en4m.mp3` //  
-                pvs.row.cn4f = `/en500word/${pvs.row.en.substring(0, 1)}/${pvs.row.en.substring(1, 2)}/${pvs.row.cn}cn4f.mp3` //  没下划线
-                pvs.row.en4f = `/en500word/${pvs.row.en.substring(0, 1)}/${pvs.row.en.substring(1, 2)}/${pvs.row.cn}en4f.mp3` //  没下划线
+                pvs.row.zh4m = `/en500word/${pvs.row.en.substring(0, 1)}/${pvs.row.en.substring(1, 2)}/${pvs.row.zh}_cn4m.mp3` //   
+                pvs.row.en4m = `/en500word/${pvs.row.en.substring(0, 1)}/${pvs.row.en.substring(1, 2)}/${pvs.row.zh}_en4m.mp3` //  
+                pvs.row.zh4f = `/en500word/${pvs.row.en.substring(0, 1)}/${pvs.row.en.substring(1, 2)}/${pvs.row.zh}cn4f.mp3` //  没下划线
+                pvs.row.en4f = `/en500word/${pvs.row.en.substring(0, 1)}/${pvs.row.en.substring(1, 2)}/${pvs.row.zh}en4f.mp3` //  没下划线
             }
 
 
