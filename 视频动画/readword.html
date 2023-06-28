@@ -9,7 +9,8 @@
     <title>单词浏览</title>
     <link rel="stylesheet" crossorigin="anonymous"
         href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.6.1/css/bootstrap.min.css">
-
+    <link rel="stylesheet" crossorigin="anonymous"
+        href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.5.1/animate.min.css">
     <style>
         .glassbga {
             /*渐变*/
@@ -52,8 +53,9 @@
     <!--悬浮球-->
     <div class="circle1 circle-ab"> </div>
     <div class="circle2 circle-ab"></div>
-        <!-- 齿轮修改 --->
-        <span @click="er.emit('修改',0) "  class=" btn d-flex  fixed-top justify-content-end      " style="font-size:32px;  filter: grayscale(100%); ">⚙</span>
+    <!-- 齿轮修改 --->
+    <span @click="pd.shwoChange = !pd.shwoChange  " class=" btn d-flex  fixed-top justify-content-end      "
+        style="font-size:32px;  filter: grayscale(100%); ">⚙</span>
 
     <!---上面的结果框val--->
     <div class="container ">
@@ -119,53 +121,61 @@
     </div>
 
     <!---修改-->
-    <div id="toChange" class="     container-md    glassbga  mt-4  mb-4   pt-3  pb-3">
-        <div class=" row  align-items-center  justify-items-around">
-            <div class="   d-flex col-md-5 col-sm-8   ">英标</div>
-            <div class="   d-flex col-md-5 col-sm-8   ">英标</div>
-            <div class="   d-flex col-md-5 col-sm-8   ">英标</div>
-            <div class="        "><select class="form-select w-100   " multiple
-                    aria-label="multiple select example">
-
-                    <option value="1">男</option>
-                    <option value="2">女</option>
-                  
-                </select></div>
-
-            <div class="  d-flex  justify-content-around   ">
-                <select class="form-select w-100   " multiple aria-label="multiple select example">
-
-                    <option value="1">One</option>
-                    <option value="2">Two</option>
-                    <option value="3">Three</option>
-                </select>
-            </div>
-            <div>    <button ref="ref_login_manage" @click="er.emit('翻页',0) " class="btn shadow-lg btn-danger">跳转
-            </button></div>
-        </div>
-        <div class="row">
-            <div class="dropdown">
-                <button type="button" class="btn btn-primary dropdown-toggle" data-toggle="dropdown">
-                  Dropdown button
-                </button>
-                <div class="dropdown-menu">
-                  <a class="dropdown-item" href="#">Link 1</a>
-                  <a class="dropdown-item" href="#">Link 2</a>
-                  <a class="dropdown-item" href="#">Link 3</a>
+    <transition enter-active-class="animated bounceIn" leave-active-class="animated bounceOut">
+        <div v-if="pd.shwoChange==0?false:true" class="container-md    glassbga  mt-4  mb-4   pt-3  pb-3">
+            <div class=" row  align-items-center  justify-items-around justify-content-around  ">
+                <div class="   d-flex col-md-3 col-sm-3   ">
+                    <label class="text-dark   d-flex  m-1 w-25 align-items-center  ">音标</label>
+                    <input type="text" v-model="pd.row.ph" class="w-75 p-1 m-1 form-control">
                 </div>
-              </div>
+                <div class="   d-flex col-md-2 col-sm-2   ">
+              
+
+                    <div class="dropdown ">
+                        <button type="button" class="btn btn-primary dropdown-toggle p-1 m-1" data-toggle="dropdown">
+                            {{pd.mknew.lang}}
+                        </button>
+                        <div class="dropdown-menu">
+                            <a class="dropdown-item" @click='er.emit("修改",{"lang":"中","langCode":"zh-CN"}) ' href="#">中</a>
+                            <a class="dropdown-item" @click='er.emit("修改",{"lang":"英","langCode":"en-US"}) ' href="#">英</a>
+                        </div>
+                    </div>
+                    <div class="dropdown">
+                        <button type="button" class="btn btn-primary dropdown-toggle p-1 m-1" data-toggle="dropdown">
+                            {{pd.mknew.gender}}
+                        </button>
+                        <div class="dropdown-menu">
+                            <a class="dropdown-item" @click='er.emit("修改",{"gender":"男","genderCode":"Male"}) ' href="#">男</a>
+                            <a class="dropdown-item" @click='er.emit("修改",{"gender":"女","genderCode":"Female"}) ' href="#">女</a>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="    d-flex col-md-5 col-sm-5     ">
+                    <select class="form-select w-100   " v-model="pd.selected" multiple aria-label="multiple    ">
+                        <option v-for=" op  in  pd.opList " :value="op.ShortName"  >{{op.LocalName}}  （{{op.ShortName}}）</option>
+                    </select>
+                </div>
+
+
+                <div>
+                    <button ref="ref_login_manage" class="btn shadow-lg btn-danger">更新</button>
+                </div>
+            </div>
+
         </div>
-    </div>
+    </transition>
     <!--底部按钮-->
     <div class="fixed-bottom row justify-content-center     ">
-        <div class=" d-flex  col-md-5 col-sm-8   bg-warning glassbga  justify-content-around ">
-            <label  class="text-dark d-flex  align-items-center  ">页码</label>
-            <input type="text" v-model="pd.page" class="w-25 form-control">
-            <button ref="ref_login_manage" @click="er.emit('翻页',0) " class="btn shadow-lg btn-danger">跳转
-            </button>
+        <div class=" d-flex  col-md-6 col-sm-8   bg-warning glassbga  justify-content-around ">
             <button @click="er.emit('翻页',-1) " class="btn shadow-lg shadow btn-danger">上一个
                 <span class="position-absolute badge badge-light badge-pill" v-text="pd.nameSize"> </span>
             </button>
+            <label class="text-dark d-flex  align-items-center  ">页码 </label>
+            <input type="text" v-model="pd.page" class="w-25 form-control">
+            <button ref="ref_login_manage" @click="er.emit('翻页',0) " class="btn shadow-lg btn-danger">跳转
+            </button>
+
 
             <button @click="er.emit('翻页',1) " class="btn shadow-lg shadow btn-danger">下一个
                 <span class="position-absolute badge badge-light badge-pill" v-text="pd.nameSize"> </span>
@@ -225,9 +235,278 @@
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.6.1/js/bootstrap.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/axios/1.4.0/axios.min.js"></script>
-    
 
-    
+
+    <script>
+
+        const ailist = [{
+            'LocalName': 'Jenny',
+            'ShortName': 'en-US-JennyNeural',
+            'Gender': 'Female',
+            'Locale': 'en-US'
+        },
+        {
+            'LocalName': 'Jenny Multilingual',
+            'ShortName': 'en-US-JennyMultilingualNeural',
+            'Gender': 'Female',
+            'Locale': 'en-US'
+        },
+        {
+            'LocalName': 'Guy',
+            'ShortName': 'en-US-GuyNeural',
+            'Gender': 'Male',
+            'Locale': 'en-US'
+        },
+        {
+            'LocalName': 'Aria',
+            'ShortName': 'en-US-AriaNeural',
+            'Gender': 'Female',
+            'Locale': 'en-US'
+        },
+        {
+            'LocalName': 'Davis',
+            'ShortName': 'en-US-DavisNeural',
+            'Gender': 'Male',
+            'Locale': 'en-US'
+        },
+        {
+            'LocalName': 'Amber',
+            'ShortName': 'en-US-AmberNeural',
+            'Gender': 'Female',
+            'Locale': 'en-US'
+        },
+        {
+            'LocalName': 'Ana',
+            'ShortName': 'en-US-AnaNeural',
+            'Gender': 'Female',
+            'Locale': 'en-US'
+        },
+        {
+            'LocalName': 'Ashley',
+            'ShortName': 'en-US-AshleyNeural',
+            'Gender': 'Female',
+            'Locale': 'en-US'
+        },
+        {
+            'LocalName': 'Brandon',
+            'ShortName': 'en-US-BrandonNeural',
+            'Gender': 'Male',
+            'Locale': 'en-US'
+        },
+        {
+            'LocalName': 'Christopher',
+            'ShortName': 'en-US-ChristopherNeural',
+            'Gender': 'Male',
+            'Locale': 'en-US'
+        },
+        {
+            'LocalName': 'Cora',
+            'ShortName': 'en-US-CoraNeural',
+            'Gender': 'Female',
+            'Locale': 'en-US'
+        },
+        {
+            'LocalName': 'Elizabeth',
+            'ShortName': 'en-US-ElizabethNeural',
+            'Gender': 'Female',
+            'Locale': 'en-US'
+        },
+        {
+            'LocalName': 'Eric',
+            'ShortName': 'en-US-EricNeural',
+            'Gender': 'Male',
+            'Locale': 'en-US'
+        },
+        {
+            'LocalName': 'Jacob',
+            'ShortName': 'en-US-JacobNeural',
+            'Gender': 'Male',
+            'Locale': 'en-US'
+        },
+        {
+            'LocalName': 'Jane',
+            'ShortName': 'en-US-JaneNeural',
+            'Gender': 'Female',
+            'Locale': 'en-US'
+        },
+        {
+            'LocalName': 'Jason',
+            'ShortName': 'en-US-JasonNeural',
+            'Gender': 'Male',
+            'Locale': 'en-US'
+        },
+        {
+            'LocalName': 'Michelle',
+            'ShortName': 'en-US-MichelleNeural',
+            'Gender': 'Female',
+            'Locale': 'en-US'
+        },
+        {
+            'LocalName': 'Monica',
+            'ShortName': 'en-US-MonicaNeural',
+            'Gender': 'Female',
+            'Locale': 'en-US'
+        },
+        {
+            'LocalName': 'Nancy',
+            'ShortName': 'en-US-NancyNeural',
+            'Gender': 'Female',
+            'Locale': 'en-US'
+        },
+        {
+            'LocalName': 'Roger',
+            'ShortName': 'en-US-RogerNeural',
+            'Gender': 'Male',
+            'Locale': 'en-US'
+        },
+        {
+            'LocalName': 'Sara',
+            'ShortName': 'en-US-SaraNeural',
+            'Gender': 'Female',
+            'Locale': 'en-US'
+        },
+        {
+            'LocalName': 'Steffan',
+            'ShortName': 'en-US-SteffanNeural',
+            'Gender': 'Male',
+            'Locale': 'en-US'
+        },
+        {
+            'LocalName': 'Tony',
+            'ShortName': 'en-US-TonyNeural',
+            'Gender': 'Male',
+            'Locale': 'en-US'
+        },
+        {
+            'LocalName': '晓晓',
+            'ShortName': 'zh-CN-XiaoxiaoNeural',
+            'Gender': 'Female',
+            'Locale': 'zh-CN'
+        },
+        {
+            'LocalName': '云希',
+            'ShortName': 'zh-CN-YunxiNeural',
+            'Gender': 'Male',
+            'Locale': 'zh-CN'
+        },
+        {
+            'LocalName': '云健',
+            'ShortName': 'zh-CN-YunjianNeural',
+            'Gender': 'Male',
+            'Locale': 'zh-CN'
+        },
+        {
+            'LocalName': '晓伊',
+            'ShortName': 'zh-CN-XiaoyiNeural',
+            'Gender': 'Female',
+            'Locale': 'zh-CN'
+        },
+        {
+            'LocalName': '云扬',
+            'ShortName': 'zh-CN-YunyangNeural',
+            'Gender': 'Male',
+            'Locale': 'zh-CN'
+        },
+        {
+            'LocalName': '晓辰',
+            'ShortName': 'zh-CN-XiaochenNeural',
+            'Gender': 'Female',
+            'Locale': 'zh-CN'
+        },
+        {
+            'LocalName': '晓涵',
+            'ShortName': 'zh-CN-XiaohanNeural',
+            'Gender': 'Female',
+            'Locale': 'zh-CN'
+        },
+        {
+            'LocalName': '晓梦',
+            'ShortName': 'zh-CN-XiaomengNeural',
+            'Gender': 'Female',
+            'Locale': 'zh-CN'
+        },
+        {
+            'LocalName': '晓墨',
+            'ShortName': 'zh-CN-XiaomoNeural',
+            'Gender': 'Female',
+            'Locale': 'zh-CN'
+        },
+        {
+            'LocalName': '晓秋',
+            'ShortName': 'zh-CN-XiaoqiuNeural',
+            'Gender': 'Female',
+            'Locale': 'zh-CN'
+        },
+        {
+            'LocalName': '晓睿',
+            'ShortName': 'zh-CN-XiaoruiNeural',
+            'Gender': 'Female',
+            'Locale': 'zh-CN'
+        },
+        {
+            'LocalName': '晓双',
+            'ShortName': 'zh-CN-XiaoshuangNeural',
+            'Gender': 'Female',
+            'Locale': 'zh-CN'
+        },
+        {
+            'LocalName': '晓萱',
+            'ShortName': 'zh-CN-XiaoxuanNeural',
+            'Gender': 'Female',
+            'Locale': 'zh-CN'
+        },
+        {
+            'LocalName': '晓颜',
+            'ShortName': 'zh-CN-XiaoyanNeural',
+            'Gender': 'Female',
+            'Locale': 'zh-CN'
+        },
+        {
+            'LocalName': '晓悠',
+            'ShortName': 'zh-CN-XiaoyouNeural',
+            'Gender': 'Female',
+            'Locale': 'zh-CN'
+        },
+        {
+            'LocalName': '晓甄',
+            'ShortName': 'zh-CN-XiaozhenNeural',
+            'Gender': 'Female',
+            'Locale': 'zh-CN'
+        },
+        {
+            'LocalName': '云枫',
+            'ShortName': 'zh-CN-YunfengNeural',
+            'Gender': 'Male',
+            'Locale': 'zh-CN'
+        },
+        {
+            'LocalName': '云皓',
+            'ShortName': 'zh-CN-YunhaoNeural',
+            'Gender': 'Male',
+            'Locale': 'zh-CN'
+        },
+        {
+            'LocalName': '云夏',
+            'ShortName': 'zh-CN-YunxiaNeural',
+            'Gender': 'Male',
+            'Locale': 'zh-CN'
+        },
+        {
+            'LocalName': '云野',
+            'ShortName': 'zh-CN-YunyeNeural',
+            'Gender': 'Male',
+            'Locale': 'zh-CN'
+        },
+        {
+            'LocalName': '云泽',
+            'ShortName': 'zh-CN-YunzeNeural',
+            'Gender': 'Male',
+            'Locale': 'zh-CN'
+        }];
+
+    </script>
+
+
     <script>
         const er = new EventEmitter //事件线
         const { onMounted, emits, createApp, ref, watch, computed } = Vue
@@ -252,14 +531,26 @@
         class pgui {
             /* 界面控制类 初始化界面默认值 */
             constructor(arg) {
-                this.pd = gd.pd //页面数据
+                //初始值
+
                 pvs.load.unshift('pgui')//从开头添加一个值
                 pvs.sp = 0; //遮罩路由 (0.无，1.名单，2.登入 ,3.管理)
                 pvs.row = {};//单词数据的一行
-                pvs.shwoChange = 0;//设置显示
+                pvs.shwoChange = 1;//设置显示
                 this.init();
 
-                this.initManage();
+                //this.initManage();
+                pvs.page = gd.storage.get('page') ? gd.storage.get('page') : 0;//当前页码
+
+
+                //发音选择
+                pvs.mknew = { "gender": "男","genderCode": "Female", "lang": "英","langCode": "en-US" }
+                pvs.selected = '女'
+                pvs.selectList = ailist
+                //pvs.opList = ailist
+            }
+
+            init() {
                 //绑定事件
                 er.on("读取.单词", this.getRow)
                 er.on('收到.单词', this.signing)
@@ -268,20 +559,12 @@
 
                 er.on('翻页', this.nextPage)
                 er.on('修改', this.toChange)
-                
-            }
-            init() {
                 //初始效果
-                pvs.page = gd.storage.get('page') ? gd.storage.get('page') : 0;//显示动画
+
 
             }
 
-            initManage() {
-                //管理相关相关界面
-                pvs.manage = {};//相关数据
-                this.pd.refManageEmt = ref(null);//登入/管理按钮元素
 
-            }
             nextPage(n) {
                 //翻页
                 const that = gd.oui
@@ -299,22 +582,10 @@
                 document.querySelectorAll('audio')[n].play()
 
             }
-            toChange(n){
-                //设置
-                //$('#toChange').removeClass("d-none");
-                console.log('修改')
-                if (pvs.shwoChange==1){
-                    pvs.shwoChange = 0
-                    
-                    $('#toChange').slideUp(300)
-                }else{
-                    pvs.shwoChange = 1
-                    $('#toChange').slideDown(300)
-                }
-                //$('#toChange').removeClass("d-none");
-                
-                
+            toChange(dc) {
+                // 设置 修改值
 
+                pvs.mknew = Object.assign({}, pvs.mknew, dc);
             }
             getRow(e) {
                 const that = gd.oui
@@ -383,12 +654,6 @@
                 pvs.row.en4m = `/en500word/${pvs.row.en.substring(0, 1)}/${pvs.row.en.substring(1, 2)}/${pvs.row.cn}_en4m.mp3` //  
                 pvs.row.cn4f = `/en500word/${pvs.row.en.substring(0, 1)}/${pvs.row.en.substring(1, 2)}/${pvs.row.cn}cn4f.mp3` //  没下划线
                 pvs.row.en4f = `/en500word/${pvs.row.en.substring(0, 1)}/${pvs.row.en.substring(1, 2)}/${pvs.row.cn}en4f.mp3` //  没下划线
-
-
-
-
-
-
             }
 
 
@@ -397,6 +662,19 @@
                 //watch
                 console.log('gd pagedata 被修改')
                 //console.log('gd pagedata 被修改\n', newValue, '\n', oldValue)
+            }
+            showOp() {
+                //重计算
+                //console.log('  showOp   ')
+                var lang = pvs.mknew.lang =='中'
+                const ls = [];
+                for (var i in pvs.selectList) {
+                    if (pvs.selectList[i].Locale == pvs.mknew.langCode && pvs.selectList[i].Gender == pvs.mknew.genderCode) {
+                        ls.push(pvs.selectList[i]);
+                    }
+                }
+                //console.log(" showOp list length== ",ls.length ,ls)
+                return ls //pvs.mknew.lang;
             }
         }
 
@@ -411,9 +689,8 @@
                 //gd.oin = oin; //通信逻辑
                 gd.oui = oui; //ui界面
 
-
                 watch(pd, oui.watchPg, { deep: true });
-                //computed(() => { return JSON.parse(JSON.stringify(pvs)); }); //对值二次计算
+                pvs.opList = computed(() => oui.showOp()); //二次计算pvs.opList
                 //onMounted(() => ocls.bindEvt()); //窗口大小变动事件
                 //onMounted(() => oui.remount()); //已经登入刷新处理
                 onMounted(() => oui.nextPage(0)); //已经登入刷新处理
@@ -425,8 +702,6 @@
         //app.use(Quasar) //vue的ui
         app.mount('#q-app')
     </script>
-
-
 
 
 

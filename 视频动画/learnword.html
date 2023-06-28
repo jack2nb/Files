@@ -82,7 +82,7 @@
 
         <div class=" row   align-items-center   justify-content-around   ">
 
-            <img onload="er.emit('进度',32) " v-bind:src="pd.row.img" style="max-width:100%;overflow:hidden;"
+            <img onload="er.emit('进度',30) " v-bind:src="pd.row.img" style="max-width:100%;overflow:hidden;"
                 class="img-fluid" alt="...">
 
         </div>
@@ -101,12 +101,12 @@
         <div class=" d-flex    align-items-center  justify-content-around " style="height: 80px;">
 
             <span class="  w-50  ml-sm-5 mx-sm-2     shadow   badge-info   badge badge-pill">
-                <audio onloadeddata="er.emit('进度',33) " class="  w-100   " controls="controls" v-bind:src="pd.row.cn4m">
+                <audio onloadeddata="er.emit('进度',31) " class="  w-100   " controls="controls" v-bind:src="pd.row.cn4m">
                     Your browser does not support the audio element.
                 </audio>
             </span>
             <span class="  w-50    mr-sm-5 mx-sm-2     shadow   badge-info badge   badge-pill">
-                <audio onloadeddata="er.emit('进度',34) " class="  w-100   " controls="controls" v-bind:src="pd.row.en4m">
+                <audio onloadeddata="er.emit('进度',32) " class="  w-100   " controls="controls" v-bind:src="pd.row.en4m">
                     Your browser does not support the audio element.
                 </audio>
             </span>
@@ -299,7 +299,7 @@
                 if (pvs.page > pvs.total) { pvs.page = pvs.total; that.showInfo("已经到头", '翻页'); return; }
                 //---处理
                 gd.storage.set('page', pvs.page)
-                pvs.vprogress = 0
+                pvs.vprogress = 6
 
 
                 //载入数据 
@@ -375,7 +375,7 @@
                 } else {
                     that.loginLoading(1) //json加载 
                     that.spto(1) //loading 
-                    pvs.vprogress = 0
+                    pvs.vprogress = 6
                     pvs.total = dataFromJSON.data.length
                 }
 
