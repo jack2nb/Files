@@ -105,7 +105,7 @@
 
             <button @click="er.emit('播放',0) "
                 class="btn ml-sm-5 mx-sm-2   px-sm-5 shadow  badge-secondary badge   badge-pill">
-                <h3 class="text-nowrap"> {{pd.row.cn || 中文}} </h3>
+                <h3 class="text-nowrap"> {{pd.row.zh || 中文}} </h3>
             </button>
             <button @click="er.emit('播放',1) "
                 class="btn mr-sm-5 mx-sm-2   px-sm-5    shadow   badge-info badge   badge-pill">
@@ -116,7 +116,7 @@
         <div class=" d-flex    align-items-center  justify-content-around " style="height: 80px;">
 
             <span class="  w-50  ml-sm-5 mx-sm-2     shadow   badge-info   badge badge-pill">
-                <audio onloadeddata="er.emit('进度',31) " class="  w-100   " controls="controls" v-bind:src="pd.row.cn4m">
+                <audio onloadeddata="er.emit('进度',31) " class="  w-100   " controls="controls" v-bind:src="pd.row.zh4m">
                     Your browser does not support the audio element.
                 </audio>
             </span>
@@ -133,7 +133,7 @@
         <div class=" row  align-items-center  justify-items-around">
             <button @click="er.emit('播放',0) "
                 class="btn ml-sm-2 mx-sm-1   px-sm-2 shadow  badge-secondary badge   badge-pill">
-                <h3 class="flex-wrap"> {{pd.row.cn || 中文}} </h3>
+                <h3 class="flex-wrap"> {{pd.row.zh || 中文}} </h3>
             </button>
             <button @click="er.emit('播放',1) "
                 class="btn col-1 mr-sm-2 mx-sm-2   px-sm-2    shadow   badge-info badge   badge-pill">
@@ -419,9 +419,9 @@
                 //pvs.row.img = '/en500word/h/e/健康.png' //  /en500word/h/e/健康.png
                 pvs.row.img = dataFromJSON.src + row.img.substring(1) //  /en500word/h/e/健康.png
                 //设置 mp3
-                pvs.row.cn4m = dataFromJSON.src + row.cn4m2mp3.substring(1)
+                pvs.row.zh4m = dataFromJSON.src + row.cn4m2mp3.substring(1)
                 pvs.row.en4m = dataFromJSON.src + row.en4m2mp3.substring(1)   //  
-                pvs.row.cn = row.cn
+                pvs.row.zh = row.cn
                 pvs.row.en = "????"
                 //载入显示
                 if (dat != 1) {
