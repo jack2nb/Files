@@ -36,12 +36,12 @@
 
         .circle1 {
             top: 0%;
-            right: 13%;
+            right: 10%;
         }
 
         .circle2 {
             bottom: 6%;
-            left: 13%;
+            left: 10%;
         }
 
         .center {
@@ -99,22 +99,22 @@
                     Your browser does not support the audio element.
                 </audio>
             </span>
-
             <span class="   mx-4    shadow   badge-info badge   badge-pill">
                 <audio controls="controls" v-bind:src="pd.row.en4m">
                     Your browser does not support the audio element.
                 </audio>
             </span>
-            
-
         </div>
-        <div class=" d-flex     align-items-center  justify-content-around "  >
-            <span class="text-dark  mx-4        ">
-                {{ pd.row.s4zh4m}}    <span  v-if="pd.row.s4zh4m"  class=" btn "  style="font-size:22px;    ">✔</span>
+        <!---当前声音-->
+        <div class=" d-flex     align-items-center  justify-content-around ">
+            <span class="text-dark  mx-4     ">
+                {{ pd.row.s4zh4m}} <span @click=" er.emit ('生成.发音',{'name':pd.row.s4zh4m,'gender':'m','lang':'zh'})"
+                    v-if="pd.row.s4zh4m" class=" btn " style="font-size:22px;    ">✔</span>
             </span>
 
-            <span class=" text-dark  mx-4         ">
-                {{ pd.row.s4en4m}}    <span  v-if="pd.row.s4en4m"  class=" btn "  style="font-size:22px;    ">✔</span>
+            <span class=" text-dark  mx-4    ">
+                {{ pd.row.s4en4m}} <span @click=" er.emit ('生成.发音',{'name':pd.row.s4en4m,'gender':'m','lang':'en'})"
+                    v-if="pd.row.s4en4m" class=" btn " style="font-size:22px;    ">✔</span>
             </span>
         </div>
         <!---nv-->
@@ -130,13 +130,16 @@
                 </audio>
             </span>
         </div>
-        <div class=" d-flex     align-items-center  justify-content-around "  >
+        <!---当前女声音-->
+        <div class=" d-flex     align-items-center  justify-content-around ">
             <span class="text-dark  mx-4        ">
-                {{ pd.row.s4zh4f}}    <span  v-if="pd.row.s4zh4f"  class=" btn "  style="font-size:22px;    ">✔</span>
+                {{ pd.row.s4zh4f}} <span @click=" er.emit ('生成.发音',{'name':pd.row.s4zh4f,'gender':'f','lang':'zh'})"
+                    v-if="pd.row.s4zh4f" class=" btn " style="font-size:22px;    ">✔</span>
             </span>
 
             <span class=" text-dark  mx-4         ">
-                {{ pd.row.s4en4f}}    <span  v-if="pd.row.s4en4f"  class=" btn "  style="font-size:22px;    ">✔</span>
+                {{ pd.row.s4en4f}} <span @click=" er.emit ('生成.发音',{'name':pd.row.s4en4f,'gender':'f','lang':'en'})"
+                    v-if="pd.row.s4en4f" class=" btn " style="font-size:22px;    ">✔</span>
             </span>
         </div>
     </div>
@@ -255,7 +258,7 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.5/umd/popper.min.js"></script>
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.6.1/js/bootstrap.min.js"></script>
-
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/axios/1.4.0/axios.min.js"></script>
 
 
     <script>
@@ -573,8 +576,8 @@
 
             init() {
                 //绑定事件
-                er.on("读取.单词", this.getRow)
-                er.on('收到.单词', this.signing)
+                er.on("读取.单词", this.toGet)
+                er.on('收到.单词', this.toGeted)
                 er.on('遮罩', this.spto)
                 er.on('播放', this.play)
 
@@ -582,6 +585,7 @@
                 er.on('修改', this.toChange)
                 er.on('更新', this.toUpdate)
                 er.on('更新.发音', this.toUpdated)
+                er.on('生成.发音', this.toMake) //计算时间先不做
                 //初始效果
 
 
@@ -594,7 +598,7 @@
                 if (pvs.page <= 0) { pvs.page = 0 }
                 gd.storage.set('page', pvs.page)
                 console.log("page=", pvs.page)
-                that.getRow(1)
+                that.toGet(1)
             }
             play(n) {
                 //播
@@ -627,6 +631,48 @@
                 setdat['ph'] = pvs.row.ph //音标
 
                 var opt = {
+                    //method: 'POST',
+                    mode: 'cors',
+                    cache: 'no-cache',
+                    //body: JSON.stringify(data),
+                    "headers": {
+                        'Content-Type': 'application/json'
+                    }
+                }
+                console.log(url, opt)
+                //发送
+
+                axios.post(url, data, opt)
+                .then(dat => er.emit('更新.发音', dat))
+                .catch(that.getErr)
+
+                // fetch(url, opt)
+                //     .then(response => response.json())
+                //     .then(json => console.log(json))
+                //     .catch(err => console.log('Request Failed', err));
+                // .then(res => res.json())
+                // .catch(that.getErr)
+                // .then(dat => er.emit('更新.发音', dat))
+                // ;
+                //动画效果
+                that.loginLoading(1)
+                that.spto(1) //loading 
+            }
+
+            toMake(dc) {
+                // 设置 修改选择框 男女、中英
+
+
+                const that = gd.oui
+                //获取数据，发送请求
+                var url = "http://127.0.0.1:2028/make";
+                //url = "http://127.0.0.1:2028/jsonapi";
+
+                var data = dc;
+                data['zh'] = pvs.row.zh
+                data['en'] = pvs.row.en
+
+                var opt = {
                     method: 'POST',
                     mode: 'cors',
                     cache: 'no-cache',
@@ -636,19 +682,19 @@
                     }
                 }
                 console.log(data)
-                //发送
+                // //发送
                 fetch(url, opt)
                     .then(res => res.json())
-                    .catch(this.signErr)
-                    .then(dat => er.emit('更新.发音', dat))
+                    .catch(that.getErr)
+                    .then(dat => er.emit('更新.发音完成', dat))
                     ;
                 //动画效果
                 that.loginLoading(1)
                 that.spto(1) //loading 
             }
 
-         
-            getRow(e) {
+
+            toGet(e) {
                 const that = gd.oui
                 //获取数据，发送请求
                 var url = "http://127.0.0.1:2028/jsonapi/get";
@@ -669,7 +715,7 @@
                 //发送
                 fetch(url, opt)
                     .then(res => res.json())
-                    .catch(this.signErr)
+                    .catch(that.getErr)
                     .then(dat => er.emit('收到.单词', dat))
                     ;
                 //动画效果
@@ -706,7 +752,7 @@
                 setTimeout(function () { pvs.info_list.splice(0, 1); }, 4000);
             }
 
-            signErr(error) {
+            getErr(error) {
                 //登入错误处理
                 const that = gd.oui
                 console.log('Error:', error);
@@ -715,7 +761,7 @@
                 that.showInfo('无法加载到数据，刷新重试', '载入数据：') //loading  
 
             }
-            signing(dat) {
+            toGeted(dat) {
                 // 读取数据到 json/翻页    页面
                 const that = gd.oui
                 console.log('请求返回数据', dat);
@@ -737,14 +783,14 @@
                 pvs.row.en4f = `/en500word/${pvs.row.en.substring(0, 1)}/${pvs.row.en.substring(1, 2)}/${pvs.row.zh}en4f.mp3` //  没下划线
             }
 
-            toUpdated(dat){
+            toUpdated(dat) {
                 //更新后
                 const that = gd.oui
                 console.log('请求返回数据', dat);
-                  //词展示++++
-                  that.loginLoading(0) //loading 
+                //词展示++++
+                that.loginLoading(0) //loading 
                 that.spto(0) //loading 
-                that.showInfo(dat['@msg'], '更新音标：') //loading  
+                that.showInfo(dat.data['@msg'], '更新音标：') //loading  
 
             }
 
