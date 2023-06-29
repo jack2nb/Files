@@ -34,15 +34,7 @@
             opacity: 0.3;
         }
 
-        .circle1 {
-            top: 0%;
-            right: 10%;
-        }
-
-        .circle2 {
-            bottom: 6%;
-            left: 10%;
-        }
+     
 
         .center {
             position: absolute;
@@ -58,8 +50,7 @@
 
 <body id="q-app" class="glassbg text-white  ">
     <!--悬浮球-->
-    <div class="circle1 circle-ab"> </div>
-    <div class="circle2 circle-ab"></div>
+    
     <!--  修改 --->
 
 
@@ -590,7 +581,7 @@
 
 
             }
- 
+       
             nextPage(n) {
                 //跳转、翻页
                 const that = gd.oui
@@ -680,6 +671,8 @@
                             that.showInfo(dat.data['@msg'], '创建声音：')
                             that.loginLoading(0)
                             that.spto(0)
+                            
+                            setTimeout(function () {  location.reload(); }, 1000);
                         }
                     )
                     .catch(that.getErr)
