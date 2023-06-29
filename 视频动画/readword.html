@@ -34,7 +34,7 @@
             opacity: 0.3;
         }
 
-     
+
 
         .center {
             position: absolute;
@@ -50,7 +50,7 @@
 
 <body id="q-app" class="glassbg text-white  ">
     <!--悬浮球-->
-    
+
     <!--  修改 --->
 
 
@@ -96,17 +96,34 @@
                 </audio>
             </span>
         </div>
-        <!---当前声音-->
+        <!---选择声音-->
         <div class=" d-flex     align-items-center  justify-content-around ">
-            <span class="text-dark  mx-4     ">
-                {{ pd.row.s4zh4m}} <span @click=" er.emit ('生成.发音',{'name':pd.row.s4zh4m,'gender':'m','lang':'zh'})"
-                    v-if="pd.row.s4zh4m" class=" btn " style="font-size:22px;    ">✔</span>
-            </span>
 
-            <span class=" text-dark  mx-4    ">
-                {{ pd.row.s4en4m}} <span @click=" er.emit ('生成.发音',{'name':pd.row.s4en4m,'gender':'m','lang':'en'})"
-                    v-if="pd.row.s4en4m" class=" btn " style="font-size:22px;    ">✔</span>
-            </span>
+            <div class="    d-flex col-md-5 col-sm-4     ">
+                <!--- s4zh4m--->
+                <select @change="er.emit('更新' ) "  class="form-select w-100   " v-model="pd.row.s4zh4m" aria-label="multiple">
+                    <option v-for=" op  in  pd.opMzh " :value="op.ShortName">{{op.LocalName}} （{{op.ShortName}}）
+                    </option>
+                </select>
+
+                <span @click=" er.emit ('生成.发音',{'name':pd.row.s4zh4m,'gender':'m','lang':'zh'})" v-if="pd.row.s4zh4m"
+                    class=" btn " style="font-size:22px;    ">✔</span>
+
+            </div>
+
+            <div class="    d-flex col-md-5 col-sm-4     ">
+                <!--- s4en4m--->
+                <select @change="er.emit('更新' ) "  class="form-select w-100   " v-model="pd.row.s4en4m" aria-label="multiple">
+                    <option v-for=" op  in  pd.opMen " :value="op.ShortName">{{op.LocalName}} （{{op.ShortName}}）
+                    </option>
+                </select>
+
+                <span @click=" er.emit ('生成.发音',{'name':pd.row.s4en4m,'gender':'m','lang':'en'})"
+                v-if="pd.row.s4en4m" class=" btn " style="font-size:22px;    ">✔</span>
+
+            </div>
+
+ 
         </div>
         <!---nv-->
         <div class=" d-flex     align-items-center  justify-content-center " style="height: 80px;">
@@ -121,18 +138,32 @@
                 </audio>
             </span>
         </div>
-        <!---当前女声音-->
+        <!---选择女声音-->
         <div class=" d-flex     align-items-center  justify-content-around ">
-            <span class="text-dark  mx-4        ">
-                {{ pd.row.s4zh4f}} <span @click=" er.emit ('生成.发音',{'name':pd.row.s4zh4f,'gender':'f','lang':'zh'})"
-                    v-if="pd.row.s4zh4f" class=" btn " style="font-size:22px;    ">✔</span>
-            </span>
+            <div class="    d-flex col-md-5 col-sm-4     ">
+                <!--- 快选s4zh4f--->
+                <select @change="er.emit('更新' ) "  class="form-select w-100   " v-model="pd.row.s4zh4f" aria-label="multiple">
+                    <option v-for=" op  in  pd.opFzh " :value="op.ShortName">{{op.LocalName}} （{{op.ShortName}}）
+                    </option>
+                </select>
+                <span @click=" er.emit ('生成.发音',{'name':pd.row.s4zh4f,'gender':'f','lang':'zh'})" v-if="pd.row.s4zh4f"
+                    class=" btn " style="font-size:22px;    ">✔</span>
+            </div>
 
-            <span class=" text-dark  mx-4         ">
-                {{ pd.row.s4en4f}} <span @click=" er.emit ('生成.发音',{'name':pd.row.s4en4f,'gender':'f','lang':'en'})"
-                    v-if="pd.row.s4en4f" class=" btn " style="font-size:22px;    ">✔</span>
-            </span>
+
+            <div class="    d-flex col-md-5 col-sm-4     ">
+                <!--- 快选s4en4f--->
+                <select @change="er.emit('更新' ) "  class="form-select w-100   " v-model="pd.row.s4en4f" aria-label="multiple">
+                    <option v-for=" op  in  pd.opFen " :value="op.ShortName">{{op.LocalName}} （{{op.ShortName}}）
+                    </option>
+                </select>
+                <span @click=" er.emit ('生成.发音',{'name':pd.row.s4en4f,'gender':'f','lang':'en'})" v-if="pd.row.s4en4f"
+                    class=" btn " style="font-size:22px;    ">✔</span>
+            </div>
+
+
         </div>
+
     </div>
 
     <!---修改-->
@@ -194,7 +225,7 @@
                 <span class="position-absolute badge badge-light badge-pill" v-text="pd.nameSize"> </span>
             </button>
             <label class="text-dark d-flex  align-items-center  ">页码 </label>
-            <input  @change="er.emit('翻页',0) " type="text" v-model="pd.page" class="w-25 form-control">
+            <input @change="er.emit('翻页',0) " type="text" v-model="pd.page" class="w-25 form-control">
             <button ref="ref_login_manage" @click="er.emit('翻页',0) " class="btn shadow-lg btn-danger">跳转
             </button>
 
@@ -581,7 +612,7 @@
 
 
             }
-       
+
             nextPage(n) {
                 //跳转、翻页
                 const that = gd.oui
@@ -606,9 +637,7 @@
             }
             toUpdate(dc) {
                 // 设置 修改选择框 男女、中英
-                var col = 's4' + pvs.mknew.langCode.substring(0, 2) + '4' + pvs.mknew.genderCode.substring(0, 1)
-                col = col.toLowerCase()
-                console.log(col, pvs.row.id, pvs.selected, pvs.row.ph, pvs.mknew)
+               
 
 
                 const that = gd.oui
@@ -619,7 +648,11 @@
                 var setdat = {}
                 var data = { "单个词表": query, "update": setdat };
 
-                setdat[col] = pvs.selected //发音
+                setdat['s4en4f'] = pvs.row.s4en4f  //发音
+                setdat['s4en4m'] = pvs.row.s4en4m  //发音
+                setdat['s4zh4f'] = pvs.row.s4zh4f  //发音
+                setdat['s4zh4m'] = pvs.row.s4zh4m //发音
+
                 setdat['ph'] = pvs.row.ph //音标
                 var opt = {
                     //method: 'POST',
@@ -630,9 +663,9 @@
                         'Content-Type': 'application/json'
                     }
                 }
-                console.log(url, opt)
+                console.log(url,setdat)
                 //发送
-
+                //return
                 axios.post(url, data, opt)
                     .then(dat => er.emit('更新.发音', dat))
                     .catch(that.getErr)
@@ -665,14 +698,15 @@
                 }
                 console.log(data)
                 // //发送
+                //return
                 axios.post(url, data, opt)
                     .then(
                         dat => {
                             that.showInfo(dat.data['@msg'], '创建声音：')
                             that.loginLoading(0)
                             that.spto(0)
-                            
-                            setTimeout(function () {  location.reload(); }, 1000);
+
+                            setTimeout(function () { location.reload(true); }, 1000);
                         }
                     )
                     .catch(that.getErr)
@@ -771,10 +805,10 @@
                 //pvs.row.img = '/en500word/h/e/健康.png' //  /en500word/h/e/健康.png
                 pvs.row.img = `/en500word/${pvs.row.en.substring(0, 1)}/${pvs.row.en.substring(1, 2)}/${pvs.row.zh}.png` //  /en500word/h/e/健康.png
                 //设置 mp3
-                pvs.row.zh4m = `/en500word/${pvs.row.en.substring(0, 1)}/${pvs.row.en.substring(1, 2)}/${pvs.row.zh}_cn4m.mp3` //   
+                pvs.row.zh4m = `/en500word/${pvs.row.en.substring(0, 1)}/${pvs.row.en.substring(1, 2)}/${pvs.row.zh}_zh4m.mp3` //   
                 pvs.row.en4m = `/en500word/${pvs.row.en.substring(0, 1)}/${pvs.row.en.substring(1, 2)}/${pvs.row.zh}_en4m.mp3` //  
-                pvs.row.zh4f = `/en500word/${pvs.row.en.substring(0, 1)}/${pvs.row.en.substring(1, 2)}/${pvs.row.zh}cn4f.mp3` //  没下划线
-                pvs.row.en4f = `/en500word/${pvs.row.en.substring(0, 1)}/${pvs.row.en.substring(1, 2)}/${pvs.row.zh}en4f.mp3` //  没下划线
+                pvs.row.zh4f = `/en500word/${pvs.row.en.substring(0, 1)}/${pvs.row.en.substring(1, 2)}/${pvs.row.zh}_zh4f.mp3` //  没下划线
+                pvs.row.en4f = `/en500word/${pvs.row.en.substring(0, 1)}/${pvs.row.en.substring(1, 2)}/${pvs.row.zh}_en4f.mp3` //  没下划线
             }
 
             toUpdated(dat) {
@@ -796,13 +830,16 @@
                 console.log('gd pagedata 被修改')
                 //console.log('gd pagedata 被修改\n', newValue, '\n', oldValue)
             }
-            showOp() {
+            showOp(lang, gen) {
+                console.log('  ini showOp   ', lang, gen)
                 //重计算
-                //console.log('  showOp   ')
-                var lang = pvs.mknew.lang == '中'
+                lang = lang ? lang : pvs.mknew.langCode
+                gen = gen ? gen : pvs.mknew.genderCode
+                console.log(' set showOp   ', lang, gen)
+
                 const ls = [];
                 for (var i in pvs.selectList) {
-                    if (pvs.selectList[i].Locale == pvs.mknew.langCode && pvs.selectList[i].Gender == pvs.mknew.genderCode) {
+                    if (pvs.selectList[i].Locale == lang && pvs.selectList[i].Gender == gen) {
                         ls.push(pvs.selectList[i]);
                     }
                 }
@@ -823,7 +860,12 @@
                 gd.oui = oui; //ui界面
 
                 watch(pd, oui.watchPg, { deep: true });
-                pvs.opList = computed(() => oui.showOp()); //二次计算pvs.opList
+                pvs.opList = computed(() => oui.showOp('', '')); //二次计算pvs.opList
+                //------
+                pvs.opFzh = computed(() => oui.showOp('zh-CN', 'Female')); //二次计算pvs.opList
+                pvs.opFen = computed(() => oui.showOp('en-US', 'Female')); //二次计算pvs.opList
+                pvs.opMzh = computed(() => oui.showOp('zh-CN', 'Male')); //二次计算pvs.opList
+                pvs.opMen = computed(() => oui.showOp('en-US', 'Male')); //二次计算pvs.opList
                 //onMounted(() => ocls.bindEvt()); //窗口大小变动事件
                 //onMounted(() => oui.remount()); //已经登入刷新处理
                 onMounted(() => oui.nextPage(0)); //已经登入刷新处理
