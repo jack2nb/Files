@@ -203,7 +203,7 @@
                 <span class="position-absolute badge badge-light badge-pill" v-text="pd.nameSize"> </span>
             </button>
             <label class="text-dark d-flex  align-items-center  ">页码 </label>
-            <input type="text" v-model="pd.page" class="w-25 form-control">
+            <input  @change="er.emit('翻页',0) " type="text" v-model="pd.page" class="w-25 form-control">
             <button ref="ref_login_manage" @click="er.emit('翻页',0) " class="btn shadow-lg btn-danger">跳转
             </button>
 
@@ -590,8 +590,9 @@
 
 
             }
+ 
             nextPage(n) {
-                //翻页
+                //跳转、翻页
                 const that = gd.oui
                 //pvs.page = gd.storage.get ('page')
                 pvs.page = parseInt(pvs.page) + n;
@@ -629,7 +630,6 @@
 
                 setdat[col] = pvs.selected //发音
                 setdat['ph'] = pvs.row.ph //音标
-
                 var opt = {
                     //method: 'POST',
                     mode: 'cors',
@@ -643,17 +643,8 @@
                 //发送
 
                 axios.post(url, data, opt)
-                .then(dat => er.emit('更新.发音', dat))
-                .catch(that.getErr)
-
-                // fetch(url, opt)
-                //     .then(response => response.json())
-                //     .then(json => console.log(json))
-                //     .catch(err => console.log('Request Failed', err));
-                // .then(res => res.json())
-                // .catch(that.getErr)
-                // .then(dat => er.emit('更新.发音', dat))
-                // ;
+                    .then(dat => er.emit('更新.发音', dat))
+                    .catch(that.getErr)
                 //动画效果
                 that.loginLoading(1)
                 that.spto(1) //loading 
@@ -673,21 +664,31 @@
                 data['en'] = pvs.row.en
 
                 var opt = {
-                    method: 'POST',
+                    //method: 'POST',
                     mode: 'cors',
                     cache: 'no-cache',
-                    body: JSON.stringify(data),
+                    //body: JSON.stringify(data),
                     "headers": {
                         'Content-Type': 'application/json'
                     }
                 }
                 console.log(data)
                 // //发送
-                fetch(url, opt)
-                    .then(res => res.json())
+                axios.post(url, data, opt)
+                    .then(
+                        dat => {
+                            that.showInfo(dat.data['@msg'], '创建声音：')
+                            that.loginLoading(0)
+                            that.spto(0)
+                        }
+                    )
                     .catch(that.getErr)
-                    .then(dat => er.emit('更新.发音完成', dat))
-                    ;
+
+                // fetch(url, opt)
+                //     .then(res => res.json())
+                //     .catch(that.getErr)
+                //     .then(dat => er.emit('更新.发音完成', dat))
+                //     ;
                 //动画效果
                 that.loginLoading(1)
                 that.spto(1) //loading 
@@ -791,6 +792,9 @@
                 that.loginLoading(0) //loading 
                 that.spto(0) //loading 
                 that.showInfo(dat.data['@msg'], '更新音标：') //loading  
+
+                //setTimeout(function () { that.toGet(0); }, 500);  //更新数据
+                that.toGet(0);
 
             }
 
