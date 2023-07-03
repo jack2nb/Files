@@ -40,8 +40,9 @@
 
 <body id="q-app" class="glassbg text-white  ">
     <!---设置-->
-    <span @click="pd.shwoChange=!pd.shwoChange " class="  d-none  d-sm-flex btn   fixed-top justify-content-end      "
-        style="font-size:32px;  filter: grayscale(100%); ">⚙</span>
+    <div class="  d-none  d-sm-flex   fixed-top justify-content-end ">
+        <span @click="pd.shwoChange=!pd.shwoChange " class="btn " style="font-size:32px;  filter: grayscale(100%); ">⚙</span>
+    </div>
 
 
 
@@ -53,10 +54,10 @@
     <div class="container ">
         <div class="mt-2 row justify-content-center  ">
             <div class="w-100 mb-5   d-none d-md-block"><!---高度垫子 小设备隐藏--></div>
-            <div  >
+            <div>
                 <h3>生成与检查</h3>
             </div>
-             
+
         </div>
     </div>
     <!--卡片-->
@@ -239,7 +240,7 @@
                     <input type="text" v-model="pd.defPath" class="    form-control">
                 </div>
 
-                <div  class="   d-flex col-auto   justify-content-start  ">
+                <div class="   d-flex col-auto   justify-content-start  ">
                     <button @click="er.emit('设置' ) " class="btn shadow-lg btn-danger">设置</button>
                 </div>
 
@@ -251,7 +252,7 @@
 
     </transition>
 
-    <div class="  d-flex  align-items-center  justify-content-center  " >
+    <div class="  d-flex  align-items-center  justify-content-center  ">
         自然学习发，降低学习负担。认识26个字母即可正确发音。感谢韦式音标/感谢韦小红
     </div>
 
@@ -263,7 +264,7 @@
             </button>
             <label class="text-dark d-flex  align-items-center  ">页码 </label>
             <input @change="er.emit('翻页',0) " type="text" v-model="pd.page" class="w-25 form-control">
-            <button ref="ref_login_manage" @click="er.emit('翻页',0) " class="btn shadow-lg btn-danger">跳转
+            <button ref="ref_login_manage" @click="er.emit('翻页',0) " class="btn shadow-lg btn-danger">删除
             </button>
 
 
@@ -272,7 +273,7 @@
             </button>
 
         </div>
-        <div class="w-100 mb-5   d-none d-md-block"><!---高度垫子 小设备隐藏--></div>
+        
     </div>
 
     <!---info提示信息--->
@@ -633,9 +634,9 @@
                 //--存储默认值
                 pvs.shwoChange = gd.storage.get('shwoChange') ? gd.storage.get('shwoChange') : 1;//设置显示
                 pvs.defTable = gd.storage.get('defTable') ? gd.storage.get('defTable') : '单个词表';//'默认表'
-                pvs.defPath = gd.storage.get('defPath') ? gd.storage.get('defPath') : 'en500word';//'默认表'
+                pvs.defPath = gd.storage.get('defPath') ? gd.storage.get('defPath') : 'en500word';//'默认路径'
                 pvs.defFrom = gd.storage.get('defFrom') ? gd.storage.get('defFrom') : '';// 条件。单词来源
-                
+
                 //初始效果
                 this.hd = { //请求头
                     mode: 'cors',
@@ -662,7 +663,7 @@
                 er.on('生成.发音', this.toMake) //计算时间先不做
                 er.on('生成.图片', this.toMakeImg)
                 er.on('设置', this.toSetDef)
-           
+
                 er.on('获取音标', this.toGetPh) //获取音标
 
             }
@@ -671,6 +672,7 @@
                 const that = gd.oui
                 //获取数据，发送请求
                 var url = "http://127.0.0.1:2028/getph";
+
                 var data = {};
                 data['en'] = pvs.row.en
                 // //发送
@@ -680,16 +682,16 @@
                         dat => {
                             that.loginLoading(0)
                             that.spto(0)
-                            if(dat.data['@code']<300){
+                            if (dat.data['@code'] < 300) {
                                 that.showInfo(dat.data['@msg'], '获取音标：')
                                 pvs.row.ph = dat.data.data[pvs.row.en][0]
-                            }else{
+                            } else {
                                 that.showInfo('出现错误', '获取音标：')
-                                console.log('ph==',dat.data.data[pvs.row.en][0],dat.data) 
+                                console.log('ph==', dat.data.data[pvs.row.en][0], dat.data)
                             }
-                            
-                           
-                       
+
+
+
                         }
                     )
                     .catch(that.getErr)
@@ -708,9 +710,10 @@
             toSetDef(dc) {
                 const that = gd.oui
                 // 设置 读取 表和路径
-                gd.storage.set('shwoChange', pvs.shwoChange);//'默认表'
-                gd.storage.set('defTable', pvs.defTable);//'默认表'
-                gd.storage.set('defFrom', pvs.defFrom);//'默认表'
+                gd.storage.set('shwoChange', pvs.shwoChange);
+                gd.storage.set('defTable', pvs.defTable);//默认表
+                gd.storage.set('defPath', pvs.defPath);//默认表
+                gd.storage.set('defFrom', pvs.defFrom);//默认查询条件
 
                 that.showInfo('设置成功', '表和路径：')
                 setTimeout(function () { that.nextPage(0); }, 1000);
@@ -843,8 +846,8 @@
 
                 ja['@limit'] = 1
                 ja['@page'] = pvs.page
-                if (pvs.defFrom){ja['f'] = pvs.defFrom}
-                
+                if (pvs.defFrom) { ja['f'] = pvs.defFrom }
+
 
                 //发送
                 var data = {};
@@ -906,9 +909,9 @@
                 //词展示++++
                 that.loginLoading(0) //loading 
                 that.spto(0) //loading 
-                if (typeof (dat.data) == "undefined" || dat.data[pvs.defTable].length == 0) { 
-                    that.showInfo("无数据","读取单词")
-                    return 
+                if (typeof (dat.data) == "undefined" || dat.data[pvs.defTable].length == 0) {
+                    that.showInfo("无数据", "读取单词")
+                    return
                 } //没数据
 
                 //设置数据
@@ -917,10 +920,10 @@
                 //pvs.row.img = '/en500word/h/e/健康.png' //  /en500word/h/e/健康.png
                 pvs.row.img = `/${pvs.defPath}/${pvs.row.en.substring(0, 1)}/${pvs.row.en.substring(1, 2)}/${pvs.row.zh}.png` //  /en500word/h/e/健康.png
                 //设置 mp3
-                pvs.row.zh4m = `/${pvs.defPath}/${pvs.row.en.substring(0, 1)}/${pvs.row.en.substring(1, 2)}/${pvs.row.zh}_zh4m.mp3` //   
-                pvs.row.en4m = `/${pvs.defPath}/${pvs.row.en.substring(0, 1)}/${pvs.row.en.substring(1, 2)}/${pvs.row.zh}_en4m.mp3` //  
-                pvs.row.zh4f = `/${pvs.defPath}/${pvs.row.en.substring(0, 1)}/${pvs.row.en.substring(1, 2)}/${pvs.row.zh}_zh4f.mp3` //  没下划线
-                pvs.row.en4f = `/${pvs.defPath}/${pvs.row.en.substring(0, 1)}/${pvs.row.en.substring(1, 2)}/${pvs.row.zh}_en4f.mp3` //  没下划线
+                pvs.row.zh4m = `/${pvs.defPath}/${pvs.row.en.substring(0, 1).toLowerCase()}/${pvs.row.en.substring(1, 2).toLowerCase()}/${pvs.row.zh}_zh4m.mp3` //   
+                pvs.row.en4m = `/${pvs.defPath}/${pvs.row.en.substring(0, 1).toLowerCase()}/${pvs.row.en.substring(1, 2).toLowerCase()}/${pvs.row.zh}_en4m.mp3` //  
+                pvs.row.zh4f = `/${pvs.defPath}/${pvs.row.en.substring(0, 1).toLowerCase()}/${pvs.row.en.substring(1, 2).toLowerCase()}/${pvs.row.zh}_zh4f.mp3` //  没下划线
+                pvs.row.en4f = `/${pvs.defPath}/${pvs.row.en.substring(0, 1).toLowerCase()}/${pvs.row.en.substring(1, 2).toLowerCase()}/${pvs.row.zh}_en4f.mp3` //  没下划线
             }
 
             toUpdated(dat) {

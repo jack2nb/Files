@@ -18,6 +18,7 @@ import logging
 
 import tornado.ioloop
 import tornado.web
+from tornado.web import StaticFileHandler  
 import warnings
 import json
 
@@ -311,6 +312,7 @@ def run_main(cfg={}):
     # --路由
     handlers = [
         (r"/jsonapi/(.*)", JsonApiHandler)  # //首页，入口
+        ,(r"/camb_word/(.*)",StaticFileHandler,{"path":os.path.join(FILE_PATH, "camb_word"), "default_filename":"index.html"})
         # ----
         , (r"(.*)", ErrorHandler)  # 404错误
     ]
