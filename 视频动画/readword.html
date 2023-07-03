@@ -198,6 +198,9 @@
                         </div>
                     </div>
                 </div>
+                <div>
+                    <button @click="er.emit('获取音标' ) " class="btn shadow-lg btn-danger">获取音标</button>
+                </div>
 
                 <div>
                     <button @click="er.emit('更新' ) " class="btn shadow-lg btn-danger">更新</button>
@@ -248,7 +251,7 @@
 
     </transition>
 
-    <div>
+    <div class="  d-flex  align-items-center  justify-content-center  " >
         自然学习发，降低学习负担。认识26个字母即可正确发音。感谢韦式音标/感谢韦小红
     </div>
 
@@ -659,7 +662,46 @@
                 er.on('生成.发音', this.toMake) //计算时间先不做
                 er.on('生成.图片', this.toMakeImg)
                 er.on('设置', this.toSetDef)
-                //this.initManage();
+           
+                er.on('获取音标', this.toGetPh) //获取音标
+
+            }
+            toGetPh() {
+
+                const that = gd.oui
+                //获取数据，发送请求
+                var url = "http://127.0.0.1:2028/getph";
+                var data = {};
+                data['en'] = pvs.row.en
+                // //发送
+                //return
+                axios.post(url, data, that.hd)
+                    .then(
+                        dat => {
+                            that.loginLoading(0)
+                            that.spto(0)
+                            if(dat.data['@code']<300){
+                                that.showInfo(dat.data['@msg'], '获取音标：')
+                                pvs.row.ph = dat.data.data[pvs.row.en][0]
+                            }else{
+                                that.showInfo('出现错误', '获取音标：')
+                                console.log('ph==',dat.data.data[pvs.row.en][0],dat.data) 
+                            }
+                            
+                           
+                       
+                        }
+                    )
+                    .catch(that.getErr)
+
+                // fetch(url, opt)
+                //     .then(res => res.json())
+                //     .catch(that.getErr)
+                //     .then(dat => er.emit('更新.发音人完成', dat))
+                //     ;
+                //动画效果
+                that.loginLoading(1)
+                that.spto(1) //loading 
 
 
             }
@@ -763,6 +805,7 @@
                 var data = dc;
                 data['zh'] = pvs.row.zh
                 data['en'] = pvs.row.en
+                data['dir'] = pvs.defPath
 
 
                 console.log(data)
@@ -793,13 +836,15 @@
 
             toGet(e) {
                 const that = gd.oui
-                //获取数据，发送请求
+                //获取数据单词
                 var url = "http://127.0.0.1:2028/jsonapi/get";
                 //url = "http://127.0.0.1:2028/jsonapi";
                 var ja = {}
 
                 ja['@limit'] = 1
                 ja['@page'] = pvs.page
+                if (pvs.defFrom){ja['f'] = pvs.defFrom}
+                
 
                 //发送
                 var data = {};
@@ -861,7 +906,10 @@
                 //词展示++++
                 that.loginLoading(0) //loading 
                 that.spto(0) //loading 
-                if (typeof (dat.data) == "undefined" || dat.data[pvs.defTable].length == 0) { return } //没数据
+                if (typeof (dat.data) == "undefined" || dat.data[pvs.defTable].length == 0) { 
+                    that.showInfo("无数据","读取单词")
+                    return 
+                } //没数据
 
                 //设置数据
                 console.log(dat.data[pvs.defTable][0])
