@@ -40,7 +40,7 @@
 
 <body id="q-app" class="glassbg text-white  ">
     <!---设置-->
-    <span @click="pd.shwoChange=!pd.shwoChange " class="  d-none  d-md-flex btn   fixed-top justify-content-end      "
+    <span @click="pd.shwoChange=!pd.shwoChange " class="  d-none  d-sm-flex btn   fixed-top justify-content-end      "
         style="font-size:32px;  filter: grayscale(100%); ">⚙</span>
 
 
@@ -53,10 +53,10 @@
     <div class="container ">
         <div class="mt-2 row justify-content-center  ">
             <div class="w-100 mb-5   d-none d-md-block"><!---高度垫子 小设备隐藏--></div>
-            <div :class="{'animate__animated  animate__bounceInUp':pd.showLucky}">
-                <h3>检查</h3>
+            <div  >
+                <h3>生成与检查</h3>
             </div>
-            <div class="w-100 mb-5   d-none d-md-block"><!---高度垫子 小设备隐藏--></div>
+             
         </div>
     </div>
     <!--卡片-->
@@ -215,18 +215,28 @@
 
     <!---齿轮设置-->
     <transition enter-active-class="animated bounceIn" leave-active-class="animated bounceOut">
-        <div v-if="pd.shwoChange==0?false:true" class="container-md    glassbga  mt-4  mb-4   pt-3  pb-3">
-            <div class=" row  align-items-center  justify-items-around justify-content-around  ">
-                <div class="   d-flex col-md-4 col-sm-4   ">
-                    <label class="text-dark   d-flex  m-1 w-50 align-items-center  ">数据表</label>
-                    <input type="text" v-model="pd.defTable" class="w-75 p-1 m-1 form-control">
+        <div v-if="pd.shwoChange==0?false:true" class="container-md     glassbga  mt-4  mb-4   pt-3  pb-3">
+            <div class=" row  align-items-center   justify-content-around  ">
+                <div class="  p-0 m-0 d-flex  col-md-1 col-sm-1  justify-content-end  ">
+                    <label class="text-dark    mt-1       ">数据表</label>
                 </div>
-                <div class="   d-flex col-md-4 col-sm-4   ">
-                    <label class="text-dark   d-flex  m-1 w-50 align-items-center  ">首目录</label>
-                    <input type="text" v-model="pd.defPath" class="w-75 p-1 m-1 form-control">
+                <div class="  p-0 m-0    col-md-2 col-sm-2   align-items-center  justify-content-start ">
+                    <input type="text" v-model="pd.defTable" class="  form-control">
+                </div>
+                <div class="  p-0 m-0  d-flex  col-md-1 col-sm-1   align-items-center  justify-content-end">
+                    <label class="text-dark  mt-1  d-flex  align-content-center  ">来源</label>
+                </div>
+                <div class="   p-0 m-0 col-md-2 col-sm-2   d-flex  align-items-center  justify-content-start  ">
+                    <input type="text" v-model="pd.defFrom" class="    form-control">
+                </div>
+                <div class="   p-0 m-0   col-md-1 col-sm-1    justify-content-end  ">
+                    <label class="text-dark  mt-1    ">首目录</label>
+                </div>
+                <div class="   p-0 m-0  col-md-2 col-sm-2   align-items-center  justify-content-start  ">
+                    <input type="text" v-model="pd.defPath" class="    form-control">
                 </div>
 
-                <div>
+                <div  class="   d-flex col-auto   justify-content-start  ">
                     <button @click="er.emit('设置' ) " class="btn shadow-lg btn-danger">设置</button>
                 </div>
 
@@ -618,10 +628,11 @@
 
 
                 //--存储默认值
-                pvs.shwoChange = 1;//设置显示
+                pvs.shwoChange = gd.storage.get('shwoChange') ? gd.storage.get('shwoChange') : 1;//设置显示
                 pvs.defTable = gd.storage.get('defTable') ? gd.storage.get('defTable') : '单个词表';//'默认表'
                 pvs.defPath = gd.storage.get('defPath') ? gd.storage.get('defPath') : 'en500word';//'默认表'
-
+                pvs.defFrom = gd.storage.get('defFrom') ? gd.storage.get('defFrom') : '';// 条件。单词来源
+                
                 //初始效果
                 this.hd = { //请求头
                     mode: 'cors',
@@ -655,12 +666,12 @@
             toSetDef(dc) {
                 const that = gd.oui
                 // 设置 读取 表和路径
+                gd.storage.set('shwoChange', pvs.shwoChange);//'默认表'
                 gd.storage.set('defTable', pvs.defTable);//'默认表'
-                gd.storage.set('defPath', pvs.defPath);//'默认表'
+                gd.storage.set('defFrom', pvs.defFrom);//'默认表'
+
                 that.showInfo('设置成功', '表和路径：')
-
-
-                setTimeout(function () { that.nextPage(0) ; }, 1000);
+                setTimeout(function () { that.nextPage(0); }, 1000);
 
             }
             nextPage(n) {
