@@ -21,20 +21,10 @@
         }
 
         .glassbg {
+            /*背景*/
             background: linear-gradient(to right top, #65dfc9, #6cdbeb);
             border-radius: 1rem;
         }
-
-        .circle-ab {
-            background: linear-gradient(to right bottom, rgba(255, 255, 255, 0.7), rgba(255, 255, 255, 0.2));
-            height: 14rem;
-            width: 14rem;
-            position: absolute;
-            border-radius: 50%;
-            opacity: 0.3;
-        }
-
-
 
         .center {
             position: absolute;
@@ -49,7 +39,11 @@
 -->
 
 <body id="q-app" class="glassbg text-white  ">
-    <!--悬浮球-->
+    <!---设置-->
+    <span @click="pd.shwoChange=!pd.shwoChange " class="  d-none  d-md-flex btn   fixed-top justify-content-end      "
+        style="font-size:32px;  filter: grayscale(100%); ">⚙</span>
+
+
 
     <!--  修改 --->
 
@@ -170,9 +164,9 @@
 
     </div>
 
-    <!---修改-->
+    <!---更新-->
     <transition enter-active-class="animated bounceIn" leave-active-class="animated bounceOut">
-        <div v-if="pd.shwoChange==0?false:true" class="container-md    glassbga  mt-4  mb-4   pt-3  pb-3">
+        <div class="container-md    glassbga  mt-4  mb-4   pt-3  pb-3">
             <div class=" row  align-items-center  justify-items-around justify-content-around  ">
                 <div class="   d-flex col-md-3 col-sm-3   ">
                     <label class="text-dark   d-flex  m-1 w-25 align-items-center  ">音标</label>
@@ -216,8 +210,38 @@
 
 
         </div>
-        </div>
+
     </transition>
+
+    <!---齿轮设置-->
+    <transition enter-active-class="animated bounceIn" leave-active-class="animated bounceOut">
+        <div v-if="pd.shwoChange==0?false:true" class="container-md    glassbga  mt-4  mb-4   pt-3  pb-3">
+            <div class=" row  align-items-center  justify-items-around justify-content-around  ">
+                <div class="   d-flex col-md-4 col-sm-4   ">
+                    <label class="text-dark   d-flex  m-1 w-50 align-items-center  ">数据表</label>
+                    <input type="text" v-model="pd.row.ph" class="w-75 p-1 m-1 form-control">
+                </div>
+                <div class="   d-flex col-md-4 col-sm-4   ">
+                    <label class="text-dark   d-flex  m-1 w-50 align-items-center  ">首目录</label>
+                    <input type="text" v-model="pd.row.ph" class="w-75 p-1 m-1 form-control">
+                </div>
+
+                <div>
+                    <button @click="er.emit('设置' ) " class="btn shadow-lg btn-danger">设置</button>
+                </div>
+
+
+            </div>
+
+
+        </div>
+
+    </transition>
+
+    <div>
+        自然学习发，降低学习负担。认识26个字母即可正确发音。感谢韦式音标/感谢韦小红
+    </div>
+
     <!--底部按钮-->
     <div class="fixed-bottom row justify-content-center     ">
         <div class=" d-flex  col-md-6 col-sm-8   bg-warning glassbga  justify-content-around ">
@@ -558,9 +582,6 @@
         const { onMounted, emits, createApp, ref, watch, computed } = Vue
 
         const gd = {};//全局数据 解决调用引用问题
-        const pd = ref({ "load": [] }); //特殊变量，页面数据
-        const pvs = pd.value; //变量代理访问
-        gd.pd = pd;//page data 页面元素引用"数据"
         gd.storage = {
             //本地浏览器 存取组件
             set(key, value) {
@@ -573,30 +594,47 @@
                 localStorage.removeItem(key);
             },
         }
-
+        gd.pd = ref({ "load": [] });;//page data 页面元素引用"数据"
+        //const pd = ref({ "load": [] }); //特殊变量，页面数据
+        const pvs = gd.pd.value; //变量代理访问
         class pgui {
             /* 界面控制类 初始化界面默认值 */
             constructor(arg) {
-                //初始值
-
+                //初始（值）
+                
+                //--界面值
                 pvs.load.unshift('pgui')//从开头添加一个值
                 pvs.sp = 0; //遮罩路由 (0.无，1.名单，2.登入 ,3.管理)
                 pvs.row = {};//单词数据的一行
-                pvs.shwoChange = 1;//设置显示
 
-                //this.initManage();
+
+
                 pvs.page = gd.storage.get('page') ? gd.storage.get('page') : 0;//当前页码
-                pvs.info_list = []//{info:"2",type:"2"}
+                pvs.info_list = []//交互提示 {info:"2",type:"2"}
                 pvs.vprogress = 100 //进度条
-                //发音选择
+                //--发音选择
                 pvs.mknew = { "gender": "女", "genderCode": "Female", "lang": "英", "langCode": "en-US" }
-                pvs.selected = 'en-US-JennyNeural'
-                pvs.selectList = ailist
-                //pvs.opList = ailist
+                pvs.selectList = ailist //发音人选项列表
+
+
+                //--存储默认值
+                pvs.shwoChange = 1;//设置显示
+                pvs.defTable = gd.storage.get('defTable') ? gd.storage.get('defTable') : '单个词表';//'默认表'
+                pvs.defPath = gd.storage.get('defPath') ? gd.storage.get('defPath') : 'en500word';//'默认表'
+                
+                //初始效果
+                this.hd = { //请求头
+                    mode: 'cors',
+                    cache: 'no-cache',
+                    "headers": {
+                        'Content-Type': 'application/json'
+                    }
+                }
                 this.init();
             }
 
             init() {
+                //初始（设置）
                 //绑定事件
                 er.on("读取.单词", this.toGet)
                 er.on('收到.单词', this.toGeted)
@@ -609,15 +647,8 @@
                 er.on('更新.发音人', this.toUpdated)
                 er.on('生成.发音', this.toMake) //计算时间先不做
                 er.on('生成.图片', this.toMakeImg)
+                //this.initManage();
 
-                //初始效果
-                this.hd = {
-                    mode: 'cors',
-                    cache: 'no-cache',
-                    "headers": {
-                        'Content-Type': 'application/json'
-                    }
-                }
 
             }
 
@@ -679,7 +710,7 @@
                 //url = "http://127.0.0.1:2028/jsonapi";
                 var query = { "id": pvs.row.id }
                 var setdat = {}
-                var data = { "单个词表": query, "update": setdat };
+               
 
                 setdat['s4en4f'] = pvs.row.s4en4f  //发音
                 setdat['s4en4m'] = pvs.row.s4en4m  //发音
@@ -689,6 +720,9 @@
                 setdat['ph'] = pvs.row.ph //音标
 
                 console.log(url, setdat)
+                var data = {    }; //请求数据
+                data[ pvs.defTable] = query //表
+                data['update'] =setdat //设置值
                 //发送
                 //return
                 axios.post(url, data, that.hd)
@@ -741,11 +775,13 @@
                 var url = "http://127.0.0.1:2028/jsonapi/get";
                 //url = "http://127.0.0.1:2028/jsonapi";
                 var ja = {}
-                var data = { "单个词表": ja };
+                
                 ja['@limit'] = 1
                 ja['@page'] = pvs.page
 
                 //发送
+                var data = {  };
+                data[ pvs.defTable ]=ja
                 axios.post(url, data, that.hd)
                     //fetch(url, opt)
                     //.then(res => res.json())
@@ -803,18 +839,18 @@
                 //词展示++++
                 that.loginLoading(0) //loading 
                 that.spto(0) //loading 
-                if (typeof (dat.data) == "undefined" || dat.data['单个词表'].length == 0) { return } //没数据
+                if (typeof (dat.data) == "undefined" || dat.data[ pvs.defTable ].length == 0) { return } //没数据
 
                 //设置数据
-                console.log(dat.data['单个词表'][0])
-                pvs.row = dat.data['单个词表'][0]
+                console.log(dat.data[ pvs.defTable ][0])
+                pvs.row = dat.data[ pvs.defTable][0]
                 //pvs.row.img = '/en500word/h/e/健康.png' //  /en500word/h/e/健康.png
-                pvs.row.img = `/en500word/${pvs.row.en.substring(0, 1)}/${pvs.row.en.substring(1, 2)}/${pvs.row.zh}.png` //  /en500word/h/e/健康.png
+                pvs.row.img = `/${pvs.defPath}/${pvs.row.en.substring(0, 1)}/${pvs.row.en.substring(1, 2)}/${pvs.row.zh}.png` //  /en500word/h/e/健康.png
                 //设置 mp3
-                pvs.row.zh4m = `/en500word/${pvs.row.en.substring(0, 1)}/${pvs.row.en.substring(1, 2)}/${pvs.row.zh}_zh4m.mp3` //   
-                pvs.row.en4m = `/en500word/${pvs.row.en.substring(0, 1)}/${pvs.row.en.substring(1, 2)}/${pvs.row.zh}_en4m.mp3` //  
-                pvs.row.zh4f = `/en500word/${pvs.row.en.substring(0, 1)}/${pvs.row.en.substring(1, 2)}/${pvs.row.zh}_zh4f.mp3` //  没下划线
-                pvs.row.en4f = `/en500word/${pvs.row.en.substring(0, 1)}/${pvs.row.en.substring(1, 2)}/${pvs.row.zh}_en4f.mp3` //  没下划线
+                pvs.row.zh4m = `/${pvs.defPath}/${pvs.row.en.substring(0, 1)}/${pvs.row.en.substring(1, 2)}/${pvs.row.zh}_zh4m.mp3` //   
+                pvs.row.en4m = `/${pvs.defPath}/${pvs.row.en.substring(0, 1)}/${pvs.row.en.substring(1, 2)}/${pvs.row.zh}_en4m.mp3` //  
+                pvs.row.zh4f = `/${pvs.defPath}/${pvs.row.en.substring(0, 1)}/${pvs.row.en.substring(1, 2)}/${pvs.row.zh}_zh4f.mp3` //  没下划线
+                pvs.row.en4f = `/${pvs.defPath}/${pvs.row.en.substring(0, 1)}/${pvs.row.en.substring(1, 2)}/${pvs.row.zh}_en4f.mp3` //  没下划线
             }
 
             toUpdated(dat) {
@@ -865,7 +901,7 @@
                 //gd.oin = oin; //通信逻辑
                 gd.oui = oui; //ui界面
 
-                watch(pd, oui.watchPg, { deep: true });
+                watch(gd.pd, oui.watchPg, { deep: true });
                 //pvs.opList = computed(() => oui.showOp('', '')); //二次计算pvs.opList
                 //------
                 pvs.opFzh = computed(() => oui.showOp('zh-CN', 'Female')); //二次计算 
@@ -876,7 +912,7 @@
                 //onMounted(() => oui.remount()); //已经登入刷新处理
                 onMounted(() => oui.nextPage(0)); //已经登入刷新处理
                 //--变量关联到html的映射 js访问要加.value
-                return { er, pd, oui, "ref_login_manage": pd.refManageEmt, }
+                return { er, oui, "pd": gd.pd, "ref_login_manage": gd.pd.refManageEmt, }
             }
         }
         const app = createApp(appdat)
