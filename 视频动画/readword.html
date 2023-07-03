@@ -219,11 +219,11 @@
             <div class=" row  align-items-center  justify-items-around justify-content-around  ">
                 <div class="   d-flex col-md-4 col-sm-4   ">
                     <label class="text-dark   d-flex  m-1 w-50 align-items-center  ">数据表</label>
-                    <input type="text" v-model="pd.row.ph" class="w-75 p-1 m-1 form-control">
+                    <input type="text" v-model="pd.defTable" class="w-75 p-1 m-1 form-control">
                 </div>
                 <div class="   d-flex col-md-4 col-sm-4   ">
                     <label class="text-dark   d-flex  m-1 w-50 align-items-center  ">首目录</label>
-                    <input type="text" v-model="pd.row.ph" class="w-75 p-1 m-1 form-control">
+                    <input type="text" v-model="pd.defPath" class="w-75 p-1 m-1 form-control">
                 </div>
 
                 <div>
@@ -601,7 +601,7 @@
             /* 界面控制类 初始化界面默认值 */
             constructor(arg) {
                 //初始（值）
-                
+
                 //--界面值
                 pvs.load.unshift('pgui')//从开头添加一个值
                 pvs.sp = 0; //遮罩路由 (0.无，1.名单，2.登入 ,3.管理)
@@ -621,7 +621,7 @@
                 pvs.shwoChange = 1;//设置显示
                 pvs.defTable = gd.storage.get('defTable') ? gd.storage.get('defTable') : '单个词表';//'默认表'
                 pvs.defPath = gd.storage.get('defPath') ? gd.storage.get('defPath') : 'en500word';//'默认表'
-                
+
                 //初始效果
                 this.hd = { //请求头
                     mode: 'cors',
@@ -647,11 +647,22 @@
                 er.on('更新.发音人', this.toUpdated)
                 er.on('生成.发音', this.toMake) //计算时间先不做
                 er.on('生成.图片', this.toMakeImg)
+                er.on('设置', this.toSetDef)
                 //this.initManage();
 
 
             }
+            toSetDef(dc) {
+                const that = gd.oui
+                // 设置 读取 表和路径
+                gd.storage.set('defTable', pvs.defTable);//'默认表'
+                gd.storage.set('defPath', pvs.defPath);//'默认表'
+                that.showInfo('设置成功', '表和路径：')
 
+
+                setTimeout(function () { that.nextPage(0) ; }, 1000);
+
+            }
             nextPage(n) {
                 //跳转、翻页
                 const that = gd.oui
@@ -710,7 +721,7 @@
                 //url = "http://127.0.0.1:2028/jsonapi";
                 var query = { "id": pvs.row.id }
                 var setdat = {}
-               
+
 
                 setdat['s4en4f'] = pvs.row.s4en4f  //发音
                 setdat['s4en4m'] = pvs.row.s4en4m  //发音
@@ -720,9 +731,9 @@
                 setdat['ph'] = pvs.row.ph //音标
 
                 console.log(url, setdat)
-                var data = {    }; //请求数据
-                data[ pvs.defTable] = query //表
-                data['update'] =setdat //设置值
+                var data = {}; //请求数据
+                data[pvs.defTable] = query //表
+                data['update'] = setdat //设置值
                 //发送
                 //return
                 axios.post(url, data, that.hd)
@@ -775,13 +786,13 @@
                 var url = "http://127.0.0.1:2028/jsonapi/get";
                 //url = "http://127.0.0.1:2028/jsonapi";
                 var ja = {}
-                
+
                 ja['@limit'] = 1
                 ja['@page'] = pvs.page
 
                 //发送
-                var data = {  };
-                data[ pvs.defTable ]=ja
+                var data = {};
+                data[pvs.defTable] = ja
                 axios.post(url, data, that.hd)
                     //fetch(url, opt)
                     //.then(res => res.json())
@@ -839,11 +850,11 @@
                 //词展示++++
                 that.loginLoading(0) //loading 
                 that.spto(0) //loading 
-                if (typeof (dat.data) == "undefined" || dat.data[ pvs.defTable ].length == 0) { return } //没数据
+                if (typeof (dat.data) == "undefined" || dat.data[pvs.defTable].length == 0) { return } //没数据
 
                 //设置数据
-                console.log(dat.data[ pvs.defTable ][0])
-                pvs.row = dat.data[ pvs.defTable][0]
+                console.log(dat.data[pvs.defTable][0])
+                pvs.row = dat.data[pvs.defTable][0]
                 //pvs.row.img = '/en500word/h/e/健康.png' //  /en500word/h/e/健康.png
                 pvs.row.img = `/${pvs.defPath}/${pvs.row.en.substring(0, 1)}/${pvs.row.en.substring(1, 2)}/${pvs.row.zh}.png` //  /en500word/h/e/健康.png
                 //设置 mp3
