@@ -68,7 +68,7 @@
 
     </div><!---上面的结果框val--->
     <div class="container ">
-       
+
         <!--选题列表-->
         <div class="  row     justify-content-center     ">
             <div class="w-100 mt-5   d-none d-md-block"><!---高度垫子 小设备隐藏--></div>
@@ -86,10 +86,10 @@
     <div class="container ">
         <div class="mt-2 row justify-content-center  ">
             <div class="w-100 mb-3   d-none d-md-block"><!---高度垫子 小设备隐藏--></div>
-            <div  >
+            <div>
                 <h4>选择对应的英文单词</h4>
             </div>
-           
+
         </div>
     </div>
     <!--卡片-->
@@ -182,8 +182,8 @@
             </div>
         </div>
     </transition>
- 
- 
+
+
     <!---载入动画--->
     <transition leave-active-class="animated fadeOut">
         <div v-if="pd.sp==0?false:true"
@@ -193,7 +193,7 @@
         </div>
     </transition>
     <!---进度条---->
-    <transition   enter-active-class="animated fadeIn" leave-active-class="animated fadeOut">
+    <transition enter-active-class="animated fadeIn" leave-active-class="animated fadeOut">
         <div v-if="pd.showProgress" class="center w-75   px-3   " style="z-index: 1082 ; ">
             <div class="progress">
                 <div class=" progress-bar  progress-bar-striped progress-bar-animated  "
@@ -202,29 +202,30 @@
         </div>
     </transition>
     <!---遮罩1024--->
-   
-        <div v-if="pd.showLoading" @click="er.emit('遮罩',0) " style="z-index: 1081  ;"
-            class=" modal-backdrop show "> </div>
 
-    
+    <div v-if="pd.showLoading" @click="er.emit('遮罩',0) " style="z-index: 1081  ;" class=" modal-backdrop show "> </div>
+
+
     <!---侧边栏 -->
-    <nav v-if="pd.showNav " class="  d-flex  navbar-light bg-light"
-        style="z-index:1082; top:0;left:0;width: 240px; height: 100vh; position: fixed;">
-        <ul >
-            <li class="nav-item ">
-                <a class="nav-link" href="#">目录  </a>
-            </li>
-            <li class="nav-item">
-                <a class="nav-link" href="#">第二课</a>
-            </li>
-            <li class="nav-item">
-                <a class="nav-link" href="#">第三课</a>
-            </li>
-            <li class="nav-item">
-                <a class="nav-link  " href="#">第四课</a>
-            </li>
-        </ul>
-    </nav>
+    <transition enter-active-class="animated fadeIn"  >
+        <nav v-if="pd.showNav " class="  d-flex  navbar-light bg-light"
+            style="z-index:1082; top:0;left:0;width: 240px; height: 100vh; position: fixed;">
+            <ul>
+                <li class="nav-item ">
+                    <a class="nav-link" href="#">目录 </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="#">第二课</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="#">第三课</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link  " href="#">第四课</a>
+                </li>
+            </ul>
+        </nav>
+    </transition>
     <div class=" d-flex w-25  fixed-bottom justify-content-between  ">
         <!-- 齿轮修改 --->
         <span @click="er.emit('导航',1) " class="  d-none  btn     justify-content-end      "
@@ -274,7 +275,7 @@
         class pgui {
             /* 界面控制类 初始化界面默认值 */
             constructor(arg) {
-             
+
                 pvs.load.unshift('pgui')//从开头添加一个值
                 pvs.sp = 0; //遮罩路由 (0.无，1.名单，2.登入 ,3.管理)
                 pvs.row = {};//单词数据的一行
@@ -301,11 +302,11 @@
                 er.on('翻页', this.nextPage)
                 er.on('跳转', this.toPage)
                 er.on('进度', this.progress)
-                er.on('导航',this.trunNav)
+                er.on('导航', this.trunNav)
             }
-            trunNav(n){
+            trunNav(n) {
                 const that = gd.oui
-                pvs.showNav=n
+                pvs.showNav = n
                 pvs.showLoading = n
             }
 
@@ -333,7 +334,7 @@
 
 
             }
-			   getPage() {
+            getPage() {
                 // 超限 问题处理
                 var page = gd.storage.get('page') ? gd.storage.get('page') : 1;//默认值
                 page = parseInt(page);
@@ -394,7 +395,8 @@
             loginLoading(n) {
                 //登入中效果
                 pvs.showLoading = n
-                pvs.showNav = pvs.showLoading == 0 ? 0 : 1
+                if (pvs.showLoading == 0) { pvs.showNav = 0 }
+
             }
             spto(n) {
                 //遮罩和二级界面
@@ -405,16 +407,16 @@
             progress(n) {
                 const that = gd.oui
                 //进度  0 和 100 都隐藏
-                
+
                 pvs.vprogress = pvs.vprogress + n
-                console.log("进度", n,pvs.vprogress)
+                console.log("进度", n, pvs.vprogress)
                 if (pvs.vprogress > 98) {
-                    pvs.vprogress  = 100
+                    pvs.vprogress = 100
                     setTimeout(function () { pvs.showProgress = 0 }, 50);
                     that.spto(0)
                     that.loginLoading(0)
-                }else{
-                    pvs.showProgress = 1
+                } else {
+                    pvs.showProgress = 1 //未加载
                 }
             }
 

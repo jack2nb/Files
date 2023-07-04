@@ -193,24 +193,26 @@
             class=" modal-backdrop show "> </div>
     
     <!---侧边栏 -->
-    <nav v-if="pd.showNav " class="  d-flex  navbar-light bg-light"
-        style="z-index:1082; top:0;left:0;width: 240px; height: 100vh; position: fixed;">
-        <ul >
-            <li class="nav-item ">
-                <a class="nav-link" href="#">目录  </a>
-            </li>
-            <li class="nav-item">
-                <a class="nav-link" href="#">第二课</a>
-            </li>
-            <li class="nav-item">
-                <a class="nav-link" href="#">第三课</a>
-            </li>
-            <li class="nav-item">
-                <a class="nav-link  " href="#">第四课</a>
-            </li>
-        </ul>
-    </nav>
-    <div class=" d-flex   fixed-bottom justify-content-between  ">
+    <transition enter-active-class="animated fadeIn"  >
+        <nav v-if="pd.showNav " class="  d-flex  navbar-light bg-light"
+            style="z-index:1082; top:0;left:0;width: 240px; height: 100vh; position: fixed;">
+            <ul>
+                <li class="nav-item ">
+                    <a class="nav-link" href="#">目录 </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="#">第二课</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="#">第三课</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link  " href="#">第四课</a>
+                </li>
+            </ul>
+        </nav>
+    </transition>
+    <div class=" d-flex w-25  fixed-bottom justify-content-between  ">
         <!-- 齿轮修改 --->
         <span @click="er.emit('导航',1) " class="  d-none  btn     justify-content-end      "
             style="font-size:28px;    ">⚙</span>
@@ -349,7 +351,8 @@
             loginLoading(n) {
                 //登入中效果
                 pvs.showLoading = n
-                pvs.showNav = pvs.showLoading == 0 ? 0 : 1
+                if( pvs.showLoading == 0 ){pvs.showNav = 0}
+             
             }
             spto(n) {
                 //遮罩和二级界面
