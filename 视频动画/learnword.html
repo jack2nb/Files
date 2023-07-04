@@ -64,18 +64,7 @@
     <!--悬浮球-->
     <div class="circle1 circle-ab"> </div>
     <div class="circle2 circle-ab"></div>
-    <div class=" d-flex   fixed-bottom justify-content-between  ">
-        <!-- 齿轮修改 --->
-
-        <span @click="er.emit('修改',0) " class="  d-none  btn     justify-content-end      "
-            style="font-size:28px;    ">⚙</span>
-
-        <button class="navbar-light  navbar-toggler">
-            <span class="navbar-toggler-icon"></span>
-        </button>
-
-
-    </div><!---上面的结果框val--->
+  <!---上面的结果框val--->
     <div class="container ">
         <div class="w-100 mb-5   d-none d-md-block"><!---高度垫子 小设备隐藏--></div>
         <div class="container ">
@@ -200,41 +189,40 @@
     </transition>
     <!---遮罩1024--->
     
-        <div v-if="pd.loginLoding==0?false:true" @click="er.emit('遮罩',0) " style="z-index: 1081  ;"
+        <div v-if="pd.showLoading" @click="er.emit('遮罩',0) " style="z-index: 1081  ;"
             class=" modal-backdrop show "> </div>
- 
+    
     <!---侧边栏 -->
-    <nav class="  d-flex  navbar-light bg-light"
-        style="z-index:1041; top:0;left:0;width: 240px; height: 100vh; position: fixed;">
-
-
-        <ul class="navbar-nav">
-            <li class="nav-item active">
-                <a class="nav-link" href="#">Home <span class="sr-only">(current)</span></a>
+    <nav v-if="pd.showNav " class="  d-flex  navbar-light bg-light"
+        style="z-index:1082; top:0;left:0;width: 240px; height: 100vh; position: fixed;">
+        <ul >
+            <li class="nav-item ">
+                <a class="nav-link" href="#">目录  </a>
             </li>
             <li class="nav-item">
-                <a class="nav-link" href="#">Features</a>
+                <a class="nav-link" href="#">第二课</a>
             </li>
             <li class="nav-item">
-                <a class="nav-link" href="#">Pricing</a>
+                <a class="nav-link" href="#">第三课</a>
             </li>
             <li class="nav-item">
-                <a class="nav-link disabled" href="#">Disabled</a>
+                <a class="nav-link  " href="#">第四课</a>
             </li>
         </ul>
-
     </nav>
-
-
+    <div class=" d-flex   fixed-bottom justify-content-between  ">
+        <!-- 齿轮修改 --->
+        <span @click="er.emit('导航',1) " class="  d-none  btn     justify-content-end      "
+            style="font-size:28px;    ">⚙</span>
+        <button @click="er.emit('导航',1) " class="navbar-light  navbar-toggler">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+    </div>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/vue/3.2.47/vue.global.prod.min.js"></script>
     <!--script src="https://cdnjs.cloudflare.com/ajax/libs/lodash.js/2.4.2/lodash.min.js"></script--->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/EventEmitter/5.2.8/EventEmitter.min.js"></script>
-
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
-
-
     <script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.6.1/js/bootstrap.min.js"></script>
-
     <script src="https://cdnjs.cloudflare.com/ajax/libs/URI.js/1.19.11/URI.min.js"></script>
 
 
@@ -271,13 +259,13 @@
                 pvs.load.unshift('pgui')//从开头添加一个值
                 pvs.sp = 0; //遮罩路由 (0.无，1.名单，2.登入 ,3.管理)
                 pvs.row = {};//单词数据的一行
-                pvs.shwoChange = 0;//设置显示
-
+                pvs.showNav = 0;//导航显示
+                pvs.showLoading = 0 //遮罩
                 pvs.total = 0
                 pvs.page = gd.storage.get('page') ? gd.storage.get('page') : 1;//显示动画
                 pvs.info_list = []//{info:"2",type:"2"}
                 pvs.vprogress = 100 //进度条
-                pvs.showProgress = 0
+                pvs.showProgress = 0 //进度条
                 //----页面参数
                 pvs.url = new URI() //获取去 type，pid ，默认访问本站，数据加载主站
                 this.init();
@@ -285,12 +273,17 @@
             init() {
                 //初始（设置）
 
-                er.on('遮罩', this.spto)
+                er.on('遮罩', this.loginLoading)
                 er.on('播放', this.play)
                 er.on('翻页', this.nextPage)
                 er.on('进度', this.progress)
+                er.on('导航',this.trunNav)
             }
-
+            trunNav(n){
+                const that = gd.oui
+                pvs.showNav=n
+                pvs.showLoading = n
+            }
             loadJson() {
                 //一次性加载 json数据  默认数据来源当前站点，当前没有访问主站
                 const that = gd.oui
@@ -318,9 +311,6 @@
                 //词展示++++
                 that.loginLoading(1) //loading 
                 that.spto(1) //loading 
-
-
-
             }
             getPage() {
                 // 超限 问题处理
@@ -335,9 +325,6 @@
             nextPage(n) {
                 //内部翻页
                 const that = gd.oui
-
-
-
                 //document.getElementById('dataFromJson').remove ()
                 // delete  dataFromJSON .data
                 //on mount 
@@ -350,30 +337,25 @@
                 //---处理
                 gd.storage.set('page', pvs.page)
                 pvs.vprogress = 6
-
-
                 //载入数据 
                 that.signing(1)
-
-
             }
             play(n) {
                 //播
                 console.log('播放=', n)
                 //播放指定 document.querySelectorAll('audio')[0].play()
                 document.querySelectorAll('audio')[n].play()
-
             }
-
-
             loginLoading(n) {
                 //登入中效果
-                pvs.loginLoding = n
+                pvs.showLoading = n
+                pvs.showNav = pvs.showLoading == 0 ? 0 : 1
             }
             spto(n) {
                 //遮罩和二级界面
                 /*切换界面*/
                 pvs.sp = n
+
 
             }
             progress(n) {
