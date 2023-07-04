@@ -41,7 +41,7 @@ import decimal
 import jsonapi
 
 template_root = 'netui'  # 模板文件根目录
-static_root = 'en500word'  # 静态文件目录
+static_root = 'static'  # 静态文件目录
  
 
 class gm():
@@ -277,7 +277,7 @@ class ErrorHandler(BaseHandler):
                 result["@msg"] = "完成  '{}' ".format(filename)
             if args  and args[0]  == '/mkimg':
                 #生成 音标图
-                mr.mkphimg(metadata)
+                mr.mkphimg(metadata,os.path.join(FILE_PATH,metadata['dir']))
                 result["@msg"] = '完成'
 
             if args  and args[0]  == '/getph':
@@ -304,7 +304,7 @@ class ErrorHandler(BaseHandler):
         self.finish(json.dumps(result, ensure_ascii=False,cls=DateEncoder))
 
 
-
+ 
 
 def run_main(cfg={}):
     """ 启动入口 載入配置"""
@@ -313,6 +313,7 @@ def run_main(cfg={}):
     handlers = [
         (r"/jsonapi/(.*)", JsonApiHandler)  # //首页，入口
         ,(r"/camb_word/(.*)",StaticFileHandler,{"path":os.path.join(FILE_PATH, "camb_word"), "default_filename":"index.html"})
+        ,(r"/en500word/(.*)",StaticFileHandler,{"path":os.path.join(FILE_PATH, "en500word") })
         # ----
         , (r"(.*)", ErrorHandler)  # 404错误
     ]

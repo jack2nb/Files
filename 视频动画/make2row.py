@@ -2,6 +2,8 @@
 2生 生成音频 、生音标图
 
 2刷 刷音标，刷时长
+
+26*26 ,id=9*9
 """
 
 
@@ -12,7 +14,7 @@ import azure.cognitiveservices.speech as speechsdk
 speech_key, service_region = "78b5e11b237642b0a2250c36fba9becb", "koreacentral"
 speech_config = speechsdk.SpeechConfig(subscription=speech_key, region=service_region)
 
-import os,re
+import os,re,json
 from PIL import Image, ImageDraw, ImageFont
 
 
@@ -148,7 +150,7 @@ def mkone(arg,g_dir = '.\\en500word'):
     fname = "{}_{}4{}.mp3".format(arg['zh'],lang,gender) 
     if len(arg['en'])>=2:
         word = arg['en'] if lang=='en' else  arg['zh']
-        filename = os.path.join(g_dir,arg['en'][0],arg['en'][1],fname)
+        filename = os.path.join(g_dir,arg['en'][0].lower(),arg['en'][1].lower(),fname)
         print(word,filename,arg['name'])
         mksound(word,filename,arg['name'])
         return  fname
@@ -159,9 +161,32 @@ def mkphimg(imgarg,g_dir = '.\\en500word'):
     """ 通过web post 参数生成音标图"""
     fname = "{}.png".format(imgarg['zh'] ) 
     if len(imgarg['en'])>=2:
-        filename = os.path.join(g_dir,imgarg['en'][0],imgarg['en'][1],fname)
+        filename = os.path.join(g_dir,imgarg['en'][0].lower(),imgarg['en'][1].lower(),fname)
         print( filename )
         word = trimPh(imgarg['ph'])
         draw_png('/'+word+'/' , filename)
+
+
+def mkWrodCfg(ls,g_dir='.\\en500word'):
+    """  创建 文件"""
+    jsonf = os.path.join('.',g_dir,fm[-2],fm[-1],'cfg_'+str(pid) +'.json')
+    filePath = os.path.dirname(jsonf)   #获取目录
+    os.makedirs(filePath,exist_ok=True)  #递归创建
+    #---
+    jsonDat = {"data":ls,"src":"https://disk.17121.top/"}
+    jsonstr = json.dumps(jsonDat,  ensure_ascii=False, indent=4)
+    jsonstr = " var dataFromJSON =  " + jsonstr
+    with open(jsonf, "w", encoding="utf-8") as f:
+        f.write(jsonstr)
+        #print(jsonstr)
+    return jsonf
+
+
+
+
+
+
+
+
 
 
