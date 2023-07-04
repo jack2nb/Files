@@ -39,11 +39,13 @@
         .circle1 {
             top: 0%;
             right: 13%;
+            z-index: -1;
         }
 
         .circle2 {
             bottom: 6%;
             left: 13%;
+            z-index: -1;
         }
 
         .center {
@@ -212,9 +214,6 @@
         const { onMounted, emits, createApp, ref, watch, computed } = Vue
 
         const gd = {};//全局数据 解决调用引用问题
-        const pd = ref({ "load": [] }); //特殊变量，页面数据
-        const pvs = pd.value; //变量代理访问
-        gd.pd = pd;//page data 页面元素引用"数据"
         gd.storage = {
             //本地浏览器 存取组件
             set(key, value) {
@@ -227,6 +226,10 @@
                 localStorage.removeItem(key);
             },
         }
+
+        const pd = ref({ "load": [] }); //特殊变量，页面数据
+        const pvs = pd.value; //变量代理访问
+        gd.pd = pd;//page data 页面元素引用"数据"
 
         class pgui {
             /* 界面控制类 初始化界面默认值 */
@@ -256,8 +259,8 @@
 
             }
 
-            initManage() {
-                //一次性加载 json数据
+            loadJson() {
+                //一次性加载 json数据  默认数据来源当前站点，当前没有访问主站
 
                 const that = gd.oui
                 //document.getElementById('dataFromJson').remove ()
@@ -278,6 +281,16 @@
                 that.spto(1) //loading 
 
 
+
+            }
+            getPage() {
+                // 超限 问题处理
+                var page = gd.storage.get('page') ? gd.storage.get('page') : 1;//默认值
+                page = parseInt(page);
+                if (page <= 0) { page = 1; }
+                if (page > pvs.total) { page = pvs.total; }
+                gd.storage.set('page', page);
+                return page;
 
             }
             nextPage(n) {
@@ -375,9 +388,10 @@
 
 
                 //设置数据
-                console.log(dataFromJSON.src, pvs.page, dataFromJSON.data[pvs.page - 1])
-                var row = dataFromJSON.data[pvs.page - 1]
+
+                var row = dataFromJSON.data[that.getPage() - 1] //page不存在或超限
                 //pvs.row.img = '/en500word/h/e/健康.png' //  /en500word/h/e/健康.png
+                console.log(dataFromJSON.src, row, dataFromJSON.data)
                 pvs.row.img = dataFromJSON.src + row.img.substring(1) //  /en500word/h/e/健康.png
                 //设置 mp3
                 pvs.row.zh4m = dataFromJSON.src + row.cn4m2mp3.substring(1)
@@ -410,12 +424,12 @@
                 gd.oui = oui; //ui界面
 
 
-                watch(pd, oui.watchPg, { deep: true });
+                //watch(pd, oui.watchPg, { deep: true });
 
                 //computed(() => { return JSON.parse(JSON.stringify(pvs)); }); //对值二次计算
                 //onMounted(() => ocls.bindEvt()); //窗口大小变动事件
                 //onMounted(() => oui.remount()); //已经登入刷新处理
-                onMounted(() => oui.initManage(0)); //已经登入刷新处理
+                onMounted(() => oui.loadJson(0)); //已经登入刷新处理
                 //--变量关联到html的映射 js访问要加.value
                 return { er, pd, oui, "ref_login_manage": pd.refManageEmt, }
             }
