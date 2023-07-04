@@ -172,8 +172,8 @@
 
 
     <!---info提示信息--->
-    <transition mode="out-in" enter-active-class="animated pulse" leave-active-class="animated bounceOutRight">
-        <div id="obj-alert" class=" container-sm  fixed-top    " style="z-index: 1083 ;" v-for="site in pd.info_list">
+    <transition mode="out-in" enter-active-class="animated pulse" leave-active-class="animated fadeOut">
+        <div class=" container-sm  fixed-top    " style="z-index: 1083 ;" v-for="site in pd.info_list">
             <div class="alert  alert-warning alert-dismissible fade show" role="alert">
                 <strong>{{site.type}}</strong>{{ site.info }}
                 <button type="button" class="close" data-dismiss="alert" aria-label="Close">
@@ -182,27 +182,57 @@
             </div>
         </div>
     </transition>
-    <!---遮罩1024--->
-    <div v-if="pd.sp==0?false:true" @click="er.emit('遮罩',0) " style="z-index: 1081  ;" class=" modal-backdrop show ">
-
-    </div>
+ 
+ 
     <!---载入动画--->
-    <div v-if="pd.sp==0?false:true"
-        class="center w-100 mt-5  px-3  row d-flex  clearfix  align-items-center  justify-content-center  "
-        style="z-index: 1082  ;">
-        <div class="spinner-border   "></div>
-    </div>
-
-    <!---进度条---->
-    <div v-if="pd.vprogress>98?false:true" class="center w-75  px-3   " style="z-index: 1082 ; ">
-        <div class="progress">
-            <div class=" progress-bar  progress-bar-striped progress-bar-animated  "
-                v-bind:style="{ width: pd.vprogress+'%' , }">{{pd.vprogress}}%</div>
+    <transition leave-active-class="animated fadeOut">
+        <div v-if="pd.sp==0?false:true"
+            class="center w-100 mt-5  px-3  row d-flex  clearfix  align-items-center  justify-content-center  "
+            style="z-index: 1082  ;">
+            <div class="spinner-border   "></div>
         </div>
+    </transition>
+    <!---进度条---->
+    <transition   enter-active-class="animated fadeIn" leave-active-class="animated fadeOut">
+        <div v-if="pd.showProgress" class="center w-75   px-3   " style="z-index: 1082 ; ">
+            <div class="progress">
+                <div class=" progress-bar  progress-bar-striped progress-bar-animated  "
+                    v-bind:style="{ width: pd.vprogress+'%' , }">{{pd.vprogress}}%</div>
+            </div>
+        </div>
+    </transition>
+    <!---遮罩1024--->
+   
+        <div v-if="pd.showLoading" @click="er.emit('遮罩',0) " style="z-index: 1081  ;"
+            class=" modal-backdrop show "> </div>
+
+    
+    <!---侧边栏 -->
+    <nav v-if="pd.showNav " class="  d-flex  navbar-light bg-light"
+        style="z-index:1082; top:0;left:0;width: 240px; height: 100vh; position: fixed;">
+        <ul >
+            <li class="nav-item ">
+                <a class="nav-link" href="#">目录  </a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="#">第二课</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="#">第三课</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link  " href="#">第四课</a>
+            </li>
+        </ul>
+    </nav>
+    <div class=" d-flex w-25  fixed-bottom justify-content-between  ">
+        <!-- 齿轮修改 --->
+        <span @click="er.emit('导航',1) " class="  d-none  btn     justify-content-end      "
+            style="font-size:28px;    ">⚙</span>
+        <button @click="er.emit('导航',1) " class="navbar-light  navbar-toggler">
+            <span class="navbar-toggler-icon"></span>
+        </button>
     </div>
-
-    <!---$(".alert").fadeOut();   $('.alert').delay(900).slideUp(500) ; -->
-
 
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/vue/3.2.47/vue.global.prod.min.js"></script>
@@ -224,9 +254,6 @@
         const { onMounted, emits, createApp, ref, watch, computed } = Vue
 
         const gd = {};//全局数据 解决调用引用问题
-        const pd = ref({ "load": [] }); //特殊变量，页面数据
-        const pvs = pd.value; //变量代理访问
-        gd.pd = pd;//page data 页面元素引用"数据"
         gd.storage = {
             //本地浏览器 存取组件
             set(key, value) {
@@ -239,16 +266,20 @@
                 localStorage.removeItem(key);
             },
         }
+        gd.pd = ref({ "load": [] });;//page data 页面元素引用"数据"
+        //const pd = ref({ "load": [] }); //特殊变量，页面数据
+        const pvs = gd.pd.value; //变量代理访问
+        //gd.pd = pd;//page data 页面元素引用"数据"
 
         class pgui {
             /* 界面控制类 初始化界面默认值 */
             constructor(arg) {
-                this.pd = gd.pd //页面数据
+             
                 pvs.load.unshift('pgui')//从开头添加一个值
                 pvs.sp = 0; //遮罩路由 (0.无，1.名单，2.登入 ,3.管理)
                 pvs.row = {};//单词数据的一行
-                pvs.shwoChange = 0;//设置显示
-
+                pvs.showNav = 0;//导航显示
+                pvs.showLoading = 0 //遮罩
                 pvs.total = 0
                 pvs.page = gd.storage.get('page') ? gd.storage.get('page') : 1;//显示动画
 
@@ -263,19 +294,23 @@
                 this.init();
             }
             init() {
-                //初始 效果
+                //初始（设置）
 
-                er.on('遮罩', this.spto)
+                er.on('遮罩', this.loginLoading)
                 er.on('播放', this.play)
                 er.on('翻页', this.nextPage)
                 er.on('跳转', this.toPage)
                 er.on('进度', this.progress)
-
-
+                er.on('导航',this.trunNav)
+            }
+            trunNav(n){
+                const that = gd.oui
+                pvs.showNav=n
+                pvs.showLoading = n
             }
 
-            initManage() {
-                //一次性加载 json数据
+            loadJson() {
+                //一次性加载 json数据  默认数据来源当前站点，当前没有访问主站
 
                 const that = gd.oui
                 //document.getElementById('dataFromJson').remove ()
@@ -296,6 +331,16 @@
                 that.spto(1) //loading 
 
 
+
+            }
+			   getPage() {
+                // 超限 问题处理
+                var page = gd.storage.get('page') ? gd.storage.get('page') : 1;//默认值
+                page = parseInt(page);
+                if (page <= 0) { page = 1; }
+                if (page > pvs.total) { page = pvs.total; }
+                gd.storage.set('page', page);
+                return page;
 
             }
             toPage(n) {
@@ -348,7 +393,8 @@
 
             loginLoading(n) {
                 //登入中效果
-                pvs.loginLoding = n
+                pvs.showLoading = n
+                pvs.showNav = pvs.showLoading == 0 ? 0 : 1
             }
             spto(n) {
                 //遮罩和二级界面
@@ -359,14 +405,17 @@
             progress(n) {
                 const that = gd.oui
                 //进度  0 和 100 都隐藏
-                console.log("进度", n)
+                
                 pvs.vprogress = pvs.vprogress + n
-
+                console.log("进度", n,pvs.vprogress)
                 if (pvs.vprogress > 98) {
+                    pvs.vprogress  = 100
+                    setTimeout(function () { pvs.showProgress = 0 }, 50);
                     that.spto(0)
                     that.loginLoading(0)
+                }else{
+                    pvs.showProgress = 1
                 }
-
             }
 
             showInfo(info, type = '') {
@@ -455,14 +504,14 @@
                 gd.oui = oui; //ui界面
 
 
-                watch(pd, oui.watchPg, { deep: true });
+                watch(gd.pd, oui.watchPg, { deep: true });
 
                 //computed(() => { return JSON.parse(JSON.stringify(pvs)); }); //对值二次计算
                 //onMounted(() => ocls.bindEvt()); //窗口大小变动事件
                 //onMounted(() => oui.remount()); //已经登入刷新处理
-                onMounted(() => oui.initManage(0)); //已经登入刷新处理
+                onMounted(() => oui.loadJson(0)); //已经登入刷新处理
                 //--变量关联到html的映射 js访问要加.value
-                return { er, pd, oui, "ref_login_manage": pd.refManageEmt, }
+                return { er, oui, "pd": gd.pd, "ref_login_manage": gd.pd.refManageEmt, }
             }
         }
         const app = createApp(appdat)
