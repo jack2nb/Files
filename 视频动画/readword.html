@@ -749,6 +749,7 @@
                 data['zh'] = pvs.row.zh  //发音
                 data['en'] = pvs.row.en  //发音
                 data['ph'] = pvs.row.ph //音标
+                data['dir'] = pvs.defPath //首目录
 
                 console.log(url, data)
                 //发送
@@ -846,7 +847,8 @@
 
                 ja['@limit'] = 1
                 ja['@page'] = pvs.page
-                if (pvs.defFrom) { ja['f'] = pvs.defFrom }
+                ja['mkimg'] = 1 //是否显示
+                if (pvs.defFrom) { ja['f'] = pvs.defFrom } //来源条件
 
 
                 //发送
@@ -920,10 +922,11 @@
                 //pvs.row.img = '/en500word/h/e/健康.png' //  /en500word/h/e/健康.png
                 pvs.row.img = `/${pvs.defPath}/${pvs.row.en.substring(0, 1)}/${pvs.row.en.substring(1, 2)}/${pvs.row.zh}.png` //  /en500word/h/e/健康.png
                 //设置 mp3
-                pvs.row.zh4m = `/${pvs.defPath}/${pvs.row.en.substring(0, 1).toLowerCase()}/${pvs.row.en.substring(1, 2).toLowerCase()}/${pvs.row.zh}_zh4m.mp3` //   
-                pvs.row.en4m = `/${pvs.defPath}/${pvs.row.en.substring(0, 1).toLowerCase()}/${pvs.row.en.substring(1, 2).toLowerCase()}/${pvs.row.zh}_en4m.mp3` //  
-                pvs.row.zh4f = `/${pvs.defPath}/${pvs.row.en.substring(0, 1).toLowerCase()}/${pvs.row.en.substring(1, 2).toLowerCase()}/${pvs.row.zh}_zh4f.mp3` //  没下划线
-                pvs.row.en4f = `/${pvs.defPath}/${pvs.row.en.substring(0, 1).toLowerCase()}/${pvs.row.en.substring(1, 2).toLowerCase()}/${pvs.row.zh}_en4f.mp3` //  没下划线
+                var noCache=  new Date().valueOf();//禁止缓存
+                pvs.row.zh4m = `/${pvs.defPath}/${pvs.row.en.substring(0, 1).toLowerCase()}/${pvs.row.en.substring(1, 2).toLowerCase()}/${pvs.row.zh}_zh4m.mp3?q=${noCache}` //   
+                pvs.row.en4m = `/${pvs.defPath}/${pvs.row.en.substring(0, 1).toLowerCase()}/${pvs.row.en.substring(1, 2).toLowerCase()}/${pvs.row.zh}_en4m.mp3?q=${noCache}` //  
+                pvs.row.zh4f = `/${pvs.defPath}/${pvs.row.en.substring(0, 1).toLowerCase()}/${pvs.row.en.substring(1, 2).toLowerCase()}/${pvs.row.zh}_zh4f.mp3?q=${noCache}` //  没下划线
+                pvs.row.en4f = `/${pvs.defPath}/${pvs.row.en.substring(0, 1).toLowerCase()}/${pvs.row.en.substring(1, 2).toLowerCase()}/${pvs.row.zh}_en4f.mp3?q=${noCache}` //  没下划线
             }
 
             toUpdated(dat) {

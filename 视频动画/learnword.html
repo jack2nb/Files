@@ -14,6 +14,36 @@
 
 
     <style>
+        @media (min-width: 0px) {
+            html {
+                font-size: 0.9rem;
+            }
+        }
+
+        @media (min-width: 576px) {
+            html {
+                font-size: 1rem;
+            }
+        }
+
+        @media (min-width: 768px) {
+            html {
+                font-size: 1rem;
+            }
+        }
+
+        @media (min-width: 992px) {
+            html {
+                font-size: 1.25rem;
+            }
+        }
+
+        @media (min-width: 1200px) {
+            html {
+                font-size: 1.25rem;
+            }
+        }
+
         .glassbga {
             /*渐变*/
             background: linear-gradient(to right bottom, rgba(255, 255, 255, 0.7), rgba(255, 255, 255, 0.2));
@@ -64,7 +94,7 @@
     <!--悬浮球-->
     <div class="circle1 circle-ab"> </div>
     <div class="circle2 circle-ab"></div>
-  <!---上面的结果框val--->
+    <!---上面的结果框val--->
     <div class="container ">
         <div class="w-100 mb-5   d-none d-md-block"><!---高度垫子 小设备隐藏--></div>
         <div class="container ">
@@ -169,7 +199,7 @@
         </div>
     </transition>
 
- 
+
     <!---载入动画--->
     <transition leave-active-class="animated fadeOut">
         <div v-if="pd.sp==0?false:true"
@@ -179,7 +209,7 @@
         </div>
     </transition>
     <!---进度条---->
-    <transition   enter-active-class="animated fadeIn" leave-active-class="animated fadeOut">
+    <transition   >
         <div v-if="pd.showProgress" class="center w-75   px-3   " style="z-index: 1082 ; ">
             <div class="progress">
                 <div class=" progress-bar  progress-bar-striped progress-bar-animated  "
@@ -188,14 +218,13 @@
         </div>
     </transition>
     <!---遮罩1024--->
-    
-        <div v-if="pd.showLoading" @click="er.emit('遮罩',0) " style="z-index: 1081  ;"
-            class=" modal-backdrop show "> </div>
-    
+
+    <div v-if="pd.showLoading" @click="er.emit('遮罩',0) " style="z-index: 1081  ;" class=" modal-backdrop show "> </div>
+
     <!---侧边栏 -->
-    <transition enter-active-class="animated fadeIn"  >
-        <nav v-if="pd.showNav " class="  d-flex  navbar-light bg-light"
-            style="z-index:1082; top:0;left:0;width: 240px; height: 100vh; position: fixed;">
+    <transition enter-active-class="animated fadeInLeft"  leave-active-class="animated fadeOutLeft"  >
+        <nav v-if="pd.showNav " class="    d-flex   bg-light"
+            style="z-index:1082; top:0;left:0;width: 220px; height: 100vh; position: fixed;  ">
             <ul>
                 <li class="nav-item ">
                     <a class="nav-link" href="#">目录 </a>
@@ -223,8 +252,8 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/vue/3.2.47/vue.global.prod.min.js"></script>
     <!--script src="https://cdnjs.cloudflare.com/ajax/libs/lodash.js/2.4.2/lodash.min.js"></script--->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/EventEmitter/5.2.8/EventEmitter.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.6.1/js/bootstrap.min.js"></script>
+    <!-- script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script -->
+    <!--script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.6.1/js/bootstrap.min.js"></script  -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/URI.js/1.19.11/URI.min.js"></script>
 
 
@@ -279,16 +308,17 @@
                 er.on('播放', this.play)
                 er.on('翻页', this.nextPage)
                 er.on('进度', this.progress)
-                er.on('导航',this.trunNav)
+                er.on('导航', this.trunNav)
             }
-            trunNav(n){
+            trunNav(n) {
                 const that = gd.oui
-                pvs.showNav=n
+                pvs.showNav = n
                 pvs.showLoading = n
             }
             loadJson() {
                 //一次性加载 json数据  默认数据来源当前站点，当前没有访问主站
                 const that = gd.oui
+				  that.progressVal (6)
 
                 var dc = pvs.url.query(true)
                 var src = pvs.url.host();//本站
@@ -338,7 +368,7 @@
                 if (pvs.page > pvs.total) { pvs.page = pvs.total; that.showInfo("已经到头", '翻页'); return; }
                 //---处理
                 gd.storage.set('page', pvs.page)
-                pvs.vprogress = 6
+                that.progressVal (6)
                 //载入数据 
                 that.signing(1)
             }
@@ -351,29 +381,33 @@
             loginLoading(n) {
                 //登入中效果
                 pvs.showLoading = n
-                if( pvs.showLoading == 0 ){pvs.showNav = 0}
-             
+                if (pvs.showLoading == 0) { pvs.showNav = 0 }
+
             }
             spto(n) {
                 //遮罩和二级界面
                 /*切换界面*/
                 pvs.sp = n
-
-
+            }
+            progressVal(n){
+                //直接设置值
+                const that = gd.oui
+                pvs.vprogress = n
+                that.progress(0)
             }
             progress(n) {
                 const that = gd.oui
                 //进度  0 和 100 都隐藏
-                
+
                 pvs.vprogress = pvs.vprogress + n
-                console.log("进度", n,pvs.vprogress)
+                console.log("进度", n, pvs.vprogress)
                 if (pvs.vprogress > 98) {
-                    pvs.vprogress  = 100
-                    setTimeout(function () { pvs.showProgress = 0 }, 50);
+                    pvs.vprogress = 100
+                    setTimeout(function () { pvs.showProgress = 0 }, 155);
                     that.spto(0)
                     that.loginLoading(0)
-                }else{
-                    pvs.showProgress = 1
+                } else {
+                    pvs.showProgress = 1 //未加载
                 }
             }
 
@@ -409,7 +443,7 @@
                 } else {
                     that.loginLoading(1) //json加载 
                     that.spto(1) //loading 
-                    pvs.vprogress = 6
+                    that.progressVal (6)
                     pvs.total = dataFromJSON.data.length
                 }
 
@@ -455,7 +489,7 @@
                 gd.oui = oui; //ui界面
 
 
-                //watch(pd, oui.watchPg, { deep: true });
+                watch(gd.pd, oui.watchPg, { deep: true });
 
                 //computed(() => { return JSON.parse(JSON.stringify(pvs)); }); //对值二次计算
                 //onMounted(() => ocls.bindEvt()); //窗口大小变动事件
