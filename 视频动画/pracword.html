@@ -94,7 +94,7 @@
     <!--悬浮球-->
     <div class="circle1 circle-ab"> </div>
     <div class="circle2 circle-ab"></div>
-  <!---上面的结果框val--->
+    <!---上面的结果框val--->
     <div class="container ">
 
         <!--选题列表-->
@@ -103,8 +103,8 @@
 
             <div class=" row  col-md-10 col-sm-12 flex-wrap    bg-warning glassbga    ">
                 <span v-for="(site, index) in pd.wordLs"
-                    :class="[{'text-warning': (index+1  == pd.page )}, {' text-center': (index  != pd.page )}]"
-                    class="btn  col-1 badge   badge-secondary mx-1  px-1 my-1"
+                    :class="[{'text-warning': (index+1  == pd.page )}, {' text-center': (index  != pd.page )} ,{'btn':(index+1  != pd.page )}]"
+                    class="  col-1 badge   badge-secondary mx-1  px-1 my-1"
                     @click="er.emit('跳转',index+1) ">{{index+1}}</span>
             </div>
 
@@ -123,17 +123,15 @@
     <!--卡片-->
     <div class=" container-md   glassbga  pt-md-5  pb-md-5 pt-sm-1  pb-sm-1">
 
+
         <div class=" row   align-items-center   justify-content-around   ">
-
-            <img onload="er.emit('进度',30) " v-bind:src="pd.row.img" style="max-width:100%;overflow:hidden;"
-                class="img-fluid" alt="...">
+            <img onload="er.emit('预加载',10) "   
+             v-bind:src="pd.row.img" style="max-width:100%;overflow:hidden;"
+                class="img-fluid" v-bind:style="{ visibility: pd.selectedCss  }"> 
         </div>
-        <img onload="er.emit('进度',30) " v-bind:src="pd.row.imgx" style=" visibility: hidden; max-width:100%; height: 0px;"
-        class="img-fluid" alt="...">
 
-
+        <!---nan文字-->
         <div class=" row   align-items-center   justify-content-around" style="height: 80px;">
-
             <button @click="er.emit('播放',0) "
                 class="btn ml-sm-5 mx-sm-2   px-sm-5 shadow  badge-secondary badge   badge-pill">
                 <h3 class="text-nowrap"> {{pd.row.zh || 中文}} </h3>
@@ -143,16 +141,18 @@
                 <h3 class="text-nowrap">{{pd.row.en || 英文}} </h3>
             </button>
         </div>
-        <!---nan-->
+        <!---nan音频-->
         <div class=" d-flex    align-items-center  justify-content-around " style="height: 80px;">
 
             <span class="  w-50  ml-sm-5 mx-sm-2     shadow   badge-info   badge badge-pill">
-                <audio onloadeddata="er.emit('进度',31) " class="  w-100   " controls="controls" v-bind:src="pd.row.zh4m">
+                <audio onloadeddata="er.emit('预加载',12) " class="  w-100   " controls="controls"
+                    v-bind:src="pd.row.zh4mp3">
                     Your browser does not support the audio element.
                 </audio>
             </span>
             <span class="  w-50    mr-sm-5 mx-sm-2     shadow   badge-info badge   badge-pill">
-                <audio onloadeddata="er.emit('进度',32) " class="  w-100   " controls="controls" v-bind:src="pd.row.en4m">
+                <audio onloadeddata="er.emit('预加载',13) " class="  w-100   " controls="controls"
+                    v-bind:src="pd.row.en4mp3">
                     Your browser does not support the audio element.
                 </audio>
             </span>
@@ -163,24 +163,36 @@
         <p>从下面的单词中选择你认为正确的，然后✔</p>
     </div>
     <!--选择区-->
-    <div id="toChange" class=" container-md    glassbga    mb-sm-4    mb-1  pt-3  pb-3">
-        <div class=" row  align-items-center  justify-items-around">
-            <span  v-for="(site, index) in pd.choose"   @click="er.emit('播放',0) "
-                class="btn ml-sm-2 mx-sm-1   px-sm-2 shadow  badge-secondary     badge-pill">
-                <h3 class="flex-wrap"> {{ site }} </h3>
-            </span>
-           
+    <div class=" container-md    glassbga    mb-sm-4    mb-1  pt-3  pb-3">
+        <div class=" row  align-items-center  justify-content-center mx-1 ">
 
+            <div v-for="(site, index) in pd.choose" class=" col-6  col-sm-3 my-1 my-sm-1 row  align-items-center  justify-content-center">
+                <label class="text-dark  mx-1   mx-sm-1   px-sm-2    ">{{ index +1 }} </label>
+                <span @click="er.emit('播放',index+1) " class="btn mr-1 mr-sm-2 mr-sm-1   px-2 shadow  badge-info badge-pill">
+                    <h4 class="flex-wrap"> {{ site }} </h4>
+                </span>
+            </div>
 
         </div>
 
     </div>
- 
+    <!---加载区--->
+    <div style=" visibility: hidden; max-width:100%; height: 0px;">
+        <div v-for="(site, index) in pd.chooseRow">
+            <img v-if="site.img != pd.row.img"  onload="er.emit('预加载',11) " v-bind:src="site.img">
+            <audio v-if="site.img != pd.row.img" onloadeddata="er.emit('预加载',11) " class="  w-25  " controls="controls" v-bind:src="site.en4m2mp3">
+                Your browser does not support the audio element.
+            </audio>
+            
+        </div>
+        <img   onload="er.emit('预加载',9) " v-bind:src="pd.row.imgx">
+    </div>
+
 
     <!--功能选择--->
     <div class="fixed-bottom row justify-content-center rounded   ">
         <div class="mt-2 row justify-content-center  ">
-            <div class="w-100 mb-5   d-none d-md-block"><!---高度垫子 小设备隐藏--></div>
+ 
             <div class="container   ">
                 <ul class="nav nav-tabs">
                     <li class="nav-item">
@@ -222,7 +234,7 @@
         </div>
     </transition>
     <!---进度条---->
-    <transition   >
+    <transition>
         <div v-if="pd.showProgress" class="center w-75   px-3   " style="z-index: 1082 ; ">
             <div class="progress">
                 <div class=" progress-bar  progress-bar-striped progress-bar-animated  "
@@ -235,7 +247,7 @@
     <div v-if="pd.showLoading" @click="er.emit('遮罩',0) " style="z-index: 1081  ;" class=" modal-backdrop show "> </div>
 
     <!---侧边栏 -->
-    <transition enter-active-class="animated fadeInLeft"  leave-active-class="animated fadeOutLeft"  >
+    <transition enter-active-class="animated fadeInLeft" leave-active-class="animated fadeOutLeft">
         <nav v-if="pd.showNav " class="    d-flex   bg-light"
             style="z-index:1082; top:0;left:0;width: 220px; height: 100vh; position: fixed;  ">
             <ul>
@@ -265,12 +277,12 @@
 
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/vue/3.2.47/vue.global.prod.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/lodash.js/2.4.2/lodash.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/lodash.js/3.9.3/lodash.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/EventEmitter/5.2.8/EventEmitter.min.js"></script>
     <!-- script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script -->
     <!--script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.6.1/js/bootstrap.min.js"></script  -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/URI.js/1.19.11/URI.min.js"></script>
- 
+
     <script>
         const er = new EventEmitter //事件线
         const { onMounted, emits, createApp, ref, watch, computed } = Vue
@@ -310,9 +322,14 @@
                 pvs.info_list = []//{info:"2",type:"2"}
 
                 pvs.vprogress = 100 //进度条
-				pvs.showProgress = 0 //进度条
+                pvs.showProgress = 0 //进度条
+                //----页面参数
+                pvs.url = new URI() //获取去 type，pid ，默认访问本站，数据加载主站
+
+                //
+                pvs.selected = -1 //选择的单词
+                pvs.selectedCss = 'hidden' //选择的单词
                 pvs.wordLs = []
-    
                 this.init();
             }
             init() {
@@ -322,10 +339,19 @@
                 er.on('播放', this.play)
                 er.on('翻页', this.nextPage)
                 er.on('跳转', this.toPage)
-                er.on('进度', this.progress)
+                er.on('进度', this.progress) 
+                er.on('预加载', this.preload)//预加载
                 er.on('导航', this.trunNav)
             }
+            preload(n) {
+                const that = gd.oui
+                //预加载
+                console.log(n)
+                that.progress(n)
+
+            }
             trunNav(n) {
+                //切换导航栏
                 const that = gd.oui
                 pvs.showNav = n
                 pvs.showLoading = n
@@ -335,15 +361,21 @@
                 //一次性加载 json数据  默认数据来源当前站点，当前没有访问主站
 
                 const that = gd.oui
-            
-                that.progressVal (6)
+
+                that.progressVal(6)
+                var dc = pvs.url.query(true)
+                var src = pvs.url.host();//本站
+                pvs.type = dc['t'] ? dc['t'] : 'camb_word';//业务类型
+                pvs.pid = String(dc['p'] ? dc['p'] : 365);//对应id
+                console.log("script参数=", src, pvs.type, pvs.pid)
                 //document.getElementById('dataFromJson').remove ()
                 // delete  dataFromJSON .data
                 // 添加数据json元素
 
                 var st = document.createElement("script");
                 st.id = 'dataFromJson';
-                st.src = 'https://disk.17121.top/camb_word/6/5/365/cfg_365.json';
+                st.src = `//${src}/${pvs.type}/${pvs.pid.substring(pvs.pid.length - 2, pvs.pid.length - 1)}/${pvs.pid.substring(pvs.pid.length - 1)}/cfg_${pvs.pid}.json`
+                //'https://disk.17121.top/camb_word/6/5/365/cfg_365.json';
                 // 'https://p_disk.17121.top/camb_word/6/5/365/cfg_365.json'; //经过代理
                 st.onerror = that.signErr;
                 st.onload = that.signing;
@@ -364,16 +396,19 @@
                 if (page <= 0) { page = 1; }
                 if (page > pvs.total) { page = pvs.total; }
                 gd.storage.set('page', page);
+                pvs.page = page
                 return page;
 
             }
             toPage(n) {
+                if (pvs.page == n) { return; }
+
                 const that = gd.oui
                 //跳转到某页面
                 pvs.page = parseInt(n);
                 //---处理
                 gd.storage.set('page', pvs.page)
-                that.progressVal (6)
+                that.progressVal(6)
                 //载入数据 
                 that.signing(1)
 
@@ -392,7 +427,7 @@
                 if (pvs.page > pvs.total) { pvs.page = pvs.total; that.showInfo("已经到头", '翻页'); return; }
                 //---处理
                 gd.storage.set('page', pvs.page)
-                that.progressVal (6)
+                that.progressVal(6)
                 //载入数据 
                 that.signing(1)
 
@@ -413,7 +448,7 @@
                 /*切换界面*/
                 pvs.sp = n
             }
-            progressVal(n){
+            progressVal(n) {
                 //直接设置值
                 const that = gd.oui
                 pvs.vprogress = n
@@ -444,7 +479,7 @@
             signErr(error) {
                 //登入错误处理
                 const that = gd.oui
-                //pvs.login_info = "无法加载到数据，刷新重试"
+
                 console.log('Error:', error); //提示框
                 that.loginLoading(0) //loading 
                 that.spto(0) //loading  
@@ -454,44 +489,67 @@
                 // 读取数据到 json/翻页    页面
                 console.log('dat==', dat)
                 const that = gd.oui
-                
-                that.progressVal (6)
+
+                that.progressVal(6)
                 that.loginLoading(1) //内部翻页 
                 that.spto(1) //loading 
                 //词展示++++
                 if (dat != 1) {//非内部翻页-首次加载
-                    pvs.total = dataFromJSON.data.length
-                    pvs.wordLs = dataFromJSON.data
-                }   
+
+                    pvs.wordLs = _.slice(_.shuffle(dataFromJSON.data), 0, 9)
+
+                    //pvs.wordLs = dataFromJSON.data
+                    pvs.total = pvs.wordLs.length
+
+                }
                 if (typeof (dataFromJSON) == "undefined" || dataFromJSON.data.length == 0) { that.showInfo("没找到数据", '翻页'); return; } //没数据
                 that.getPage() //if (pvs.page > pvs.total) { pvs.page = 1 }
-                
+
                 //设置数据
                 console.log(dataFromJSON.src, pvs.page, dataFromJSON.data[pvs.page - 1])
-                var row = dataFromJSON.data[pvs.page - 1]
+                var row = pvs.wordLs[pvs.page - 1]
                 //创建选区
-                pvs.choose = that.mkchoose(row,dataFromJSON.data)
-
-                //pvs.row.img = '/en500word/h/e/健康.png' //  /en500word/h/e/健康.png
+                pvs.choose = that.mkchoose(row, dataFromJSON.data)
                 //设置 mp3
-                pvs.row.zh4m = dataFromJSON.src + row.cn4m2mp3.substring(1)
-                pvs.row.en4m = dataFromJSON.src + row.en4m2mp3.substring(1)   //  
-                pvs.row.zh = row.cn
-                pvs.row.en = "?"
-                //pvs.row.img = dataFromJSON.src + row.img.substring(1) //  /en500word/h/e/健康.png
-                pvs.row.img = dataFromJSON.src + 'camb_word/choose.png'
-                pvs.row.imgx = dataFromJSON.src + row.img.substring(1)
-            
+                pvs.row.zh = row.zh
+                pvs.row.en = "?"// row.en
+                pvs.row.zh4mp3 = that.mkPath(row.en) + row.zh4m2mp3
+                pvs.row.en4mp3 = that.mkPath(row.en) + row.en4m2mp3
+                pvs.row.img = that.mkPath(row.en) + row.img
+                pvs.row.imgx = `//${pvs.url.host()}/${pvs.type}/choose.png` //?q=${ new Date().valueOf() }
+ 
+                //  加载5组10个音图文件（异步）
+                pvs.chooseRow = _.map(pvs.chooseRow, function (o) { return  {} }) //清空
+                setTimeout(function () { that.loadChoose(); }, 150);
             }
-            mkchoose(row,dat){
-                //创建选区
+            mkPath(wrod) {
+                return `//${pvs.url.host()}/${pvs.type}/${wrod.substring(0, 1).toLowerCase()}/${wrod.substring(1, 2).toLowerCase()}/`
+            }
+            loadChoose(){
+                const that = gd.oui
+                
+                //单独处理选择列表
+                //pvs.chooseRow = _.filter(dataFromJSON.data, function (o) { return pvs.choose.indexOf(o.en) >= 0; });//无序
+                pvs.chooseRow = _.map( pvs.choose , function (o) { return  _.find(dataFromJSON.data,{"en":o}); });//有序
+
+                pvs.chooseRow = _.cloneDeep( pvs.chooseRow ) //深度拷贝 
+                pvs.chooseRow = _.map(pvs.chooseRow, function (o) {
+                    //计算长路径  免缓存
+                    o.en4m2mp3 = that.mkPath(o.en) + o.en4m2mp3;
+                    o.img = that.mkPath(o.en) + o.img;
+                    return o;
+                }
+                );
+            }
+            mkchoose(row, dat) {
+                //创建 选区单词
                 var ls = [row.en]
 
-                var count = Math.min(4,dat.length)
+                var count = Math.min(4, dat.length)
                 var tmp = ''
-                while(! (ls.length>= count)){
+                while (!(ls.length >= count)) {
                     tmp = _.sample(dat).en
-                    if( _.include(ls, tmp) ){
+                    if (_.include(ls, tmp)) {
                         continue//不重复
                     }
                     ls.push(tmp)
@@ -499,17 +557,16 @@
                 _.find(ls, ['a']);
                 return _.shuffle(ls)
             }
+
             watchPg(newValue, oldValue) {
                 //watch
                 //console.log('gd pagedata 被修改', newValue.page, oldValue.page)
                 //console.log('gd pagedata 被修改\n', newValue, '\n', oldValue)
             }
         }
-
         //----------开始
         let appdat = {
             setup() {
-
                 const oui = new pgui(); //界面更改"方法"
                 //const ocls = new cls(12);//默认选择
                 //---放入全局解决this问题
@@ -529,11 +586,5 @@
         //app.use(Quasar) //vue的ui
         app.mount('#q-app')
     </script>
-
-
-
-
-
 </body>
-
 </html>

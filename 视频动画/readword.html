@@ -689,9 +689,6 @@
                                 that.showInfo('出现错误', '获取音标：')
                                 console.log('ph==', dat.data.data[pvs.row.en][0], dat.data)
                             }
-
-
-
                         }
                     )
                     .catch(that.getErr)
@@ -714,7 +711,6 @@
                 gd.storage.set('defTable', pvs.defTable);//默认表
                 gd.storage.set('defPath', pvs.defPath);//默认表
                 gd.storage.set('defFrom', pvs.defFrom);//默认查询条件
-
                 that.showInfo('设置成功', '表和路径：')
                 setTimeout(function () { that.nextPage(0); }, 1000);
 
@@ -760,7 +756,6 @@
                             that.showInfo(dat.data['@msg'], '创建图片：')
                             that.loginLoading(0)
                             that.spto(0)
-
                             setTimeout(function () { location.reload(true); }, 1000);
                         }
                     )
@@ -810,8 +805,6 @@
                 data['zh'] = pvs.row.zh
                 data['en'] = pvs.row.en
                 data['dir'] = pvs.defPath
-
-
                 console.log(data)
                 // //发送
                 //return
@@ -826,12 +819,6 @@
                         }
                     )
                     .catch(that.getErr)
-
-                // fetch(url, opt)
-                //     .then(res => res.json())
-                //     .catch(that.getErr)
-                //     .then(dat => er.emit('更新.发音人完成', dat))
-                //     ;
                 //动画效果
                 that.loginLoading(1)
                 that.spto(1) //loading 
@@ -849,8 +836,6 @@
                 ja['@page'] = pvs.page
                 ja['mkimg'] = 1 //是否显示
                 if (pvs.defFrom) { ja['f'] = pvs.defFrom } //来源条件
-
-
                 //发送
                 var data = {};
                 data[pvs.defTable] = ja
@@ -872,7 +857,6 @@
                 //遮罩和二级界面
                 /*切换界面*/
                 pvs.sp = n
-
             }
 
             progress(n) {
@@ -885,7 +869,6 @@
                     that.loginLoading(0)
                 }
             }
-
             showInfo(info, type = '') {
                 //结果提示信息 （数据驱动）
                 //添加数据，来添加提示
@@ -893,7 +876,6 @@
                 //缺少动效
                 setTimeout(function () { pvs.info_list.splice(0, 1); }, 4000);
             }
-
             getErr(error) {
                 //登入错误处理
                 const that = gd.oui
@@ -901,7 +883,6 @@
                 that.loginLoading(0) //loading 
                 that.spto(0) //loading  
                 that.showInfo('无法加载到数据，刷新重试', '载入数据：') //loading  
-
             }
             toGeted(dat) {
                 // 读取数据到 json/翻页    页面
@@ -937,12 +918,10 @@
                 that.loginLoading(0) //loading 
                 that.spto(0) //loading 
                 that.showInfo(dat.data['@msg'], '更新音标：') //loading  
-
                 //setTimeout(function () { that.toGet(0); }, 500);  //更新数据
                 that.toGet(0);
 
             }
-
             watchPg(newValue, oldValue) {
                 //watch
                 console.log('gd pagedata 被修改')
@@ -954,7 +933,6 @@
                 lang = lang ? lang : pvs.mknew.langCode
                 gen = gen ? gen : pvs.mknew.genderCode
                 console.log(' set showOp   ', lang, gen)
-
                 const ls = [];
                 for (var i in pvs.selectList) {
                     if (pvs.selectList[i].Locale == lang && pvs.selectList[i].Gender == gen) {
@@ -969,7 +947,6 @@
         //----------开始
         let appdat = {
             setup() {
-
                 const oui = new pgui(); //界面更改"方法"
                 //const ocls = new cls(12);//默认选择
                 //---放入全局解决this问题

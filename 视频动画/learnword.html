@@ -148,7 +148,7 @@
     <!--功能选择--->
     <div class="fixed-bottom row justify-content-center rounded   ">
         <div class="mt-2 row justify-content-center  ">
-            <div class="w-100 mb-5   d-none d-md-block"><!---高度垫子 小设备隐藏--></div>
+            
             <div class="container   ">
                 <ul class="nav nav-tabs">
                     <li class="nav-item">
@@ -174,7 +174,7 @@
                 <span class="position-absolute badge badge-light badge-pill" v-text="pd.nameSize"> </span>
             </button>
             <label class="text-dark d-flex  align-items-center  ">当前第</label>
-            <input type="text" v-model="pd.page" class="w-25 form-control"> <label
+            <input  @change="er.emit('翻页',0) " type="text" v-model="pd.page" class="w-25 form-control"> <label
                 class="text-dark d-flex  align-items-center  ">个共{{ pd.total }}</label>
 
 
@@ -209,7 +209,7 @@
         </div>
     </transition>
     <!---进度条---->
-    <transition   >
+    <transition>
         <div v-if="pd.showProgress" class="center w-75   px-3   " style="z-index: 1082 ; ">
             <div class="progress">
                 <div class=" progress-bar  progress-bar-striped progress-bar-animated  "
@@ -222,7 +222,7 @@
     <div v-if="pd.showLoading" @click="er.emit('遮罩',0) " style="z-index: 1081  ;" class=" modal-backdrop show "> </div>
 
     <!---侧边栏 -->
-    <transition enter-active-class="animated fadeInLeft"  leave-active-class="animated fadeOutLeft"  >
+    <transition enter-active-class="animated fadeInLeft" leave-active-class="animated fadeOutLeft">
         <nav v-if="pd.showNav " class="    d-flex   bg-light"
             style="z-index:1082; top:0;left:0;width: 220px; height: 100vh; position: fixed;  ">
             <ul>
@@ -318,7 +318,7 @@
             loadJson() {
                 //一次性加载 json数据  默认数据来源当前站点，当前没有访问主站
                 const that = gd.oui
-				  that.progressVal (6)
+                that.progressVal(6)
 
                 var dc = pvs.url.query(true)
                 var src = pvs.url.host();//本站
@@ -368,7 +368,7 @@
                 if (pvs.page > pvs.total) { pvs.page = pvs.total; that.showInfo("已经到头", '翻页'); return; }
                 //---处理
                 gd.storage.set('page', pvs.page)
-                that.progressVal (6)
+                that.progressVal(6)
                 //载入数据 
                 that.signing(1)
             }
@@ -389,7 +389,7 @@
                 /*切换界面*/
                 pvs.sp = n
             }
-            progressVal(n){
+            progressVal(n) {
                 //直接设置值
                 const that = gd.oui
                 pvs.vprogress = n
@@ -422,9 +422,7 @@
                 //登入错误处理
                 const that = gd.oui
 
-                console.log('Error:', error);
-
-
+                console.log('Error:', error); //提示框
                 that.loginLoading(0) //loading 
                 that.spto(0) //loading  
                 that.showInfo('无法加载到数据，刷新重试', '载入数据：') //loading  
@@ -435,15 +433,13 @@
                 // 读取数据到 json/翻页    页面
 
                 const that = gd.oui
+                that.loginLoading(1) //json加载 
+                that.spto(1) //loading 
+                that.progressVal(6)
                 console.log('dat==', dat)
                 //词展示++++
-                if (dat == 1) {
-                    that.loginLoading(1) //内部翻页 
-                    that.spto(1) //loading 
-                } else {
-                    that.loginLoading(1) //json加载 
-                    that.spto(1) //loading 
-                    that.progressVal (6)
+                if (dat != 1) {//非内部翻页-首次加载
+
                     pvs.total = dataFromJSON.data.length
                 }
 
