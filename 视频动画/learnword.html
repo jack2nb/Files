@@ -84,6 +84,10 @@
             top: 10%;
             transform: translate(-50%, -50%);
         }
+
+        [v-cloak] {
+            display: none;
+        }
     </style>
 </head>
 <!--
@@ -95,7 +99,7 @@
     <div class="circle1 circle-ab"> </div>
     <div class="circle2 circle-ab"></div>
     <!---上面的结果框val--->
-    <div class="container ">
+    <div  v-cloak class="container ">
         <div class="w-100 mb-5   d-none d-md-block"><!---高度垫子 小设备隐藏--></div>
         <div class="container ">
             <div class="w-100 pt-5  pb-5 "><!---高度垫子 小设备隐藏--></div>
@@ -104,7 +108,7 @@
     </div>
 
     <!--卡片-->
-    <div class=" container-sm   glassbga  pt-5  pb-5">
+    <div  v-cloak class=" container-sm   glassbga  pt-5  pb-5">
 
         <div class=" row   align-items-center   justify-content-around   ">
 
@@ -160,7 +164,8 @@
                             href="./pracword.html">练一练</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link shadow   bg-secondary  text-white  px-lg-5 mx-md-2 mx-lg-5" href="#">试一试</a>
+                        <a class="nav-link shadow   bg-secondary  text-white  px-lg-5 mx-md-2 mx-lg-5" 
+                        href="./testword.html">试一试</a>
                     </li>
                 </ul>
             </div>
@@ -188,7 +193,7 @@
     </div>
 
     <!---info提示信息--->
-    <transition mode="out-in" enter-active-class="animated pulse" leave-active-class="animated fadeOut">
+    <transition  v-cloak mode="out-in" enter-active-class="animated pulse" leave-active-class="animated fadeOut">
         <div class=" container-sm  fixed-top    " style="z-index: 1083 ;" v-for="site in pd.info_list">
             <div class="alert  alert-warning alert-dismissible fade show" role="alert">
                 <strong>{{site.type}}</strong>{{ site.info }}
@@ -209,7 +214,7 @@
         </div>
     </transition>
     <!---进度条---->
-    <transition>
+    <transition  v-cloak >
         <div v-if="pd.showProgress" class="center w-75   px-3   " style="z-index: 1082 ; ">
             <div class="progress">
                 <div class=" progress-bar  progress-bar-striped progress-bar-animated  "
@@ -222,7 +227,7 @@
     <div v-if="pd.showLoading" @click="er.emit('遮罩',0) " style="z-index: 1081  ;" class=" modal-backdrop show "> </div>
 
     <!---侧边栏 -->
-    <transition enter-active-class="animated fadeInLeft" leave-active-class="animated fadeOutLeft">
+    <transition  v-cloak enter-active-class="animated fadeInLeft" leave-active-class="animated fadeOutLeft">
         <nav v-if="pd.showNav " class="    d-flex   bg-light"
             style="z-index:1082; top:0;left:0;width: 220px; height: 100vh; position: fixed;  ">
             <ul>
