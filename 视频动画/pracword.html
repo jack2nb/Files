@@ -102,7 +102,7 @@
             <div class=" row col-12 flex-wrap bg-warning glassbga d-flex justify-content-center ">
                 <span v-for="(site, index) in pd.wordLs"
                     :class="[{'text-warning': (index+1  == pd.page )}, {' text-center': (index  != pd.page )} ,{'btn':(index+1  != pd.page )}]"
-                    class=" my-1  col-1 badge   badge-secondary mx-1  px-1 my-1"
+                    class=" my-1  col-1 badge   badge-secondary mx-1  px-1 my-2"
                     @click="er.emit('跳转',index+1) ">{{index+1}}</span>
             </div>
         </div>
@@ -118,8 +118,9 @@
     </div>
     <!--卡片-->
     <div class=" container-md   glassbga  pt-md-5  pb-md-5 pt-sm-1  pb-sm-1">
+   
         <div class=" row   align-items-center   justify-content-around   ">
-            <img v-bind:src="pd.row.img" style="max-width:100%;overflow:hidden;" class="img-fluid"
+            <img v-bind:src="pd.row.img" style="max-width:100%;overflow:hidden;"  sytle="clear:both" class="img-fluid"
                 v-bind:style="{ visibility: pd.selectedCss  }">
         </div>
         <!---nan文字-->
@@ -174,7 +175,7 @@
 
     </div>
     <!---加载区xxxxxxxxxx--->
-    <div style=" visibility: hidden; max-width:100%; height: 0px;">
+    <div v-if=" pd.unload "  style=" visibility: hidden; max-width:100%; height: 0px;">
         <div v-for="(site, index) in pd.chooseRow">
             <img onload="er.emit('预加载',11) " v-bind:src="site.img">
             <audio onloadeddata="er.emit('预加载',11) " class="  w-25  " controls="controls" v-bind:src="site.en4m2mp3">
@@ -321,7 +322,8 @@
                 //----页面参数
                 pvs.url = new URI() //获取去 type，pid ，默认访问本站，数据加载主站
                 //选择的单词
-                pvs.selected = -1 //选择的单词
+                pvs.unload = 1 //预加载后隐藏
+                pvs.selected = '' //选择的单词
                 pvs.selectedCss = 'hidden' //选择的单词
                 pvs.wordLs = []
                 this.init();
@@ -348,9 +350,11 @@
                 pvs.selectedCss = ''//显示
                 pvs.row.en = dc.word
                 pvs.row.img = that.mkPath(row.en) + row.img
+                pvs.row.en4mp3 =  that.mkPath(row.en) + row.en4m2mp3
 
-
-                that.play(dc.play)
+                setTimeout(()=>{  that.play(1)},150)
+                //that.play(dc.play)
+              
 
             }
             trunNav(n) {
@@ -414,6 +418,7 @@
                 that.progressVal(6)
                 //载入数据 
                 that.signing(1)
+                pvs.unload = 1
 
             }
             nextPage(n) {
@@ -464,6 +469,7 @@
                 console.log("进度", n, pvs.vprogress)
                 if (pvs.vprogress > 98) {
                     pvs.vprogress = 100
+                    pvs.unload = 0 //加载完 删除元素
                     setTimeout(function () { pvs.showProgress = 0 }, 155);
                     that.spto(0)
                     that.loginLoading(0)
