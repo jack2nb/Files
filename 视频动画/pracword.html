@@ -96,20 +96,16 @@
     <div class="circle2 circle-ab"></div>
     <!---上面的结果框val--->
     <div class="container ">
-
-        <!--选题列表-->
-        <div class="  row     justify-content-center     ">
-            <div class="w-100 mt-5   d-none d-md-block"><!---高度垫子 小设备隐藏--></div>
-
-            <div class=" row  col-md-10 col-sm-12 flex-wrap    bg-warning glassbga    ">
+        <!--题列表-->
+        <div class=" row justify-content-center ">
+            <div class="w-100 mt-5 d-none d-md-block"><!---高度垫子 小设备隐藏--></div>
+            <div class=" row col-12 flex-wrap bg-warning glassbga d-flex justify-content-center ">
                 <span v-for="(site, index) in pd.wordLs"
                     :class="[{'text-warning': (index+1  == pd.page )}, {' text-center': (index  != pd.page )} ,{'btn':(index+1  != pd.page )}]"
-                    class="  col-1 badge   badge-secondary mx-1  px-1 my-1"
+                    class=" my-1  col-1 badge   badge-secondary mx-1  px-1 my-1"
                     @click="er.emit('跳转',index+1) ">{{index+1}}</span>
             </div>
-
         </div>
-
     </div>
     <div class="container ">
         <div class="mt-2 row justify-content-center  ">
@@ -122,24 +118,24 @@
     </div>
     <!--卡片-->
     <div class=" container-md   glassbga  pt-md-5  pb-md-5 pt-sm-1  pb-sm-1">
-
-
         <div class=" row   align-items-center   justify-content-around   ">
-            <img onload="er.emit('预加载',10) "   
-             v-bind:src="pd.row.img" style="max-width:100%;overflow:hidden;"
-                class="img-fluid" v-bind:style="{ visibility: pd.selectedCss  }"> 
+            <img v-bind:src="pd.row.img" style="max-width:100%;overflow:hidden;" class="img-fluid"
+                v-bind:style="{ visibility: pd.selectedCss  }">
         </div>
-
         <!---nan文字-->
         <div class=" row   align-items-center   justify-content-around" style="height: 80px;">
-            <button @click="er.emit('播放',0) "
-                class="btn ml-sm-5 mx-sm-2   px-sm-5 shadow  badge-secondary badge   badge-pill">
-                <h3 class="text-nowrap"> {{pd.row.zh || 中文}} </h3>
-            </button>
-            <button @click="er.emit('播放',1) "
-                class="btn mr-sm-5 mx-sm-2   px-sm-5    shadow   badge-info badge   badge-pill">
-                <h3 class="text-nowrap">{{pd.row.en || 英文}} </h3>
-            </button>
+            <div class=" col-6  row     justify-content-around">
+                <button @click="er.emit('播放',0) "
+                    class="btn ml-sm-5 mx-sm-2   px-sm-5 shadow  badge-secondary badge   badge-pill">
+                    <h3 class="text-nowrap"> {{pd.row.zh || 中文}} </h3>
+                </button>
+            </div>
+            <div class=" col-6  row     justify-content-around ">
+                <button @click="er.emit('播放',1) "
+                    class="btn mr-sm-5 mx-sm-2   px-sm-5    shadow   badge-info badge   badge-pill">
+                    <h3 class="text-nowrap">{{pd.row.en || 英文}} </h3>
+                </button>
+            </div>
         </div>
         <!---nan音频-->
         <div class=" d-flex    align-items-center  justify-content-around " style="height: 80px;">
@@ -151,8 +147,7 @@
                 </audio>
             </span>
             <span class="  w-50    mr-sm-5 mx-sm-2     shadow   badge-info badge   badge-pill">
-                <audio onloadeddata="er.emit('预加载',13) " class="  w-100   " controls="controls"
-                    v-bind:src="pd.row.en4mp3">
+                <audio class="  w-100   " controls="controls" v-bind:src="pd.row.en4mp3">
                     Your browser does not support the audio element.
                 </audio>
             </span>
@@ -162,13 +157,15 @@
     <div class=" container-md">
         <p>从下面的单词中选择你认为正确的，然后✔</p>
     </div>
-    <!--选择区-->
+    <!--选区-->
     <div class=" container-md    glassbga    mb-sm-4    mb-1  pt-3  pb-3">
-        <div class=" row  align-items-center  justify-content-center mx-1 ">
+        <div class="  row  align-items-center  justify-content-center   ">
 
-            <div v-for="(site, index) in pd.choose" class=" col-6  col-sm-3 my-1 my-sm-1 row  align-items-center  justify-content-center">
+            <div v-for="(site, index) in pd.choose"
+                class=" col-6  col-sm-3  my-1 my-sm-1 row  align-items-center  justify-content-center">
                 <label class="text-dark  mx-1   mx-sm-1   px-sm-2    ">{{ index +1 }} </label>
-                <span @click="er.emit('播放',index+1) " class="btn mr-1 mr-sm-2 mr-sm-1   px-2 shadow  badge-info badge-pill">
+                <span @click="er.emit('播放-候选',{'play':index+2,'word': site}) "
+                    class="btn mr-1 mr-sm-2 mr-sm-1   px-2 shadow  badge-info badge-pill">
                     <h4 class="flex-wrap"> {{ site }} </h4>
                 </span>
             </div>
@@ -176,23 +173,23 @@
         </div>
 
     </div>
-    <!---加载区--->
+    <!---加载区xxxxxxxxxx--->
     <div style=" visibility: hidden; max-width:100%; height: 0px;">
         <div v-for="(site, index) in pd.chooseRow">
-            <img v-if="site.img != pd.row.img"  onload="er.emit('预加载',11) " v-bind:src="site.img">
-            <audio v-if="site.img != pd.row.img" onloadeddata="er.emit('预加载',11) " class="  w-25  " controls="controls" v-bind:src="site.en4m2mp3">
+            <img onload="er.emit('预加载',11) " v-bind:src="site.img">
+            <audio onloadeddata="er.emit('预加载',11) " class="  w-25  " controls="controls" v-bind:src="site.en4m2mp3">
                 Your browser does not support the audio element.
             </audio>
-            
+
         </div>
-        <img   onload="er.emit('预加载',9) " v-bind:src="pd.row.imgx">
+        <img onload="er.emit('预加载',9) " v-bind:src="pd.row.imgx">
     </div>
 
 
     <!--功能选择--->
     <div class="fixed-bottom row justify-content-center rounded   ">
         <div class="mt-2 row justify-content-center  ">
- 
+
             <div class="container   ">
                 <ul class="nav nav-tabs">
                     <li class="nav-item">
@@ -318,15 +315,12 @@
                 pvs.showLoading = 0 //遮罩
                 pvs.total = 0
                 pvs.page = gd.storage.get('page') ? gd.storage.get('page') : 1;//显示动画
-
                 pvs.info_list = []//{info:"2",type:"2"}
-
                 pvs.vprogress = 100 //进度条
                 pvs.showProgress = 0 //进度条
                 //----页面参数
                 pvs.url = new URI() //获取去 type，pid ，默认访问本站，数据加载主站
-
-                //
+                //选择的单词
                 pvs.selected = -1 //选择的单词
                 pvs.selectedCss = 'hidden' //选择的单词
                 pvs.wordLs = []
@@ -337,17 +331,26 @@
 
                 er.on('遮罩', this.loginLoading)
                 er.on('播放', this.play)
+                er.on('播放-候选', this.playChoose)
                 er.on('翻页', this.nextPage)
                 er.on('跳转', this.toPage)
-                er.on('进度', this.progress) 
-                er.on('预加载', this.preload)//预加载
+                er.on('进度', this.progress)
+                er.on('预加载', this.progress)//预加载
                 er.on('导航', this.trunNav)
             }
-            preload(n) {
+            playChoose(dc) {
+                // 播放选择
                 const that = gd.oui
-                //预加载
-                console.log(n)
-                that.progress(n)
+                var row = _.find(dataFromJSON.data, { "en": dc.word })
+                console.log('playChoose', dc, row)
+                //设置值
+                pvs.selected = dc.word
+                pvs.selectedCss = ''//显示
+                pvs.row.en = dc.word
+                pvs.row.img = that.mkPath(row.en) + row.img
+
+
+                that.play(dc.play)
 
             }
             trunNav(n) {
@@ -496,7 +499,7 @@
                 //词展示++++
                 if (dat != 1) {//非内部翻页-首次加载
 
-                    pvs.wordLs = _.slice(_.shuffle(dataFromJSON.data), 0, 9)
+                    pvs.wordLs = _.slice(_.shuffle(dataFromJSON.data), 0, 9)//测试数
 
                     //pvs.wordLs = dataFromJSON.data
                     pvs.total = pvs.wordLs.length
@@ -517,22 +520,22 @@
                 pvs.row.en4mp3 = that.mkPath(row.en) + row.en4m2mp3
                 pvs.row.img = that.mkPath(row.en) + row.img
                 pvs.row.imgx = `//${pvs.url.host()}/${pvs.type}/choose.png` //?q=${ new Date().valueOf() }
- 
+
                 //  加载5组10个音图文件（异步）
-                pvs.chooseRow = _.map(pvs.chooseRow, function (o) { return  {} }) //清空
+                pvs.chooseRow = _.map(pvs.chooseRow, function (o) { return {} }) //清空
                 setTimeout(function () { that.loadChoose(); }, 150);
             }
             mkPath(wrod) {
                 return `//${pvs.url.host()}/${pvs.type}/${wrod.substring(0, 1).toLowerCase()}/${wrod.substring(1, 2).toLowerCase()}/`
             }
-            loadChoose(){
+            loadChoose() {
                 const that = gd.oui
-                
+
                 //单独处理选择列表
                 //pvs.chooseRow = _.filter(dataFromJSON.data, function (o) { return pvs.choose.indexOf(o.en) >= 0; });//无序
-                pvs.chooseRow = _.map( pvs.choose , function (o) { return  _.find(dataFromJSON.data,{"en":o}); });//有序
+                pvs.chooseRow = _.map(pvs.choose, function (o) { return _.find(dataFromJSON.data, { "en": o }); });//有序
 
-                pvs.chooseRow = _.cloneDeep( pvs.chooseRow ) //深度拷贝 
+                pvs.chooseRow = _.cloneDeep(pvs.chooseRow) //深度拷贝 
                 pvs.chooseRow = _.map(pvs.chooseRow, function (o) {
                     //计算长路径  免缓存
                     o.en4m2mp3 = that.mkPath(o.en) + o.en4m2mp3;
@@ -587,4 +590,5 @@
         app.mount('#q-app')
     </script>
 </body>
+
 </html>
