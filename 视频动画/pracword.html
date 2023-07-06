@@ -84,6 +84,10 @@
             top: 10%;
             transform: translate(-50%, -50%);
         }
+
+        [v-cloak] {
+            display: none;
+        }
     </style>
 </head>
 <!--
@@ -95,7 +99,7 @@
     <div class="circle1 circle-ab"> </div>
     <div class="circle2 circle-ab"></div>
     <!---上面的结果框val--->
-    <div class="container ">
+    <div v-cloak class="container ">
         <!--题列表-->
         <div class=" row justify-content-center ">
             <div class="w-100 mt-5 d-none d-md-block"><!---高度垫子 小设备隐藏--></div>
@@ -117,10 +121,10 @@
         </div>
     </div>
     <!--卡片-->
-    <div class=" container-md   glassbga  pt-md-5  pb-md-5 pt-sm-1  pb-sm-1">
-   
+    <div v-cloak class=" container-md   glassbga  pt-md-5  pb-md-5 pt-sm-1  pb-sm-1">
+
         <div class=" row   align-items-center   justify-content-around   ">
-            <img v-bind:src="pd.row.img" style="max-width:100%;overflow:hidden;"  sytle="clear:both" class="img-fluid"
+            <img v-bind:src="pd.row.img" style="max-width:100%;overflow:hidden;" sytle="clear:both" class="img-fluid"
                 v-bind:style="{ visibility: pd.selectedCss  }">
         </div>
         <!---nan文字-->
@@ -142,13 +146,13 @@
         <div class=" d-flex    align-items-center  justify-content-around " style="height: 80px;">
 
             <span class="  w-50  ml-sm-5 mx-sm-2     shadow   badge-info   badge badge-pill">
-                <audio onloadeddata="er.emit('预加载',12) " class="  w-100   " controls="controls"
-                    v-bind:src="pd.row.zh4mp3">
+                <audio onloadeddata="er.emit('预加载',12) " onended="er.emit('播放完成',0) " class="  w-100   "
+                    controls="controls" v-bind:src="pd.row.zh4mp3">
                     Your browser does not support the audio element.
                 </audio>
             </span>
             <span class="  w-50    mr-sm-5 mx-sm-2     shadow   badge-info badge   badge-pill">
-                <audio class="  w-100   " controls="controls" v-bind:src="pd.row.en4mp3">
+                <audio onended="er.emit('播放完成',1) " class="  w-100   " controls="controls" v-bind:src="pd.row.en4mp3">
                     Your browser does not support the audio element.
                 </audio>
             </span>
@@ -156,10 +160,10 @@
 
     </div>
     <div class=" container-md">
-        <p>从下面的单词中选择你认为正确的，然后✔</p>
+        <p>从下面的单词中选择认为正确的 </p>
     </div>
     <!--选区-->
-    <div class=" container-md    glassbga    mb-sm-4    mb-1  pt-3  pb-3">
+    <div v-cloak class=" container-md    glassbga    mb-sm-4    mb-1  pt-3  pb-3">
         <div class="  row  align-items-center  justify-content-center   ">
 
             <div v-for="(site, index) in pd.choose"
@@ -175,7 +179,7 @@
 
     </div>
     <!---加载区xxxxxxxxxx--->
-    <div v-if=" pd.unload "  style=" visibility: hidden; max-width:100%; height: 0px;">
+    <div v-if=" pd.unload " style=" visibility: hidden; max-width:100%; height: 0px;">
         <div v-for="(site, index) in pd.chooseRow">
             <img onload="er.emit('预加载',11) " v-bind:src="site.img">
             <audio onloadeddata="er.emit('预加载',11) " class="  w-25  " controls="controls" v-bind:src="site.en4m2mp3">
@@ -211,7 +215,7 @@
 
 
     <!---info提示信息--->
-    <transition mode="out-in" enter-active-class="animated pulse" leave-active-class="animated fadeOut">
+    <transition v-cloak mode="out-in" enter-active-class="animated pulse" leave-active-class="animated fadeOut">
         <div class=" container-sm  fixed-top    " style="z-index: 1083 ;" v-for="site in pd.info_list">
             <div class="alert  alert-warning alert-dismissible fade show" role="alert">
                 <strong>{{site.type}}</strong>{{ site.info }}
@@ -232,7 +236,7 @@
         </div>
     </transition>
     <!---进度条---->
-    <transition>
+    <transition v-cloak>
         <div v-if="pd.showProgress" class="center w-75   px-3   " style="z-index: 1082 ; ">
             <div class="progress">
                 <div class=" progress-bar  progress-bar-striped progress-bar-animated  "
@@ -245,7 +249,7 @@
     <div v-if="pd.showLoading" @click="er.emit('遮罩',0) " style="z-index: 1081  ;" class=" modal-backdrop show "> </div>
 
     <!---侧边栏 -->
-    <transition enter-active-class="animated fadeInLeft" leave-active-class="animated fadeOutLeft">
+    <transition v-cloak enter-active-class="animated fadeInLeft" leave-active-class="animated fadeOutLeft">
         <nav v-if="pd.showNav " class="    d-flex   bg-light"
             style="z-index:1082; top:0;left:0;width: 220px; height: 100vh; position: fixed;  ">
             <ul>
@@ -264,8 +268,43 @@
             </ul>
         </nav>
     </transition>
+    <transition v-cloak enter-active-class="animated flash">
+        <div v-cloak v-if="pd.showJudgment == 0" class="center text-success"
+            style="font-size:55px; z-index:1082; top:35%;    ">
+            ✔
+        </div>
+    </transition>
+
+
+    <transition v-cloak enter-active-class="animated flash">
+        <div v-cloak v-if="pd.showJudgment == 1" class="center text-danger"
+            style="font-size:55px;z-index:1082; top:35%;    ">
+            ❌
+        </div>
+    </transition>
+
+
+    <!----确认框---->
+    <transition v-cloak enter-active-class="animated fadeIn" leave-active-class="animated fadeOut">
+        <div v-cloak v-if="pd.showConfirm" class="center" style="z-index:1082; top:45%;    ">
+            <div class="modal-dialog shadow" role="document">
+
+                <div class="text-dark  modal-content">
+                    <div class="modal-body">
+                        <p>中文 "{{pd.row.zh}}"" 英文是 "{{ pd.row.en}}"</p>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-primary">确定</button>
+                        <button @click="pd.showConfirm = 0  " type="button" class="btn btn-secondary"
+                            data-dismiss="modal">关闭</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </transition>
+    <!-- 齿轮修改 --->
     <div class=" d-flex w-25  fixed-bottom justify-content-between  ">
-        <!-- 齿轮修改 --->
+
         <span @click="er.emit('导航',1) " class="  d-none  btn     justify-content-end      "
             style="font-size:28px;    ">⚙</span>
         <button @click="er.emit('导航',1) " class="navbar-light  navbar-toggler">
@@ -325,6 +364,9 @@
                 pvs.unload = 1 //预加载后隐藏
                 pvs.selected = '' //选择的单词
                 pvs.selectedCss = 'hidden' //选择的单词
+                //确认
+                pvs.showConfirm = 0//确认检查
+                pvs.showJudgment = -1//判断对错
                 pvs.wordLs = []
                 this.init();
             }
@@ -335,10 +377,36 @@
                 er.on('播放', this.play)
                 er.on('播放-候选', this.playChoose)
                 er.on('翻页', this.nextPage)
-                er.on('跳转', this.toPage)
+
                 er.on('进度', this.progress)
                 er.on('预加载', this.progress)//预加载
                 er.on('导航', this.trunNav)
+
+                er.on('跳转', this.toPage)
+                er.on('播放完成', this.endPlay)
+            }
+            endPlay(n) {
+                const that = gd.oui
+                //选择后 播放结束
+                console.log('endPlay', n)
+                if (n == 1 && pvs.selected == pvs.row.en) {
+                    //pvs.showConfirm = 1
+                }
+                //直接进入判断
+                var row = _.find(dataFromJSON.data, { "en": pvs.row.en })
+                if (n == 1 && pvs.selected == pvs.row.en && row.zh == pvs.row.zh) {
+                    pvs.showJudgment = 0
+                    if (pvs.page == pvs.wordLs.length) {
+                        setTimeout(() => { that.showInfo('恭喜 完成了练习', '真棒 ') }, 1600);
+                    } else {
+                        setTimeout(() => { that.toPage(pvs.page + 1) }, 1600);
+                    }
+                } else {
+                    pvs.showJudgment = 1
+                }
+
+
+
             }
             playChoose(dc) {
                 // 播放选择
@@ -348,13 +416,14 @@
                 //设置值
                 pvs.selected = dc.word
                 pvs.selectedCss = ''//显示
+                pvs.showJudgment = -1 //判断结果
                 pvs.row.en = dc.word
                 pvs.row.img = that.mkPath(row.en) + row.img
-                pvs.row.en4mp3 =  that.mkPath(row.en) + row.en4m2mp3
+                pvs.row.en4mp3 = that.mkPath(row.en) + row.en4m2mp3
 
-                setTimeout(()=>{  that.play(1)},150)
+                setTimeout(() => { that.play(1) }, 150)
                 //that.play(dc.play)
-              
+
 
             }
             trunNav(n) {
@@ -418,7 +487,8 @@
                 that.progressVal(6)
                 //载入数据 
                 that.signing(1)
-                pvs.unload = 1
+                pvs.unload = 1 //允许预加载mp3 图片
+                pvs.showJudgment = -1 //选择判断结果
 
             }
             nextPage(n) {
