@@ -104,7 +104,7 @@
         <div class=" row justify-content-center ">
             <div class="w-100 mt-5 d-none d-md-block"><!---高度垫子 小设备隐藏--></div>
             <div class=" row col-12 flex-wrap bg-warning glassbga d-flex justify-content-center ">
-                <span v-for="(site, index) in pd.wordLs"
+                <span v-for="(site, index) in pd.testLs"
                     :class="[{'text-warning': (index+1  == pd.page )}, {' text-center': (index  != pd.page )} ,{'btn':(index+1  != pd.page )}]"
                     class=" my-1  col-1 badge   badge-secondary mx-1  px-1 my-2"
                     @click="er.emit('跳转',index+1) ">{{index+1}}</span>
@@ -187,7 +187,7 @@
             </audio>
 
         </div>
-        <img onload="er.emit('预加载',9) " v-bind:src="pd.row.imgx">
+
     </div>
 
 
@@ -206,14 +206,29 @@
                             href="./pracword.html">练一练</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link shadow   bg-secondary  text-white  px-lg-5 mx-md-2 mx-lg-5" href="./testword.html">试一试</a>
+                        <a class="nav-link shadow   bg-secondary  text-white  px-lg-5 mx-md-2 mx-lg-5"
+                            href="./testword.html">试一试</a>
                     </li>
                 </ul>
             </div>
         </div>
     </div>
 
-
+ <!---侧边栏 -->
+    <transition v-cloak enter-active-class="animated fadeInLeft" leave-active-class="animated fadeOutLeft">
+        <nav v-if="pd.showNav " class="    d-flex   bg-light"
+            style="z-index:1082; top:0;left:0;width: 220px; height: 100vh; position: fixed;  ">
+            <ul>
+                <li  class="nav-item ">
+                    <a class="nav-link" href="#">目录 </a>
+                </li>
+                <li v-for ="(site, index) in pd.wordList" class="nav-item">
+                    <a class="nav-link" v-bind:href="site.url">第{{site.f}}课</a>
+                </li>
+                
+            </ul>
+        </nav>
+    </transition>
     <!---info提示信息--->
     <transition v-cloak mode="out-in" enter-active-class="animated pulse" leave-active-class="animated fadeOut">
         <div class=" container-sm  fixed-top    " style="z-index: 1083 ;" v-for="site in pd.info_list">
@@ -248,26 +263,7 @@
 
     <div v-if="pd.showLoading" @click="er.emit('遮罩',0) " style="z-index: 1081  ;" class=" modal-backdrop show "> </div>
 
-    <!---侧边栏 -->
-    <transition v-cloak enter-active-class="animated fadeInLeft" leave-active-class="animated fadeOutLeft">
-        <nav v-if="pd.showNav " class="    d-flex   bg-light"
-            style="z-index:1082; top:0;left:0;width: 220px; height: 100vh; position: fixed;  ">
-            <ul>
-                <li class="nav-item ">
-                    <a class="nav-link" href="#">目录 </a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" href="#">第二课</a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" href="#">第三课</a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link  " href="#">第四课</a>
-                </li>
-            </ul>
-        </nav>
-    </transition>
+   
     <transition v-cloak enter-active-class="animated flash">
         <div v-cloak v-if="pd.showJudgment == 0" class="center text-success"
             style="font-size:55px; z-index:1082; top:35%;    ">
@@ -311,6 +307,8 @@
             <span class="navbar-toggler-icon"></span>
         </button>
     </div>
+
+
 
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/vue/3.2.47/vue.global.prod.min.js"></script>
@@ -367,7 +365,8 @@
                 //确认
                 pvs.showConfirm = 0//确认检查
                 pvs.showJudgment = -1//判断对错
-                pvs.wordLs = []
+                pvs.testLs = []
+                pvs.wordList = {} //左侧列表
                 this.init();
             }
             init() {
@@ -396,7 +395,7 @@
                 var row = _.find(dataFromJSON.data, { "en": pvs.row.en })
                 if (n == 1 && pvs.selected == pvs.row.en && row.zh == pvs.row.zh) {
                     pvs.showJudgment = 0
-                    if (pvs.page == pvs.wordLs.length) {
+                    if (pvs.page == pvs.testLs.length) {
                         setTimeout(() => { that.showInfo('恭喜 完成了练习', '真棒 ') }, 1600);
                     } else {
                         setTimeout(() => { that.toPage(pvs.page + 1) }, 1600);
@@ -434,13 +433,14 @@
             }
 
             loadJson() {
-                //一次性加载 json数据  默认数据来源当前站点，当前没有访问主站
+                //添加 加载 json数据  默认数据来源当前站点，当前没有访问主站
 
                 const that = gd.oui
 
                 that.progressVal(6)
                 var dc = pvs.url.query(true)
                 var src = pvs.url.host();//本站
+
                 pvs.type = dc['t'] ? dc['t'] : 'camb_word';//业务类型
                 pvs.pid = String(dc['p'] ? dc['p'] : 365);//对应id
                 console.log("script参数=", src, pvs.type, pvs.pid)
@@ -461,8 +461,11 @@
                 //词展示++++
                 that.loginLoading(1) //loading 
                 that.spto(1) //loading 
-
-
+                //wordList  加载
+                var wl = document.createElement("script");
+                wl.src = `//${src}/${pvs.type}/word_list.json`
+                wl.onload = that.wordListLoad;
+                document.body.appendChild(wl);
 
             }
             getPage() {
@@ -564,6 +567,13 @@
                 that.spto(0) //loading  
                 that.showInfo('无法加载到数据，刷新重试', '载入数据：') //loading  
             }
+            wordListLoad(dat){
+                //单词列表加载
+                console.log('wordListLoad=',pvs.url.filename(),wordList)
+                pvs.wordList = wordList.data
+                pvs.wordList = _.map(pvs.wordList,(o)=>{o.url = './'+pvs.url.filename()+`?p=${o.f}&t=${pvs.type}`; return o })
+
+            }
             signing(dat) {
                 // 读取数据到 json/翻页    页面
                 console.log('dat==', dat)
@@ -575,10 +585,10 @@
                 //词展示++++
                 if (dat != 1) {//非内部翻页-首次加载
 
-                    pvs.wordLs = _.slice(_.shuffle(dataFromJSON.data), 0, 9)//测试数
+                    pvs.testLs = _.slice(_.shuffle(dataFromJSON.data), 0, 9)//测试数
 
-                    //pvs.wordLs = dataFromJSON.data
-                    pvs.total = pvs.wordLs.length
+                    //pvs.testLs = dataFromJSON.data
+                    pvs.total = pvs.testLs.length
 
                 }
                 if (typeof (dataFromJSON) == "undefined" || dataFromJSON.data.length == 0) { that.showInfo("没找到数据", '翻页'); return; } //没数据
@@ -586,7 +596,7 @@
 
                 //设置数据
                 console.log(dataFromJSON.src, pvs.page, dataFromJSON.data[pvs.page - 1])
-                var row = pvs.wordLs[pvs.page - 1]
+                var row = pvs.testLs[pvs.page - 1]
                 //创建选区
                 pvs.choose = that.mkchoose(row, dataFromJSON.data)
                 //设置 mp3
@@ -595,7 +605,7 @@
                 pvs.row.zh4mp3 = that.mkPath(row.en) + row.zh4m2mp3
                 pvs.row.en4mp3 = that.mkPath(row.en) + row.en4m2mp3
                 pvs.row.img = that.mkPath(row.en) + row.img
-                pvs.row.imgx = `//${pvs.url.host()}/${pvs.type}/choose.png` //?q=${ new Date().valueOf() }
+                //pvs.row.imgx = `//${pvs.url.host()}/${pvs.type}/choose.png` //?q=${ new Date().valueOf() }
 
                 //  加载5组10个音图文件（异步）
                 pvs.chooseRow = _.map(pvs.chooseRow, function (o) { return {} }) //清空
