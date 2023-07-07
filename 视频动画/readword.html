@@ -32,6 +32,10 @@
             top: 10%;
             transform: translate(-50%, -50%);
         }
+
+        [v-cloak] {
+            display: none;
+        }
     </style>
 </head>
 <!--
@@ -41,7 +45,8 @@
 <body id="q-app" class="glassbg text-white  ">
     <!---设置-->
     <div class="  d-none  d-sm-flex   fixed-top justify-content-end ">
-        <span @click="pd.shwoChange=!pd.shwoChange " class="btn " style="font-size:32px;  filter: grayscale(100%); ">⚙</span>
+        <span @click="pd.shwoChange=!pd.shwoChange " class="btn "
+            style="font-size:32px;  filter: grayscale(100%); ">⚙</span>
     </div>
 
 
@@ -51,7 +56,7 @@
 
 
     <!---上面的结果框val--->
-    <div class="container ">
+    <div v-cloak class="container ">
         <div class="mt-2 row justify-content-center  ">
             <div class="w-100 mb-5   d-none d-md-block"><!---高度垫子 小设备隐藏--></div>
             <div>
@@ -61,7 +66,7 @@
         </div>
     </div>
     <!--卡片-->
-    <div class=" container-md   glassbga  pt-5  pb-5">
+    <div v-cloak class=" container-md   glassbga  pt-5  pb-5">
         <div class=" row   align-items-center   justify-content-around   ">
 
             <img v-bind:src="pd.row.img" style="max-width:100%;overflow:hidden;" class="img-fluid" alt="...">
@@ -92,7 +97,7 @@
             </span>
         </div>
         <!---选择声音-->
-        <div class=" d-flex     align-items-center  justify-content-around ">
+        <div v-cloak class=" d-flex     align-items-center  justify-content-around ">
 
             <div class="    d-flex col-md-5 col-sm-4     ">
                 <!--- s4zh4m--->
@@ -123,7 +128,7 @@
 
         </div>
         <!---nv-->
-        <div class=" d-flex     align-items-center  justify-content-center " style="height: 80px;">
+        <div v-cloak class=" d-flex     align-items-center  justify-content-center " style="height: 80px;">
             <span class="  mx-4  shadow    badge badge-light badge-pill">
                 <audio controls="controls" v-bind:src="pd.row.zh4f">
                     Your browser does not support the audio element.
@@ -136,7 +141,7 @@
             </span>
         </div>
         <!---选择女声音-->
-        <div class=" d-flex     align-items-center  justify-content-around ">
+        <div v-cloak class=" d-flex     align-items-center  justify-content-around ">
             <div class="    d-flex col-md-5 col-sm-4     ">
                 <!--- 快选s4zh4f--->
                 <select @change="er.emit('更新' ) " class="form-select w-100   " v-model="pd.row.s4zh4f"
@@ -166,7 +171,7 @@
     </div>
 
     <!---更新-->
-    <transition enter-active-class="animated bounceIn" leave-active-class="animated bounceOut">
+    <transition v-cloak enter-active-class="animated bounceIn" leave-active-class="animated bounceOut">
         <div class="container-md    glassbga  mt-4  mb-4   pt-3  pb-3">
             <div class=" row  align-items-center  justify-items-around justify-content-around  ">
                 <div class="   d-flex col-md-3 col-sm-3   ">
@@ -218,7 +223,7 @@
     </transition>
 
     <!---齿轮设置-->
-    <transition enter-active-class="animated bounceIn" leave-active-class="animated bounceOut">
+    <transition v-cloak enter-active-class="animated bounceIn" leave-active-class="animated bounceOut">
         <div v-if="pd.shwoChange==0?false:true" class="container-md     glassbga  mt-4  mb-4   pt-3  pb-3">
             <div class=" row  align-items-center   justify-content-around  ">
                 <div class="  p-0 m-0 d-flex  col-md-1 col-sm-1  justify-content-end  ">
@@ -257,7 +262,7 @@
     </div>
 
     <!--底部按钮-->
-    <div class="fixed-bottom row justify-content-center     ">
+    <div v-cloak class="fixed-bottom row justify-content-center     ">
         <div class=" d-flex  col-md-6 col-sm-8   bg-warning glassbga  justify-content-around ">
             <button @click="er.emit('翻页',-1) " class="btn shadow-lg shadow btn-danger">上一个
                 <span class="position-absolute badge badge-light badge-pill" v-text="pd.nameSize"> </span>
@@ -273,11 +278,11 @@
             </button>
 
         </div>
-        
+
     </div>
 
     <!---info提示信息--->
-    <transition mode="out-in" enter-active-class="animated pulse" leave-active-class="animated bounceOutRight">
+    <transition v-cloak mode="out-in" enter-active-class="animated pulse" leave-active-class="animated bounceOutRight">
         <div class=" container-sm  fixed-top    " style="z-index: 1083 ;" v-for="site in pd.info_list">
             <div class="alert  alert-warning alert-dismissible fade show" role="alert">
                 <strong>{{site.type}}</strong>{{ site.info }}
@@ -288,25 +293,28 @@
         </div>
     </transition>
     <!---遮罩1024--->
-    <div v-if="pd.sp==0?false:true" @click="er.emit('遮罩',0) " style="z-index: 1081  ;" class=" modal-backdrop show ">
+    <div v-cloak v-if="pd.sp==0?false:true" @click="er.emit('遮罩',0) " style="z-index: 1081  ;"
+        class=" modal-backdrop show ">
 
     </div>
     <!---载入动画--->
-    <div v-if="pd.sp==0?false:true"
-        class="center w-100 mt-5   row d-flex     align-items-center  justify-content-center  "
-        style="z-index: 1082  ;">
-        <div class="spinner-border   "></div>
-    </div>
-
-    <!---进度条---->
-    <div v-if="pd.vprogress>98?false:true" class="center w-100   px-3   " style="z-index: 1082 ; ">
-        <div class="progress">
-            <div class=" progress-bar  progress-bar-striped progress-bar-animated  "
-                v-bind:style="{ width: pd.vprogress+'%' , }">{{pd.vprogress}}%</div>
+    <transition v-cloak leave-active-class="animated fadeOut">
+        <div v-if="pd.sp==0?false:true"
+            class="center w-100 mt-5   row d-flex     align-items-center  justify-content-center  "
+            style="z-index: 1082  ;">
+            <div class="spinner-border   "></div>
         </div>
-    </div>
+    </transition>
+    <!---进度条---->
+    <transition v-cloak>
+        <div v-if="pd.vprogress>98?false:true" class="center w-100   px-3   " style="z-index: 1082 ; ">
+            <div class="progress">
+                <div class=" progress-bar  progress-bar-striped progress-bar-animated  "
+                    v-bind:style="{ width: pd.vprogress+'%' , }">{{pd.vprogress}}%</div>
+            </div>
+        </div>
 
-
+    </transition>
 
 
 
@@ -903,7 +911,7 @@
                 //pvs.row.img = '/en500word/h/e/健康.png' //  /en500word/h/e/健康.png
                 pvs.row.img = `/${pvs.defPath}/${pvs.row.en.substring(0, 1)}/${pvs.row.en.substring(1, 2)}/${pvs.row.zh}.png` //  /en500word/h/e/健康.png
                 //设置 mp3
-                var noCache=  new Date().valueOf();//禁止缓存
+                var noCache = new Date().valueOf();//禁止缓存
                 pvs.row.zh4m = `/${pvs.defPath}/${pvs.row.en.substring(0, 1).toLowerCase()}/${pvs.row.en.substring(1, 2).toLowerCase()}/${pvs.row.zh}_zh4m.mp3?q=${noCache}` //   
                 pvs.row.en4m = `/${pvs.defPath}/${pvs.row.en.substring(0, 1).toLowerCase()}/${pvs.row.en.substring(1, 2).toLowerCase()}/${pvs.row.zh}_en4m.mp3?q=${noCache}` //  
                 pvs.row.zh4f = `/${pvs.defPath}/${pvs.row.en.substring(0, 1).toLowerCase()}/${pvs.row.en.substring(1, 2).toLowerCase()}/${pvs.row.zh}_zh4f.mp3?q=${noCache}` //  没下划线

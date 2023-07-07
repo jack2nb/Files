@@ -228,5 +228,9 @@ https://www.bilibili.com/video/BV15v4y1E7zV/?spm_id_from=333.880.my_history.page
 
 ```
 
+## 智能识别
+
+Whisper
+
 
 
