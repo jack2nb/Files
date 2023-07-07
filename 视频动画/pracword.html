@@ -94,7 +94,7 @@
      swiper 展示
 -->
 
-<body id="q-app" class=" glassbg text-white  ">
+<body id="q-app" class=" glassbg text-white  "  onbeforeunload="  gd.storage.set('page', 1) ">
     <!--悬浮球-->
     <div class="circle1 circle-ab"> </div>
     <div class="circle2 circle-ab"></div>
@@ -222,7 +222,8 @@
                 <li  class="nav-item ">
                     <a class="nav-link" href="#">目录 </a>
                 </li>
-                <li v-for ="(site, index) in pd.wordList" class="nav-item">
+                <li v-for ="(site, index) in pd.wordList" class="nav-item  " 
+                :class="[{'bg-warning  glassbga': (site.f  == pd.pid )} ]">
                     <a class="nav-link" v-bind:href="site.url">第{{site.f}}课</a>
                 </li>
                 
@@ -415,6 +416,7 @@
                 //设置值
                 pvs.selected = dc.word
                 pvs.selectedCss = ''//显示
+
                 pvs.showJudgment = -1 //判断结果
                 pvs.row.en = dc.word
                 pvs.row.img = that.mkPath(row.en) + row.img
@@ -490,8 +492,12 @@
                 that.progressVal(6)
                 //载入数据 
                 that.signing(1)
+                //--重新初始化
                 pvs.unload = 1 //允许预加载mp3 图片
                 pvs.showJudgment = -1 //选择判断结果
+                pvs.selected = '' //选择的单词
+                pvs.selectedCss = 'hidden' //选择的单词
+
 
             }
             nextPage(n) {

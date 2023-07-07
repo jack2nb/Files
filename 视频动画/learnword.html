@@ -94,7 +94,7 @@
      swiper 展示
 -->
 
-<body id="q-app" class=" glassbg text-white  ">
+<body id="q-app" class=" glassbg text-white  " onbeforeunload="  gd.storage.set('page', 1) " >
     <!--悬浮球-->
     <div class="circle1 circle-ab"> </div>
     <div class="circle2 circle-ab"></div>
@@ -200,7 +200,8 @@
                 <li class="nav-item ">
                     <a class="nav-link" href="#">目录 </a>
                 </li>
-                <li v-for="(site, index) in pd.wordList" class="nav-item">
+                <li v-for ="(site, index) in pd.wordList" class="nav-item  " 
+                :class="[{'bg-warning  glassbga': (site.f  == pd.pid )} ]">
                     <a class="nav-link" v-bind:href="site.url">第{{site.f}}课</a>
                 </li>
 
