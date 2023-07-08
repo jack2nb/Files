@@ -115,15 +115,7 @@ console.log('显示图表')
 mermaid.init({ noteMargin: 10 }, '.language-mermaid');
 </script>
 
- 
 
-
-  <pre class="mermaid">
-      graph LR
-          A --- B
-          B-->C[fa:fa-ban forbidden]
-          B-->D(fa:fa-spinner);
-        </pre>
 ​        
 
 
