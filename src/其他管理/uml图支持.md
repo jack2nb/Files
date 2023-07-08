@@ -93,6 +93,17 @@ pie
 ```
 
 ------------------
+
+<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mermaid/9.4.3/mermaid.min.js"></script>
+<script>
+console.log('显示图表') 
+mermaid.init({ noteMargin: 10 }, '.language-mermaid');
+</script>
+ 
+
+     
+
+
 # 视频
 
 <!-- webm格式 -->
