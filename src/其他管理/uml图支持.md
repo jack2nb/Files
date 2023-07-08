@@ -18,6 +18,21 @@ section 测试
     联调api      : 24d
 ```
 
+### 并行流
+
+```mermaid
+flowchart LR
+
+a-->|开始|B;
+a-->|开始|C;
+
+subgraph B和C同时进行
+B-->|步骤|D1;
+C-->|步骤2|D2;
+end
+
+```
+
 ### 流程图
 
 
@@ -26,7 +41,7 @@ section 测试
 
 ```mermaid
 flowchart LR
-A -.-> B
+A --> B
 C -.箭头虚线.-> D
 E -.->|箭头虚线| F
 
@@ -99,9 +114,17 @@ pie
 console.log('显示图表') 
 mermaid.init({ noteMargin: 10 }, '.language-mermaid');
 </script>
+
  
 
-     
+
+  <pre class="mermaid">
+      graph LR
+          A --- B
+          B-->C[fa:fa-ban forbidden]
+          B-->D(fa:fa-spinner);
+        </pre>
+​        
 
 
 # 视频
