@@ -157,15 +157,15 @@
                 <ul class="nav nav-tabs">
                     <li class="nav-item">
                         <a class="nav-link shadow   bg-info text-white  px-lg-5 mx-md-2 mx-lg-5  active "
-                            href="./learnword.html">学一学</a>
+                        v-bind:href="'./learnword.html?t'+pd.type+'&p='+pd.pid">学一学</a>
                     </li>
                     <li class="nav-item">
                         <a class="nav-link shadow   bg-secondary text-white  px-lg-5 mx-md-2 mx-lg-5"
-                            href="./pracword.html">练一练</a>
+                        v-bind:href="'./pracword.html?t'+pd.type+'&p='+pd.pid">练一练</a>
                     </li>
                     <li class="nav-item">
                         <a class="nav-link shadow   bg-secondary  text-white  px-lg-5 mx-md-2 mx-lg-5"
-                            href="./testword.html">试一试</a>
+                        v-bind:href="'./testword.html?t'+pd.type+'&p='+pd.pid">试一试</a>
                     </li>
                 </ul>
             </div>
@@ -322,11 +322,15 @@
                 //一次性加载 json数据  默认数据来源当前站点，当前没有访问主站
                 const that = gd.oui
                 that.progressVal(6)
-
-                var dc = pvs.url.query(true)
                 var src = pvs.url.host();//本站
-                pvs.type = dc['t'] ? dc['t'] : 'camb_word';//业务类型
-                pvs.pid = String(dc['p'] ? dc['p'] : 365);//对应id
+                var dc = pvs.url.query(true);//参数
+                pvs.type = dc['t'] ? dc['t'] : gd.storage.get('pageType')?gd.storage.get('pageType'):'camb_word';//业务类型，url优先
+                pvs.pid = String(dc['p'] ? dc['p'] : gd.storage.get(pvs.type+'_pid')?gd.storage.get(pvs.type+'_pid'):365);//对应id，url优先
+                gd.storage.set('pageType',pvs.type) 
+                gd.storage.set(pvs.type+'_pid',pvs.pid) 
+                
+
+       
                 console.log("script参数=", src, pvs.type, pvs.pid)
 
                 //document.getElementById('dataFromJson').remove ()
