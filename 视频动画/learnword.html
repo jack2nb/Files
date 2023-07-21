@@ -12,7 +12,7 @@
     <link rel="stylesheet" crossorigin="anonymous"
         href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.5.1/animate.min.css">
 
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/driver.js/0.9.8/driver.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/intro.js/7.0.1/introjs.min.css">
     <style>
         @media (min-width: 0px) {
             html {
@@ -89,11 +89,14 @@
             display: none;
         }
 
-        div#driver-highlighted-element-stage,
-        div#driver-page-overlay {
-            background: transparent !important;
-            outline: 5000px solid rgba(0, 0, 0, .75);
+        div.introjs-tooltip-header,
+        div.introjs-tooltiptext {
+            color:  #616161  !important;
+            
         }
+
+        
+
     </style>
 </head>
 <!--
@@ -166,7 +169,7 @@
                             v-bind:href="'./learnword.html?t'+pd.type+'&p='+pd.pid">学一学</a>
                     </li>
                     <li class="nav-item" id="prac">
-                        <a  class="nav-link shadow   bg-secondary text-white  px-lg-5 mx-md-2 mx-lg-5"
+                        <a class="nav-link shadow   bg-secondary text-white  px-lg-5 mx-md-2 mx-lg-5"
                             v-bind:href="'./pracword.html?t'+pd.type+'&p='+pd.pid">练一练</a>
                     </li>
                     <li class="nav-item">
@@ -190,7 +193,7 @@
 
 
 
-            <button  @click="er.emit('翻页',1) " class="btn shadow-lg shadow btn-danger">下一个
+            <button @click="er.emit('翻页',1) " class="btn shadow-lg shadow btn-danger">下一个
                 <span class="position-absolute badge badge-light badge-pill" v-text="pd.nameSize"> </span>
             </button>
 
@@ -263,7 +266,8 @@
     <!-- script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script -->
     <!--script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.6.1/js/bootstrap.min.js"></script  -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/URI.js/1.19.11/URI.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/driver.js/0.9.8/driver.min.js"></script>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/intro.js/7.0.1/intro.min.js"></script>
 
 
     <!--script type="text/javascript" onload="console.log(10000)" onerror="console.log(55555)" src="https://disk.17121.top/camb_word/6/5/365/cfg_365.json"></script-->
@@ -289,12 +293,7 @@
         //const pd = ref({ "load": [] }); //特殊变量，页面数据
         const pvs = gd.pd.value; //变量代理访问
         //gd.pd = pd;//page data 页面元素引用"数据"
-        gd.help = new Driver({
-            closeBtnText: '关闭', //   关闭按钮文案
-            nextBtnText: '下一个', //   下一步的按钮文案
-            prevBtnText: '上一个', //  上一步的按钮文案
- 
-        });
+
         class pgui {
             /* 界面控制类 初始化界面默认值 */
             constructor(arg) {
@@ -407,15 +406,25 @@
                 that.signing(1)
             }
             hp2prac() {
+                var setpList = [
+                    {
+                        title: '来接受下一个挑战',
+                        element: document.querySelector('#prac'),
+                        intro: '通过<strong>练一练</strong>来证明学习成果',
+                    },
 
-                gd.help.highlight({
-                    element: '#prac',
-                    popover: {
-                        title: '<em>来接受挑战</em>', //突出框标题
-                        description: '通过<strong>练一练</strong>来证明学习成果'//突出框描述
-                    }
-                });
-
+                ];
+                var helpOpt = {
+                    nextLabel: '下一个  &rarr;',    // 下一个按钮文字
+                    prevLabel: '&larr; 上一个',     // 上一个按钮文字
+                    doneLabel: '好',           // 完成按钮文字
+                    exitOnOverlayClick: false,  // 点击叠加层时是否退出介绍
+                    showStepNumbers: false,     // 是否显示红色圆圈的步骤编号
+                    disableInteraction: true,   // 是否禁用与突出显示的框内的元素的交互，就是禁止点击
+                    showBullets: false          // 是否显示面板指示点
+                }
+                helpOpt['steps'] = setpList
+                introJs().setOptions(helpOpt).start();
             }
             play(n) {
                 //播
