@@ -209,7 +209,7 @@
                 <li class="nav-item ">
                     <a class="nav-link" href="#">目录 </a>
                 </li>
-                <li v-for="(site, index) in pd.wordList" class="nav-item  "
+                <li v-for="(site, index) in pd.leftList" class="nav-item  "
                     :class="[{'bg-warning  glassbga': (site.f  == pd.pid )} ]">
                     <a class="nav-link" v-bind:href="site.url">第{{site.f}}课</a>
                 </li>
@@ -315,7 +315,7 @@
                 pvs.showProgress = 0 //进度条
                 //----页面参数
                 pvs.url = new URI() //获取去 type，pid ，默认访问本站，数据加载主站
-                pvs.wordList = {} //左侧列表
+                pvs.leftList = {} //左侧列表
                 this.init();
             }
             init() {
@@ -340,7 +340,7 @@
                 var src = pvs.url.host();//本站
                 var dc = pvs.url.query(true);//参数
                 pvs.type = dc['t'] ? dc['t'] : gd.storage.get('pageType') ? gd.storage.get('pageType') : 'camb_word';//业务类型，url优先
-                pvs.pid = String(dc['p'] ? dc['p'] : gd.storage.get(pvs.type + '_pid') ? gd.storage.get(pvs.type + '_pid') : 365);//对应id，url优先
+                pvs.pid = String(dc['p'] ? dc['p'] : gd.storage.get('pid',pvs.type ) ? gd.storage.get('pid',pvs.type ) : 365);//对应id，url优先
                 pvs.pid = pvs.pid.padStart(3, '0'); //id定长
                 gd.storage.set('pageType', pvs.type)
                 gd.storage.set(pvs.type + '_pid', pvs.pid)
@@ -366,10 +366,10 @@
                 //词展示++++
                 that.loginLoading(1) //loading 
                 that.spto(1) //loading 
-                //wordList  加载
+                //leftList  加载
                 var wl = document.createElement("script");
                 wl.src = `//${src}/${pvs.type}/word_list.json`
-                wl.onload = that.wordListLoad;
+                wl.onload = that.leftListLoad;
                 document.body.appendChild(wl);
             }
             getPage() {
@@ -486,11 +486,11 @@
 
 
             }
-            wordListLoad(dat) {
+            leftListLoad(dat) {
                 //单词列表加载
-                console.log('wordListLoad=', pvs.url.filename(), wordList)//来之json文件
-                pvs.wordList = wordList.data
-                pvs.wordList = _.map(pvs.wordList, (o) => { o.url = './' + pvs.url.filename() + `?p=${o.f}&t=${pvs.type}`; return o })
+                console.log('leftListLoad=', pvs.url.filename(), wordList)//来之json文件
+                pvs.leftList = wordList.data
+                pvs.leftList = _.map(pvs.leftList, (o) => { o.url = './' + pvs.url.filename() + `?p=${o.f}&t=${pvs.type}`; return o })
 
             }
             signing(dat) {

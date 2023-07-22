@@ -5,8 +5,9 @@
     <meta charset="utf-8">
     <meta name="description" content="单词学习">
     <meta name="keywords" content="单词学习 练习">
+    <meta name="keywords" content="学习无边界，乐在海中游">
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
-    <title>英语 培训 单词学习</title>
+    <title>练一练 英语 培训 单词学习</title>
     <link rel="stylesheet" crossorigin="anonymous"
         href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.6.1/css/bootstrap.min.css">
     <link rel="stylesheet" crossorigin="anonymous"
@@ -229,7 +230,7 @@
                 <li class="nav-item ">
                     <a class="nav-link" href="#">目录 </a>
                 </li>
-                <li v-for="(site, index) in pd.wordList" class="nav-item  "
+                <li v-for="(site, index) in pd.leftList" class="nav-item  "
                     :class="[{'bg-warning  glassbga': (site.f  == pd.pid )} ]">
                     <a class="nav-link" v-bind:href="site.url">第{{site.f}}课</a>
                 </li>
@@ -382,7 +383,7 @@
                 pvs.showConfirm = 0//确认检查
                 pvs.showJudgment = -1//判断对错
                 pvs.testLs = []
-                pvs.wordList = {} //左侧列表
+                pvs.leftList = {} //左侧列表
                 this.init();
             }
             init() {
@@ -462,7 +463,7 @@
             }
 
             loadJson() {
-                //添加 加载 json数据  默认数据来源当前站点，当前没有访问主站
+                //一次性加载 json数据  默认数据来源当前站点，当前没有访问主站
 
                 const that = gd.oui
 
@@ -493,10 +494,10 @@
                 //词展示++++
                 that.loginLoading(1) //loading 
                 that.spto(1) //loading 
-                //wordList  加载
+                //leftList  加载左侧菜单
                 var wl = document.createElement("script");
                 wl.src = `//${src}/${pvs.type}/word_list.json`
-                wl.onload = that.wordListLoad;
+                wl.onload = that.leftListLoad;
                 document.body.appendChild(wl);
 
             }
@@ -610,11 +611,11 @@
                 that.spto(0) //loading  
                 that.showInfo('无法加载到数据，刷新重试', '载入数据：') //loading  
             }
-            wordListLoad(dat) {
+            leftListLoad(dat) {
                 //单词列表加载
-                console.log('wordListLoad=', pvs.url.filename(), wordList)
-                pvs.wordList = wordList.data
-                pvs.wordList = _.map(pvs.wordList, (o) => { o.url = './' + pvs.url.filename() + `?p=${o.f}&t=${pvs.type}`; return o })
+                console.log('leftListLoad=', pvs.url.filename(), wordList)
+                pvs.leftList = wordList.data
+                pvs.leftList = _.map(pvs.leftList, (o) => { o.url = './' + pvs.url.filename() + `?p=${o.f}&t=${pvs.type}`; return o })
 
             }
             signing(dat) {
