@@ -209,11 +209,11 @@
                         <a class="nav-link shadow  bg-secondary   text-white  px-lg-5 mx-md-2 mx-lg-5   "
                             v-bind:href="'./learnword.html?t'+pd.type+'&p='+pd.pid">学一学</a>
                     </li>
-                    <li class="nav-item">
+                    <li class="nav-item" id="prac">
                         <a class="nav-link shadow  bg-info text-white  px-lg-5 mx-md-2 mx-lg-5 active"
                             v-bind:href="'./pracword.html?t'+pd.type+'&p='+pd.pid">练一练</a>
                     </li>
-                    <li class="nav-item">
+                    <li class="nav-item" id="test">
                         <a class="nav-link shadow   bg-secondary  text-white  px-lg-5 mx-md-2 mx-lg-5"
                             v-bind:href="'./testword.html?t'+pd.type+'&p='+pd.pid">试一试</a>
                     </li>
@@ -400,7 +400,7 @@
 
                 er.on('跳转', this.toPage)
                 er.on('播放完成', this.endPlay)
-                er.on('帮助.更多学习内容', this.hp2more)
+                er.on('帮助.更多学习内容', this.help2next)
             }
             endPlay(n) {
                 //对错判断后的播放完成
@@ -527,12 +527,12 @@
                 pvs.selectedCss = 'hidden' //选择的单词
             }
  
-            hp2more() {
+            help2next() {
                 var setpList = [
                     {
-                        title: '<em>这里有更多挑战等着你</em>',
-                        element: document.querySelector('#leftMenu'),
-                        intro: '从列表选择更多课程',
+                        title: '<em>新挑战 </em>',
+                        element: document.querySelector('#test'),
+                        intro: '来接受另一种模式的挑战吧',
                     },
 
                 ];

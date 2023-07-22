@@ -172,7 +172,7 @@
                         <a class="nav-link shadow   bg-secondary text-white  px-lg-5 mx-md-2 mx-lg-5"
                             v-bind:href="'./pracword.html?t'+pd.type+'&p='+pd.pid">练一练</a>
                     </li>
-                    <li class="nav-item">
+                    <li class="nav-item" id="test">
                         <a class="nav-link shadow   bg-secondary  text-white  px-lg-5 mx-md-2 mx-lg-5"
                             v-bind:href="'./testword.html?t'+pd.type+'&p='+pd.pid">试一试</a>
                     </li>
@@ -326,7 +326,7 @@
                 er.on('翻页', this.nextPage)
                 er.on('进度', this.progress)
                 er.on('导航', this.trunNav)
-                er.on('帮助.练一练', this.hp2prac)
+                er.on('帮助.练一练', this.help2next)
             }
             trunNav(n) {
                 const that = gd.oui
@@ -408,7 +408,7 @@
                 //载入数据 
                 that.signing(1)
             }
-            hp2prac() {
+            help2next() {
                 var setpList = [
                     {
                         title: '来接受下一个挑战',

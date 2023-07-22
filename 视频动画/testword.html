@@ -209,11 +209,11 @@
                         <a class="nav-link shadow  bg-secondary   text-white  px-lg-5 mx-md-2 mx-lg-5   "
                             v-bind:href="'./learnword.html?t'+pd.type+'&p='+pd.pid">学一学</a>
                     </li>
-                    <li class="nav-item">
+                    <li class="nav-item" id="prac">
                         <a class="nav-link shadow  bg-secondary text-white  px-lg-5 mx-md-2 mx-lg-5 active"
                             v-bind:href="'./pracword.html?t'+pd.type+'&p='+pd.pid">练一练</a>
                     </li>
-                    <li class="nav-item">
+                    <li class="nav-item" id="test">
                         <a class="nav-link shadow   bg-info  text-white  px-lg-5 mx-md-2 mx-lg-5"
                             v-bind:href="'./testword.html?t'+pd.type+'&p='+pd.pid">试一试</a>
                     </li>
@@ -428,13 +428,13 @@
 
 
                 er.on('播放完成', this.endPlay)//event
-                er.on('帮助.更多学习内容', this.hp2more)
+                er.on('帮助.更多学习内容', this.help2next)
             }
             endPlay(n) {
                 //播放 ,判断对错
                 const that = gd.oui
                 console.log(n)
-                setTimeout(() => { that.checkSelect() }, 900)
+                setTimeout(() => { that.checkSelect() }, 500)
 
 
             }
@@ -481,6 +481,7 @@
 
 
             checkSelect() {
+                const that = gd.oui
                 //判断对错 检查单词对
                 if (pvs.selectedZh == '' || pvs.selectedEn == '') {
                     return
@@ -498,6 +499,15 @@
                 var elements = document.querySelectorAll('div.line')
                 _.map(elements, (o) => { o.parentNode.removeChild(o); })
                 pvs.selectedZh = ''; pvs.selectedEn = ''; pvs.selecteds = [];
+
+                if (pvs.enLs.length == 0 ) {
+                    //完成学习  +++  时间停止功能
+                    setTimeout(() => {
+                        that.showInfo('恭喜 完成了练习', '真棒 ');
+                        setTimeout(() => er.emit('帮助.更多学习内容'), 1500);
+                        //完成提示进入挑战+++
+                    },1)
+                }
 
             }
 
@@ -549,11 +559,11 @@
             }
 
 
-            hp2more() {
+            help2next() {
                 //帮助，新手引导
                 var setpList = [
                     {
-                        title: '<em>这里有更多挑战等着你</em>',
+                        title: '<em>恭喜 完成了挑战 </em>',
                         element: document.querySelector('#leftMenu'),
                         intro: '从列表选择更多课程',
                     },
