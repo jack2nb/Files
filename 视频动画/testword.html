@@ -95,7 +95,19 @@
             color: #616161 !important;
 
         }
+
+        .line {
+            position: absolute;
+            background: green;
+            height: 1px;
+            z-index: -1;
+            /*这里设置大于2，即可看到真正连线的其实是两个元素的中心坐标*/
+        }
     </style>
+
+
+
+
 </head>
 <!--
      swiper 展示
@@ -304,7 +316,47 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/intro.js/7.0.1/intro.min.js"></script>
 
 
+
+
     <script>
+        /**
+    * 实现两个元素中心点的连线
+    * @author 渀波儿灞 2021-02-20
+    * @param  {Object} startObj  jquery对象，起点元素
+    * @param  {Object} endObj    jquery对象，终点元素
+    * @return {String}           返回连线的dom
+    */
+        function drawLine(startObj, endObj) {
+
+            //起点元素中心坐标
+            var startXywh = startObj.getBoundingClientRect()
+            var y_start = startXywh.top + startXywh.height / 2;
+            var x_start = startXywh.left + startXywh.width / 2;
+
+            //终点元素中心坐标
+            var endXywh = endObj.getBoundingClientRect()
+            var y_end = endXywh.top + endXywh.height / 2;
+            var x_end = endXywh.left + endXywh.width / 2;
+
+            console.log(y_start, x_start, y_end, x_end)
+            //用勾股定律计算出斜边长度及其夹角（即连线的旋转角度）
+            var lx = x_end - x_start;
+            var ly = y_end - y_start;
+            //计算连线长度
+            var length = Math.sqrt(lx * lx + ly * ly);
+            //弧度值转换为角度值
+            var c = 360 * Math.atan2(ly, lx) / (2 * Math.PI);
+
+            //连线中心坐标
+            var midX = (x_end + x_start) / 2;
+            var midY = (y_end + y_start) / 2
+            var deg = c <= -90 ? (360 + c) : c;  //负角转换为正角
+
+            return `<div class='line' 
+                    style='top:${midY}px;left:${midX - length / 2}px;width:${length}px;transform:rotate(${deg}deg);'>
+                </div>`
+        }
+
         const er = new EventEmitter //事件线
         const { onMounted, emits, createApp, ref, watch, computed } = Vue
 
@@ -382,7 +434,8 @@
                 //播放 ,判断对错
                 const that = gd.oui
                 console.log(n)
-                that.checkSelect()
+                setTimeout(() => { that.checkSelect() }, 1100)
+
 
             }
             playChoose(dc) {
@@ -412,6 +465,11 @@
                 /**  连线  **/
                 if (pvs.selecteds.length >= 2) {
 
+                    var h5div = drawLine(pvs.selecteds[0], pvs.selecteds[1])
+                    var doc = new DOMParser().parseFromString(h5div, 'text/html');
+                    console.log(doc, pvs.selecteds[0], pvs.selecteds[1])
+                    document.body.appendChild(doc.querySelector('div'));//选区部分，添加到body
+
                 }
 
 
@@ -431,14 +489,15 @@
                 var rowZh = _.find(dataFromJSON.data, { "zh": pvs.selectedZh })//取数据 内部的一行 
                 //答对删除对应行
                 if (rowEn.en == rowZh.en) {
-                    //pvs.testLs
                     _.remove(pvs.zhLs, { "en": rowEn.en });
                     _.remove(pvs.enLs, { "en": rowEn.en });
                     console.log('答对=')
                 }
                 console.log('比对=', rowEn, rowZh)
                 //---清空重来
-                setTimeout(() => { pvs.selectedZh = ''; pvs.selectedEn = ''; pvs.selecteds = [] }, 800)
+                var elements = document.querySelectorAll('div.line')
+                _.map(elements, (o) => { o.parentNode.removeChild(o); })
+                pvs.selectedZh = ''; pvs.selectedEn = ''; pvs.selecteds = [];
 
             }
 
