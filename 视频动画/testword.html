@@ -95,16 +95,6 @@
             color: #616161 !important;
 
         }
-
-    .line {
-            position: absolute;
-            background-color: #333333;
-            width: 200px;
-            height: 1px;
-            top: 300px;
-            left: 400px;
-            transform: rotate(0.5rad);
-        }
     </style>
 </head>
 <!--
@@ -126,7 +116,7 @@
         </div>
     </div>
     <!--卡片-->
-    <div v-cloak class=" container-md   glassbga  pt-md-5  pb-md-5 pt-sm-1  pb-sm-1">
+    <div v-cloak class=" container-md   glassbga p-3 pt-md-5  pb-md-5 pt-sm-1  pb-sm-1">
 
 
         <!---nan文字-->
@@ -137,7 +127,7 @@
             <div class=" col-6       ">
                 <div v-for="(site, index) in pd.testLs" class="row  align-items-center   justify-content-around">
                     <button @click="er.emit('播放',0) "
-                        class="btn my-sm-1   py-sm-1   px-sm-5 shadow  badge-secondary badge   badge-pill">
+                        class="btn  my-2 my-sm-3   py-sm-1  py-sm-1  px-2  px-sm-4 shadow  badge-secondary badge   badge-pill">
                         <h3 class="text-nowrap"> {{site.zh || 中文}} </h3>
                     </button>
 
@@ -153,7 +143,7 @@
             <div class=" col-6       ">
                 <div v-for="(site, index) in pd.testLs" class="row  align-items-center   justify-content-around">
                     <button @click="er.emit('播放',1) "
-                        class="btn  my-sm-1   py-sm-1    shadow   badge-info badge   badge-pill">
+                        class="btn my-2 my-sm-3   py-sm-1 px-2   px-sm-4   shadow   badge-info badge   badge-pill">
                         <h3 class="text-nowrap">{{site.en || 英文}} </h3>
                     </button>
                 </div>
