@@ -271,9 +271,9 @@
 
     <div v-if="pd.showLoading" @click="er.emit('遮罩',0) " style="z-index: 1081  ;" class=" modal-backdrop show "> </div>
 
-
+<!---对错判断标签--->
     <transition v-cloak enter-active-class="animated flash">
-        <div v-cloak v-if="pd.showJudgment == 0" class="center text-success"
+        <div v-cloak v-if="pd.showJudgment == 0" class="center text-success rounded-circle border glassbg  border-5" 
             style="font-size:55px; z-index:1082; top:35%;    ">
             ✔
         </div>
@@ -281,7 +281,7 @@
 
 
     <transition v-cloak enter-active-class="animated flash">
-        <div v-cloak v-if="pd.showJudgment == 1" class="center text-danger"
+        <div v-cloak v-if="pd.showJudgment == 1" class="center text-danger rounded-circle border  glassbg  border-5"
             style="font-size:55px;z-index:1082; top:35%;    ">
             ❌
         </div>
@@ -336,21 +336,18 @@
         const gd = {};//全局数据 解决调用引用问题
         gd.storage = {
             //本地浏览器 存取组件
-            set(key, value) {
+            set(key, value,area) {
+                key = area ? area+':'+key : key ;//分区域分区组
                 localStorage.setItem(key, JSON.stringify(value));
             },
-            pset(key, value) { //私有设置
-                localStorage.setItem('_' + this.px + '_' + key, JSON.stringify(value));
+            get(key,area) {
+                key = area ? area+':'+key : key ;//分区域分区组
+                return JSON.parse(localStorage.getItem(key));
             },
-            get(key) {
-                var v = localStorage.getItem('_' + this.px + '_' + key);//私有优先
-                v = v ? v : localStorage.getItem(key);
-                return JSON.parse(v);
-            },
-            remove(key) {
+            remove(key,area) {
+                key = area ? area+':'+key : key ;//分区域分区组
                 localStorage.removeItem(key);
             },
-            px: '',
         }
         gd.pd = ref({ "load": [] });;//page data 页面元素引用"数据"
 
@@ -405,16 +402,20 @@
                 er.on('帮助.更多学习内容', this.hp2more)
             }
             endPlay(n) {
+                //对错判断后的播放完成
                 const that = gd.oui
                 //选择后 播放结束
                 console.log('endPlay', n)
-                if (n == 1 && pvs.selected == pvs.row.en) {
-                    //pvs.showConfirm = 1
+                if(! pvs.selected     ){
+                    return 0 
                 }
+           
                 //直接进入判断
-                var row = _.find(dataFromJSON.data, { "en": pvs.row.en })
-                if (n == 1 && pvs.selected == pvs.row.en && row.zh == pvs.row.zh) {
-                    pvs.showJudgment = 0
+                var row = _.find(dataFromJSON.data, { "en": pvs.row.en })//取数据 内部的一行
+                //console.log(row, pvs.row,pvs.selected)
+                //pvs.row 界面显示的数据
+                if (   pvs.selected == pvs.row.en && row.zh == pvs.row.zh ) {
+                    pvs.showJudgment = 0 //答对
                     if (pvs.page == pvs.testLs.length) {
                         //完成学习  +++  时间停止功能
                         setTimeout(() => {
@@ -428,7 +429,7 @@
                         setTimeout(() => { that.toPage(pvs.page + 1) }, 1600);
                     }
                 } else {
-                    pvs.showJudgment = 1
+                    pvs.showJudgment = 1//打错
                 }
 
 
@@ -469,10 +470,11 @@
                 var src = pvs.url.host();//本站
                 var dc = pvs.url.query(true);//参数
                 pvs.type = dc['t'] ? dc['t'] : gd.storage.get('pageType') ? gd.storage.get('pageType') : 'camb_word';//业务类型，url优先
-                pvs.pid = String(dc['p'] ? dc['p'] : gd.storage.get(pvs.type + '_pid') ? gd.storage.get(pvs.type + '_pid') : 365);//对应id，url优先
+                pvs.pid = String(dc['p'] ? dc['p'] : gd.storage.get('pid',pvs.type ) ? gd.storage.get('pid',pvs.type ) : 365);//对应id，url优先
                 pvs.pid = pvs.pid.padStart(3, '0'); //id定长
                 gd.storage.set('pageType', pvs.type)
-                gd.storage.set(pvs.type + '_pid', pvs.pid)
+                gd.storage.set('pid', pvs.pid,pvs.type ) //记录当前项目的学习课程号
+                
                 console.log("script参数=", src, pvs.type, pvs.pid)
                 //document.getElementById('dataFromJson').remove ()
                 // delete  dataFromJSON .data
@@ -717,8 +719,7 @@
         app.mount('#q-app')
     </script>
 
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/driver.js/0.9.8/driver.min.js"></script>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/driver.js/0.9.8/driver.min.css">
+ 
 
     <script>
             (() => setTimeout(() => {

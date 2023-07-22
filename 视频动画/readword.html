@@ -606,13 +606,16 @@
         const gd = {};//全局数据 解决调用引用问题
         gd.storage = {
             //本地浏览器 存取组件
-            set(key, value) {
+            set(key, value,area) {
+                key = area ? area+':'+key : key ;//分区域分区组
                 localStorage.setItem(key, JSON.stringify(value));
             },
-            get(key) {
+            get(key,area) {
+                key = area ? area+':'+key : key ;//分区域分区组
                 return JSON.parse(localStorage.getItem(key));
             },
-            remove(key) {
+            remove(key,area) {
+                key = area ? area+':'+key : key ;//分区域分区组
                 localStorage.removeItem(key);
             },
         }
@@ -901,7 +904,7 @@
                 that.loginLoading(0) //loading 
                 that.spto(0) //loading 
                 if (typeof (dat.data) == "undefined" || dat.data[pvs.defTable].length == 0) {
-                    that.showInfo("无数据", "读取单词")
+                    that.showInfo(" 无数据 ", "读取单词"+pvs.page+"页")
                     return
                 } //没数据
 
