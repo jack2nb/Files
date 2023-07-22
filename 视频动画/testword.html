@@ -119,14 +119,13 @@
     <div v-cloak class=" container-md   glassbga p-3 pt-md-5  pb-md-5 pt-sm-1  pb-sm-1">
 
 
-        <!---nan文字-->
+        <!---文-->
         <div class=" row   align-items-center   justify-content-around">
-
-
             <!---中文区-->
             <div class=" col-6       ">
-                <div v-for="(site, index) in pd.testLs" class="row  align-items-center   justify-content-around">
-                    <button @click="er.emit('播放',0) "
+                <div v-for="(site, index) in pd.zhLs" class="row  align-items-center   justify-content-around">
+                    <button @click='er.emit("选择单",{"type":"zh","word":site.zh,"evt":$event}) '
+                        :class="[{' bg-primary ': (site.zh == pd.selectedZh )} ]"
                         class="btn  my-2 my-sm-3   py-sm-1  py-sm-1  px-2  px-sm-4 shadow  badge-secondary badge   badge-pill">
                         <h3 class="text-nowrap"> {{site.zh || 中文}} </h3>
                     </button>
@@ -134,15 +133,11 @@
                 </div>
 
             </div>
-
-
-
-
-
             <!---英文区-->
             <div class=" col-6       ">
-                <div v-for="(site, index) in pd.testLs" class="row  align-items-center   justify-content-around">
-                    <button @click="er.emit('播放',1) "
+                <div v-for="(site, index) in pd.enLs" class="row  align-items-center   justify-content-around">
+                    <button @click='er.emit("选择单",{"type":"en","word":site.en,"evt":$event }) '
+                        :class="[{' bg-primary ': (site.en == pd.selectedEn )} ]"
                         class="btn my-2 my-sm-3   py-sm-1 px-2   px-sm-4   shadow   badge-info badge   badge-pill">
                         <h3 class="text-nowrap">{{site.en || 英文}} </h3>
                     </button>
@@ -150,14 +145,22 @@
             </div>
         </div>
         <!---音频-->
-        <div class=" d-flex    align-items-center  justify-content-around " style="height: 80px;">
+        <div class=" d-flex    align-items-center  justify-content-around " style="height: 1px; visibility:hidden ">
 
             <span class="  w-50  ml-sm-5 mx-sm-2     shadow   badge-info   badge badge-pill">
-                <audio onloadeddata="er.emit('预加载',12) " onended="er.emit('播放完成',0) " class="  w-100   "
-                    controls="controls" v-bind:src="pd.row.zh4mp3">
+                <audio onended="er.emit('播放完成',0) " class="  w-100   " controls="controls" v-bind:src="pd.row.zh4mp3">
                     Your browser does not support the audio element.
                 </audio>
             </span>
+
+            <span class="  w-50    mr-sm-5 mx-sm-2     shadow   badge-info badge   badge-pill">
+                <audio onended="er.emit('播放完成',event) " class="  w-100   " controls="controls"
+                    v-bind:src="pd.row.en4mp3">
+                    Your browser does not support the audio element.
+                </audio>
+            </span>
+
+
 
         </div>
 
@@ -167,10 +170,15 @@
     </div>
 
     <!---加载区xxxxxxxxxx--->
-    <div v-if=" pd.unload " style=" visibility: hidden; max-width:100%; height: 0px;">
-        <div v-for="(site, index) in pd.chooseRow">
-            <img onload="er.emit('预加载',11) " v-bind:src="site.img">
-            <audio onloadeddata="er.emit('预加载',11) " class="  w-25  " controls="controls" v-bind:src="site.en4m2mp3">
+    <div v-if=" pd.unload " style=" visibility: hidden; max-width:100%; height: 1px;">
+        <div v-for="(site, index) in pd.testLs">
+
+            <audio onloadeddata="er.emit('预加载',10) " class="  w-25  " controls="controls" v-bind:src="site.en4m2mp3">
+                Your browser does not support the audio element.
+            </audio>
+
+
+            <audio onloadeddata="er.emit('预加载',10) " class="  w-25  " controls="controls" v-bind:src="site.zh4m2mp3">
                 Your browser does not support the audio element.
             </audio>
 
@@ -333,7 +341,6 @@
                 pvs.row = {};//单词数据的一行
                 pvs.showNav = 0;//导航显示
                 pvs.showLoading = 0 //遮罩
-                pvs.total = 0
                 pvs.page = gd.storage.get('page') ? gd.storage.get('page') : 1;//显示动画
                 pvs.info_list = []//{info:"2",type:"2"}
                 pvs.vprogress = 100 //进度条
@@ -342,13 +349,16 @@
                 pvs.url = new URI() //获取去 type，pid ，默认访问本站，数据加载主站
                 //选择的单词
                 pvs.unload = 1 //预加载后隐藏
-                pvs.selected = '' //选择的单词
-                pvs.selectedCss = 'hidden' //选择的单词
-                pvs.wordLen = 5 //联系词数
+                pvs.selectedZh = '' //选择的单词
+                pvs.selectedEn = '' //选择的单词
+                pvs.selecteds = [] //单词选择对
+                pvs.wordLen = 5 //练习词数
                 //确认
                 pvs.showConfirm = 0//确认检查
                 pvs.showJudgment = -1//判断对错
                 pvs.testLs = []
+                pvs.enLs = []
+                pvs.zhLs = []
                 pvs.leftList = {} //左侧列表
                 this.init();
             }
@@ -357,70 +367,82 @@
 
                 er.on('遮罩', this.loginLoading)
                 er.on('播放', this.play)
-                er.on('播放-候选', this.playChoose)
+                er.on('选择单', this.playChoose)
 
 
                 er.on('进度', this.progress)
                 er.on('预加载', this.progress)//预加载
                 er.on('导航', this.trunNav)
 
-                er.on('跳转', this.toPage)
-                er.on('播放完成', this.endPlay)
+
+                er.on('播放完成', this.endPlay)//event
                 er.on('帮助.更多学习内容', this.hp2more)
             }
             endPlay(n) {
-                //对错判断后的播放完成
+                //播放 ,判断对错
                 const that = gd.oui
-                //选择后 播放结束
-                console.log('endPlay', n)
-                if (!pvs.selected) {
-                    return 0
-                }
-
-                //直接进入判断
-                var row = _.find(dataFromJSON.data, { "en": pvs.row.en })//取数据 内部的一行
-                //console.log(row, pvs.row,pvs.selected)
-                //pvs.row 界面显示的数据
-                if (pvs.selected == pvs.row.en && row.zh == pvs.row.zh) {
-                    pvs.showJudgment = 0 //答对
-                    if (pvs.page == pvs.testLs.length) {
-                        //完成学习  +++  时间停止功能
-                        setTimeout(() => {
-                            that.showInfo('恭喜 完成了练习', '真棒 ');
-                            pvs.showJudgment = -1 //判断结果重置
-                            setTimeout(() => er.emit('帮助.更多学习内容'), 1800);
-                            //完成提示进入挑战+++
-
-                        }, 1600);
-                    } else {
-                        setTimeout(() => { that.toPage(pvs.page + 1) }, 1600);
-                    }
-                } else {
-                    pvs.showJudgment = 1//打错
-                }
-
-
+                console.log(n)
+                that.checkSelect()
 
             }
             playChoose(dc) {
-                // 播放选择
                 const that = gd.oui
-                var row = _.find(dataFromJSON.data, { "en": dc.word })
-                console.log('playChoose', dc, row)
-                //设置值
-                pvs.selected = dc.word
-                pvs.selectedCss = ''//显示
+                if (pvs.selecteds.length == 2) {
+                    //防止重复点击
+                    return
+                }
 
-                pvs.showJudgment = -1 //判断结果
-                pvs.row.en = dc.word
-                pvs.row.img = that.mkPath(row.en) + row.img
-                pvs.row.en4mp3 = that.mkPath(row.en) + row.en4m2mp3
+                // 选择并播放
+                if (dc.type == 'zh') {
+                    pvs.selectedZh = dc.word
+                    var row = _.find(dataFromJSON.data, { "zh": dc.word })//取数据 内部的一行
+                    pvs.row.zh4mp3 = row.zh4m2mp3
+                    setTimeout(() => { that.play(0) }, 150)
 
-                setTimeout(() => { that.play(1) }, 150)
-                //that.play(dc.play)
+                }
+                if (dc.type == 'en') {
+                    pvs.selectedEn = dc.word
+                    var row = _.find(dataFromJSON.data, { "en": dc.word })//取数据 内部的一行
+                    pvs.row.en4mp3 = row.en4m2mp3
+                    setTimeout(() => { that.play(1) }, 150)
+                }
+                //设置并播放
+                var emt = dc.evt.target
+                pvs.selecteds.push(emt)
+                /**  连线  **/
+                if (pvs.selecteds.length >= 2) {
 
+                }
+
+
+                /**   检查  **/
+                //播放完后，自动在判断
+                //that.checkSelect()
 
             }
+
+
+            checkSelect() {
+                //判断对错 检查单词对
+                if (pvs.selectedZh == '' || pvs.selectedEn == '') {
+                    return
+                }
+                var rowEn = _.find(dataFromJSON.data, { "en": pvs.selectedEn })//取数据 内部的一行
+                var rowZh = _.find(dataFromJSON.data, { "zh": pvs.selectedZh })//取数据 内部的一行 
+                //答对删除对应行
+                if (rowEn.en == rowZh.en) {
+                    //pvs.testLs
+                    _.remove(pvs.zhLs, { "en": rowEn.en });
+                    _.remove(pvs.enLs, { "en": rowEn.en });
+                    console.log('答对=')
+                }
+                console.log('比对=', rowEn, rowZh)
+                //---清空重来
+                setTimeout(() => { pvs.selectedZh = ''; pvs.selectedEn = ''; pvs.selecteds = [] }, 800)
+
+            }
+
+
             trunNav(n) {
                 //切换导航栏
                 const that = gd.oui
@@ -450,8 +472,7 @@
                 var st = document.createElement("script");
                 st.id = 'dataFromJson';
                 st.src = `//${src}/${pvs.type}/${pvs.pid.substring(pvs.pid.length - 2, pvs.pid.length - 1)}/${pvs.pid.substring(pvs.pid.length - 1)}/cfg_${pvs.pid}.json`
-                //'https://disk.17121.top/camb_word/6/5/365/cfg_365.json';
-                // 'https://p_disk.17121.top/camb_word/6/5/365/cfg_365.json'; //经过代理
+
                 st.onerror = that.signErr;
                 st.onload = that.signing;
                 //console.log(dataFromJSON)
@@ -467,41 +488,10 @@
                 document.body.appendChild(wl);
 
             }
-            getPage() {
-                // 超限 问题处理
-                var page = gd.storage.get('page') ? gd.storage.get('page') : 1;//默认值
-                page = parseInt(page);
-                if (page <= 0) { page = 1; }
-                if (page > pvs.total) { page = pvs.total; }
-                gd.storage.set('page', page);
-                pvs.page = page
-                return page;
 
-            }
-            toPage(n) {
-                if (pvs.page == n) { return; }
-
-                const that = gd.oui
-                //跳转到某页面
-                pvs.page = parseInt(n);
-                //---处理
-                gd.storage.set('page', pvs.page)
-                that.progressVal(6)
-                //载入数据 
-                that.signing(1)
-                //--重新初始化
-                pvs.unload = 1 //允许预加载mp3 图片
-                pvs.showJudgment = -1 //选择判断结果
-                pvs.selected = '' //选择的单词
-                pvs.selectedCss = 'hidden' //选择的单词
-
-
-            }
 
             hp2more() {
-
-
-
+                //帮助，新手引导
                 var setpList = [
                     {
                         title: '<em>这里有更多挑战等着你</em>',
@@ -594,32 +584,20 @@
                 that.spto(1) //loading 
                 //词展示++++
                 if (dat != 1) {//非内部翻页-首次加载
-
-                    pvs.testLs = _.slice(_.shuffle(dataFromJSON.data), 0, pvs.wordLen)//测试数
-
+                    pvs.testLs = _.slice(_.shuffle(dataFromJSON.data), 0, pvs.wordLen)//取得，测试数
                     //pvs.testLs = dataFromJSON.data
-                    pvs.total = pvs.testLs.length
-
                 }
-                if (typeof (dataFromJSON) == "undefined" || dataFromJSON.data.length == 0) { that.showInfo("没找到数据", '翻页'); return; } //没数据
-                that.getPage() //if (pvs.page > pvs.total) { pvs.page = 1 }
-
+                if (typeof (dataFromJSON) == "undefined" || dataFromJSON.data.length == 0) { that.showInfo("没找到数据", ' 加载时 '); return; } //没数据
                 //设置数据
-                console.log(dataFromJSON.src, pvs.page, dataFromJSON.data[pvs.page - 1])
-                var row = pvs.testLs[pvs.page - 1]
-                //创建选区
-                pvs.choose = that.mkchoose(row, dataFromJSON.data)
-                //设置 mp3
-                pvs.row.zh = row.zh
-                pvs.row.en = "?"// row.en
-                pvs.row.zh4mp3 = that.mkPath(row.en) + row.zh4m2mp3
-                pvs.row.en4mp3 = that.mkPath(row.en) + row.en4m2mp3
-                pvs.row.img = that.mkPath(row.en) + row.img
-                //pvs.row.imgx = `//${pvs.url.host()}/${pvs.type}/choose.png` //?q=${ new Date().valueOf() }
+                //  加载2倍的mp3音（异步）
+                that.loadChoose();
+                //分成两份 并打乱
+                pvs.zhLs = _.shuffle(pvs.testLs)
+                pvs.enLs = _.shuffle(pvs.testLs)
 
-                //  加载5组10个音图文件（异步）
-                pvs.chooseRow = _.map(pvs.chooseRow, function (o) { return {} }) //清空
-                setTimeout(function () { that.loadChoose(); }, 150);
+
+
+
             }
             mkPath(wrod) {
                 return `//${pvs.url.host()}/${pvs.type}/${wrod.substring(0, 1).toLowerCase()}/${wrod.substring(1, 2).toLowerCase()}/`
@@ -629,33 +607,17 @@
 
                 //单独处理选择列表
                 //pvs.chooseRow = _.filter(dataFromJSON.data, function (o) { return pvs.choose.indexOf(o.en) >= 0; });//无序
-                pvs.chooseRow = _.map(pvs.choose, function (o) { return _.find(dataFromJSON.data, { "en": o }); });//有序
 
-                pvs.chooseRow = _.cloneDeep(pvs.chooseRow) //深度拷贝 
-                pvs.chooseRow = _.map(pvs.chooseRow, function (o) {
+                pvs.testLs = _.map(pvs.testLs, function (o) {
                     //计算长路径  免缓存
                     o.en4m2mp3 = that.mkPath(o.en) + o.en4m2mp3;
-                    o.img = that.mkPath(o.en) + o.img;
+                    o.zh4m2mp3 = that.mkPath(o.en) + o.zh4m2mp3;
+
                     return o;
                 }
                 );
             }
-            mkchoose(row, dat) {
-                //创建 选区单词
-                var ls = [row.en]
 
-                var count = Math.min(4, dat.length)
-                var tmp = ''
-                while (!(ls.length >= count)) {
-                    tmp = _.sample(dat).en
-                    if (_.include(ls, tmp)) {
-                        continue//不重复
-                    }
-                    ls.push(tmp)
-                }
-                _.find(ls, ['a']);
-                return _.shuffle(ls)
-            }
 
             watchPg(newValue, oldValue) {
                 //watch

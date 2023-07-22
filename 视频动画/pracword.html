@@ -187,7 +187,7 @@
 
     </div>
     <!---加载区xxxxxxxxxx--->
-    <div v-if=" pd.unload " style=" visibility: hidden; max-width:100%; height: 0px;">
+    <div v-if=" pd.unload " style=" visibility: hidden; max-width:100%; height: 1px;">
         <div v-for="(site, index) in pd.chooseRow">
             <img onload="er.emit('预加载',11) " v-bind:src="site.img">
             <audio onloadeddata="er.emit('预加载',11) " class="  w-25  " controls="controls" v-bind:src="site.en4m2mp3">
@@ -425,16 +425,13 @@
                             setTimeout(()=>er.emit('帮助.更多学习内容'),1800);
                             //完成提示进入挑战+++
 
-                        }, 1600);
+                        }, 1500);
                     } else {
-                        setTimeout(() => { that.toPage(pvs.page + 1) }, 1600);
+                        setTimeout(() => { that.toPage(pvs.page + 1) }, 1500);
                     }
                 } else {
                     pvs.showJudgment = 1//打错
                 }
-
-
-
             }
             playChoose(dc) {
                 // 播放选择
@@ -528,14 +525,9 @@
                 pvs.showJudgment = -1 //选择判断结果
                 pvs.selected = '' //选择的单词
                 pvs.selectedCss = 'hidden' //选择的单词
-
-
             }
  
             hp2more() {
-
-        
-
                 var setpList = [
                     {
                         title: '<em>这里有更多挑战等着你</em>',
@@ -586,7 +578,7 @@
                 console.log("进度", n, pvs.vprogress)
                 if (pvs.vprogress > 98) {
                     pvs.vprogress = 100
-                    pvs.unload = 0 //加载完 删除元素
+                    pvs.unload = 0 //加载完不显示 删除元素
                     setTimeout(function () { pvs.showProgress = 0 }, 155);
                     that.spto(0)
                     that.loginLoading(0)
@@ -652,8 +644,8 @@
                 //pvs.row.imgx = `//${pvs.url.host()}/${pvs.type}/choose.png` //?q=${ new Date().valueOf() }
 
                 //  加载5组10个音图文件（异步）
-                pvs.chooseRow = _.map(pvs.chooseRow, function (o) { return {} }) //清空
-                setTimeout(function () { that.loadChoose(); }, 150);
+                pvs.chooseRow = []//初始化清空
+                setTimeout(function () { that.loadChoose(); }, 150); //生成
             }
             mkPath(wrod) {
                 return `//${pvs.url.host()}/${pvs.type}/${wrod.substring(0, 1).toLowerCase()}/${wrod.substring(1, 2).toLowerCase()}/`
@@ -687,7 +679,7 @@
                     }
                     ls.push(tmp)
                 }
-                _.find(ls, ['a']);
+                //_.find(ls, ['a']);//???
                 return _.shuffle(ls)
             }
 
