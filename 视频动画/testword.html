@@ -210,11 +210,11 @@
                             v-bind:href="'./learnword.html?t'+pd.type+'&p='+pd.pid">学一学</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link shadow  bg-info text-white  px-lg-5 mx-md-2 mx-lg-5 active"
+                        <a class="nav-link shadow  bg-secondary text-white  px-lg-5 mx-md-2 mx-lg-5 active"
                             v-bind:href="'./pracword.html?t'+pd.type+'&p='+pd.pid">练一练</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link shadow   bg-secondary  text-white  px-lg-5 mx-md-2 mx-lg-5"
+                        <a class="nav-link shadow   bg-info  text-white  px-lg-5 mx-md-2 mx-lg-5"
                             v-bind:href="'./testword.html?t'+pd.type+'&p='+pd.pid">试一试</a>
                     </li>
                 </ul>
@@ -434,7 +434,7 @@
                 //播放 ,判断对错
                 const that = gd.oui
                 console.log(n)
-                setTimeout(() => { that.checkSelect() }, 1100)
+                setTimeout(() => { that.checkSelect() }, 900)
 
 
             }
