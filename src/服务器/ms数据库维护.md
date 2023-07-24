@@ -31,6 +31,25 @@ SERVERPROPERTY('ProductLevel')  AS  版本级别,
 | 12.0.2000.8 | Enterprise Edition (64-bit) |
 |             |                             |
 
+## 锁
+
+```sql
+select request_session_id spid,OBJECT_NAME(resource_associated_entity_id) tableName 
+from sys.dm_tran_locks where resource_type='OBJECT'	
+```
+
+## 当前事务
+
+```sql
+ select * from sys.dm_tran_session_transactions;
+```
+
+
+
+
+
+
+
 ## LinkedServer（服务器对象->链接服务器）
 
 链接服务器名 . 数据库名 . 用户名（如dbo）. 表名（或其他对象名）
