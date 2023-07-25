@@ -1,0 +1,428 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <meta charset="utf-8">
+
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <title>老oa查询外挂</title>
+  <link rel="stylesheet" crossorigin="anonymous"
+    href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.6.1/css/bootstrap.min.css">
+  <link rel="stylesheet" crossorigin="anonymous"
+    href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.5.1/animate.min.css">
+  <style>
+    .glassbga {
+      /*渐变*/
+      background: linear-gradient(to right bottom, rgba(255, 255, 255, 0.7), rgba(255, 255, 255, 0.2));
+      ;
+      border-radius: 1rem;
+      box-shadow: 6px 6px 10px rgba(112, 112, 112, 0.2);
+    }
+
+    .glassbg {
+      /*背景*/
+      background: linear-gradient(to right top, #65dfc9, #6cdbeb);
+      border-radius: 1rem;
+    }
+
+    .center {
+      position: absolute;
+      left: 50%;
+      top: 10%;
+      transform: translate(-50%, -50%);
+    }
+
+    [v-cloak] {
+      display: none;
+    }
+  </style>
+</head>
+
+
+<body id="q-app" class="glassbg text-white  ">
+  <!---设置-->
+  <div class="  d-none  d-sm-flex   fixed-top justify-content-end ">
+    <span @click="pd.shwoChange=!pd.shwoChange " class="btn "
+      style="font-size:32px;  filter: grayscale(100%); ">⚙</span>
+  </div>
+
+
+
+
+
+
+  <!---上面的结果框val--->
+  <div v-cloak class="container ">
+    <div class="mt-2 row justify-content-center  ">
+      <div class="w-100 mb-5   d-none d-md-block"><!---高度垫子 小设备隐藏--></div>
+      <div>
+        <h3>oa基础数据查询</h3>
+      </div>
+
+    </div>
+  </div>
+
+
+
+  <!---齿轮设置-->
+  <transition v-cloak enter-active-class="animated bounceIn" leave-active-class="animated bounceOut">
+    <div v-if="pd.shwoChange==0?false:true" class="container-md     glassbga  mt-4  mb-4   pt-3  pb-3">
+      <div class=" row  align-items-center   justify-content-around  ">
+        <div class="  p-0 m-0 d-flex col-1 col-md-1 col-sm-1  justify-content-end  ">
+          <label class="text-dark    mt-1       ">名字</label>
+        </div>
+        <div class="  p-0 m-0 col-6   col-md-4 col-sm-4   align-items-center  justify-content-start ">
+          <input type="text" v-model="pd.searchName" class="  form-control">
+        </div>
+
+        <div class="   d-flex col-auto   justify-content-start  ">
+          <button @click="er.emit('查询' ) " class="btn shadow-lg btn-danger">查询</button>
+        </div>
+
+
+      </div>
+
+
+    </div>
+
+  </transition>
+
+
+
+  <!--功能选择--->
+  <div class="  mx-2 mx-sm-3   justify-content-start     ">
+    <div class="   row   ">
+
+
+      <ul class="nav nav-tabs   ">
+        <li class="nav-item">
+          <a class="nav-link shadow  bg-secondary  text-white  px-lg-5 mx-md-2 mx-lg-2   "
+            :class="[{' active bg-info ': ('基本信息' == pd.tabSele )} ]">基本信息</a>
+        </li>
+        <li class="nav-item" id="prac">
+          <a class="nav-link shadow   bg-secondary text-white  px-lg-5 mx-md-2 mx-lg-2"
+            :class="[{' active bg-info ': ('请假' == pd.tabSele )} ]">请假</a>
+        </li>
+        <li class="nav-item" id="test">
+          <a class="nav-link shadow   bg-secondary  text-white  px-lg-5 mx-md-2 mx-lg-2"
+            :class="[{' active bg-info ': ('公出' == pd.tabSele )} ]">公出</a>
+        </li>
+        <li class="nav-item" id="test">
+          <a class="nav-link shadow   bg-secondary  text-white  px-lg-5 mx-md-2 mx-lg-2"
+            :class="[{' active bg-info ': ('补考勤' == pd.tabSele )} ]">补考勤</a>
+        </li>
+        <li class="nav-item" id="test">
+          <a class="nav-link shadow   bg-secondary  text-white  px-lg-5 mx-md-2 mx-lg-2"
+            :class="[{' active bg-info ': ('考勤' == pd.tabSele )} ]">考勤</a>
+        </li>
+      </ul>
+    </div>
+
+  </div>
+
+  <!---info提示信息--->
+  <transition v-cloak mode="out-in" enter-active-class="animated pulse" leave-active-class="animated bounceOutRight">
+    <div class=" container-sm  fixed-top    " style="z-index: 1083 ;" v-for="site in pd.info_list">
+      <div class="alert  alert-warning alert-dismissible fade show" role="alert">
+        <strong>{{site.type}}</strong>{{ site.info }}
+        <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+    </div>
+  </transition>
+  <!---遮罩1024--->
+  <div v-cloak v-if="pd.sp==0?false:true" @click="er.emit('遮罩',0) " style="z-index: 1081  ;"
+    class=" modal-backdrop show ">
+
+  </div>
+  <!---载入动画--->
+  <transition v-cloak leave-active-class="animated fadeOut">
+    <div v-if="pd.sp==0?false:true"
+      class="center w-100 mt-5   row d-flex     align-items-center  justify-content-center  " style="z-index: 1082  ;">
+      <div class="spinner-border   "></div>
+    </div>
+  </transition>
+  
+
+
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/vue/3.2.47/vue.global.prod.min.js"></script>
+  <!--script src="https://cdnjs.cloudflare.com/ajax/libs/lodash.js/2.4.2/lodash.min.js"></script--->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/EventEmitter/5.2.8/EventEmitter.min.js"></script>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/axios/1.4.0/axios.min.js"></script>
+
+
+
+
+
+  <script>
+    const er = new EventEmitter //事件线
+    const { onMounted, emits, createApp, ref, watch, computed } = Vue
+
+    const gd = {};//全局数据 解决调用引用问题
+    gd.storage = {
+      //本地浏览器 存取组件
+      set(key, value, area) {
+        key = area ? area + ':' + key : key;//分区域分区组
+        localStorage.setItem(key, JSON.stringify(value));
+      },
+      get(key, area) {
+        key = area ? area + ':' + key : key;//分区域分区组
+        return JSON.parse(localStorage.getItem(key));
+      },
+      remove(key, area) {
+        key = area ? area + ':' + key : key;//分区域分区组
+        localStorage.removeItem(key);
+      },
+    }
+    gd.pd = ref({ "load": [] });;//page data 页面元素引用"数据"
+    //const pd = ref({ "load": [] }); //特殊变量，页面数据
+    const pvs = gd.pd.value; //变量代理访问
+    class pgui {
+      /* 界面控制类 初始化界面默认值 */
+      constructor(arg) {
+        //初始（值）
+
+        //--界面值
+        pvs.load.unshift('pgui')//从开头添加一个值
+        pvs.sp = 0; //遮罩路由 (0.无，1.名单，2.登入 ,3.管理)
+        pvs.info_list = []//交互提示 {info:"2",type:"2"}
+        pvs.dat = {}
+
+
+
+
+        pvs.searchName = gd.storage.get('searchName') ? gd.storage.get('searchName') : '';//'默认查询名
+
+
+
+        //--存储默认值
+        pvs.shwoChange = gd.storage.get('shwoChange') ? gd.storage.get('shwoChange') : 1;//设置显示
+
+        pvs.tabSele = gd.storage.get('tabSele') ? gd.storage.get('tabSele') : '基本信息';//'默认路径'
+
+
+        //初始效果
+        this.hd = { //请求头
+          mode: 'cors',
+          cache: 'no-cache',
+          "headers": {
+            'Content-Type': 'application/json'
+          }
+        }
+        this.init();
+      }
+
+      init() {
+        //初始（设置）
+        //绑定事件
+
+        er.on('遮罩', this.spto)
+
+
+        er.on('翻页', this.nextPage)
+        //er.on('修改', this.toChange)
+
+        er.on('查询', this.toSearch)
+
+        //er.on('获取音标', this.toGetPh) //获取音标
+
+      }
+      toSearch() {
+        if (!pvs.searchName) { return }
+
+
+        var dboa = {
+          "T_USER": {
+            "@column": "ID,NAME",
+            "NAME": '蔡金凯',
+            "@limit": 1
+          }
+        }
+        var kq = {
+          "USERINFO": {
+            "@column": "BADGENUMBER.用户id,NAME,USERID.设备内id,DEFAULTDEPTID",
+            "NAME": '蔡金凯',
+            "@limit": 1
+          }
+        }
+
+
+        const that = gd.oui
+        //获取数据，发送请求
+        var url = "http://127.0.0.1:2044/jsonapi/get";
+
+      
+        // //发送
+        //return
+        axios.post(url, kq, that.hd)
+          .then(
+            dat => {
+              that.loginLoading(0)
+              that.spto(0)
+              if (dat.data['@code'] < 300) {
+                that.showInfo(dat.data['@msg'], '基本信息完成')
+                pvs.dat.USERINFO = dat.data.USERINFO
+                console.log('ph==', dat.data )
+              } else {
+                that.showInfo('出现错误', '基本信息')
+                console.log('ph==', dat )
+              }
+            }
+          )
+          .catch(that.getErr)
+
+        // fetch(url, opt)
+        //     .then(res => res.json())
+        //     .catch(that.getErr)
+        //     .then(dat => er.emit('更新.发音人完成', dat))
+        //     ;
+        //动画效果
+        that.loginLoading(1)
+        that.spto(1) //loading 
+
+
+      }
+
+
+      nextPage(n) {
+        //跳转、翻页
+        const that = gd.oui
+        console.log("name=", pvs.searchName)
+        that.toSearch(1)
+      }
+      play(n) {
+        //播
+        console.log('播放=', n)
+        //播放指定 document.querySelectorAll('audio')[0].play()
+        document.querySelectorAll('audio')[n].play()
+
+      }
+      // toChange(dc) {
+      //     // 设置 修改选择框 男女、中英
+
+      //     pvs.mknew = Object.assign({}, pvs.mknew, dc);
+      // }
+ 
+      toMake(dc) {
+        // 设置 修改选择框 男女、中英
+        const that = gd.oui
+        //获取数据，发送请求
+        var url = "http://127.0.0.1:2028/make";
+        var data = dc;
+        data['zh'] = pvs.row.zh
+        data['en'] = pvs.row.en
+        data['dir'] = pvs.defPath
+        console.log(data)
+        // //发送
+        //return
+        axios.post(url, data, that.hd)
+          .then(
+            dat => {
+              that.showInfo(dat.data['@msg'], '创建声音：')
+              that.loginLoading(0)
+              that.spto(0)
+
+              setTimeout(function () { location.reload(true); }, 1000);
+            }
+          )
+          .catch(that.getErr)
+        //动画效果
+        that.loginLoading(1)
+        that.spto(1) //loading 
+      }
+
+
+      toGet(e) {
+        const that = gd.oui
+        //获取数据单词
+        var url = "http://127.0.0.1:2028/jsonapi/get";
+        //url = "http://127.0.0.1:2028/jsonapi";
+        var ja = {}
+
+        ja['@limit'] = 1
+        ja['@page'] = pvs.page
+        ja['mkimg'] = 1 //是否显示
+        if (pvs.defFrom) { ja['f'] = pvs.defFrom } //来源条件
+        //发送
+        var data = {};
+        data[pvs.defTable] = ja
+        axios.post(url, data, that.hd)
+          //fetch(url, opt)
+          //.then(res => res.json())
+          .catch(that.getErr)
+          .then(dat => er.emit('收到.单词', dat))
+          ;
+        //动画效果
+        that.loginLoading(1)
+        that.spto(1) //loading 
+      }
+      loginLoading(n) {
+        //登入中效果
+        pvs.loginLoding = n
+      }
+      spto(n) {
+        //遮罩和二级界面
+        /*切换界面*/
+        pvs.sp = n
+      }
+
+ 
+ 
+      showInfo(info, type = '') {
+        //结果提示信息 （数据驱动）
+        //添加数据，来添加提示
+        pvs.info_list.push({ "info": info, "type": type })
+        //缺少动效
+        setTimeout(function () { pvs.info_list.splice(0, 1); }, 4000);
+      }
+      getErr(error) {
+        //登入错误处理
+        const that = gd.oui
+        console.log('Error:', error);
+        that.loginLoading(0) //loading 
+        that.spto(0) //loading  
+        that.showInfo('无法加载到数据，刷新重试', '载入数据：') //loading  
+      }
+
+      watchPg(newValue, oldValue) {
+        //watch
+        console.log('gd pagedata 被修改')
+        //console.log('gd pagedata 被修改\n', newValue, '\n', oldValue)
+      }
+
+    }
+
+    //----------开始
+    let appdat = {
+      setup() {
+        const oui = new pgui(); //界面更改"方法"
+        //const ocls = new cls(12);//默认选择
+        //---放入全局解决this问题
+        //gd.ocls = ocls; //抽奖类
+        //gd.oin = oin; //通信逻辑
+        gd.oui = oui; //ui界面
+
+        watch(gd.pd, oui.watchPg, { deep: true });
+        //pvs.opList = computed(() => oui.showOp('', '')); //二次计算pvs.opList
+        //------
+
+        //onMounted(() => ocls.bindEvt()); //窗口大小变动事件
+        //onMounted(() => oui.remount()); //已经登入刷新处理
+        onMounted(() => oui.nextPage(0)); //已经登入刷新处理
+        //--变量关联到html的映射 js访问要加.value
+        return { er, oui, "pd": gd.pd, "ref_login_manage": gd.pd.refManageEmt, }
+      }
+    }
+    const app = createApp(appdat)
+    //app.use(Quasar) //vue的ui
+    app.mount('#q-app')
+  </script>
+
+
+
+</body>
+
+</html>

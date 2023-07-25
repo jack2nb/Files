@@ -185,12 +185,12 @@
     <div v-if=" pd.unload " style=" visibility: hidden; max-width:100%; height: 1px;">
         <div v-for="(site, index) in pd.testLs">
 
-            <audio onloadeddata="er.emit('预加载',10) " class="  w-25  " controls="controls" v-bind:src="site.en4m2mp3">
+            <audio onloadeddata="er.emit('预加载',10) " onerror="er.emit('预加出错',event)" class="  w-25  " controls="controls" v-bind:src="site.en4m2mp3">
                 Your browser does not support the audio element.
             </audio>
 
 
-            <audio onloadeddata="er.emit('预加载',10) " class="  w-25  " controls="controls" v-bind:src="site.zh4m2mp3">
+            <audio onloadeddata="er.emit('预加载',10) "  onerror="er.emit('预加出错',$event)" class="  w-25  " controls="controls" v-bind:src="site.zh4m2mp3">
                 Your browser does not support the audio element.
             </audio>
 
@@ -403,8 +403,9 @@
                 pvs.unload = 1 //预加载后隐藏
                 pvs.selectedZh = '' //选择的单词
                 pvs.selectedEn = '' //选择的单词
-                pvs.selecteds = [] //单词选择对
+                pvs.selecteds = {} //单词选择对
                 pvs.wordLen = 5 //练习词数
+                pvs.loadNum = pvs.wordLen *  2 //加载音频数量
                 //确认
                 pvs.showConfirm = 0//确认检查
                 pvs.showJudgment = -1//判断对错
@@ -424,6 +425,7 @@
 
                 er.on('进度', this.progress)
                 er.on('预加载', this.progress)//预加载
+                er.on('预加出错', (evt)=>{ console.log('预加出错',evt)})//预加载
                 er.on('导航', this.trunNav)
 
 
@@ -440,13 +442,15 @@
             }
             playChoose(dc) {
                 const that = gd.oui
-                if (pvs.selecteds.length == 2) {
+                if (  pvs.selectedZh != '' &&  pvs.selectedEn != '') {
                     //防止重复点击
                     return
                 }
-
+                var emt = dc.evt.target
                 // 选择并播放
                 if (dc.type == 'zh') {
+                    pvs.selecteds['zh'] = emt
+
                     pvs.selectedZh = dc.word
                     var row = _.find(dataFromJSON.data, { "zh": dc.word })//取数据 内部的一行
                     pvs.row.zh4mp3 = row.zh4m2mp3
@@ -454,6 +458,7 @@
 
                 }
                 if (dc.type == 'en') {
+                    pvs.selecteds['en'] = emt
                     pvs.selectedEn = dc.word
                     var row = _.find(dataFromJSON.data, { "en": dc.word })//取数据 内部的一行
                     pvs.row.en4mp3 = row.en4m2mp3
@@ -461,13 +466,13 @@
                 }
                 //设置并播放
                 var emt = dc.evt.target
-                pvs.selecteds.push(emt)
+                
                 /**  连线  **/
-                if (pvs.selecteds.length >= 2) {
+                if (  pvs.selectedZh != '' &&  pvs.selectedEn != '') {
 
-                    var h5div = drawLine(pvs.selecteds[0], pvs.selecteds[1])
+                    var h5div = drawLine(pvs.selecteds['en'],pvs.selecteds['zh'])
                     var doc = new DOMParser().parseFromString(h5div, 'text/html');
-                    console.log(doc, pvs.selecteds[0], pvs.selecteds[1])
+                    console.log(doc, pvs.selecteds)
                     document.body.appendChild(doc.querySelector('div'));//选区部分，添加到body
 
                 }
@@ -498,7 +503,7 @@
                 //---清空重来
                 var elements = document.querySelectorAll('div.line')
                 _.map(elements, (o) => { o.parentNode.removeChild(o); })
-                pvs.selectedZh = ''; pvs.selectedEn = ''; pvs.selecteds = [];
+                pvs.selectedZh = ''; pvs.selectedEn = ''; pvs.selecteds = {};
 
                 if (pvs.enLs.length == 0 ) {
                     //完成学习  +++  时间停止功能
