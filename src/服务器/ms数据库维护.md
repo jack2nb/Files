@@ -31,6 +31,14 @@ SERVERPROPERTY('ProductLevel')  AS  版本级别,
 | 12.0.2000.8 | Enterprise Edition (64-bit) |
 |             |                             |
 
+### 编码
+
+```sql
+ SELECT COLLATIONPROPERTY('Chinese_PRC_Stroke_CI_AI_KS_WS', 'CodePage');-- 936
+```
+
+
+
 ## 锁
 
 ```sql
@@ -45,6 +53,15 @@ from sys.dm_tran_locks where resource_type='OBJECT'
 ```
 
 
+
+## 缓存清理
+
+```sql
+DBCC FREEPROCCACHE       --清除存储过程相关的缓存
+DBCC FREESESSIONCACHE    --会话缓存
+DBCC FREESYSTEMCACHE('All')    --系统缓存
+DBCC DROPCLEANBUFFERS       --所有缓存
+```
 
 
 

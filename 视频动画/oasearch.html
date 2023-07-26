@@ -143,7 +143,7 @@
       <div class="spinner-border   "></div>
     </div>
   </transition>
-  
+
 
 
 
@@ -162,6 +162,7 @@
     const { onMounted, emits, createApp, ref, watch, computed } = Vue
 
     const gd = {};//全局数据 解决调用引用问题
+    gd.reg={} //组成类到全局调用
     gd.storage = {
       //本地浏览器 存取组件
       set(key, value, area) {
@@ -177,7 +178,7 @@
         localStorage.removeItem(key);
       },
     }
-    gd.pd = ref({ "load": [] });;//page data 页面元素引用"数据"
+    gd.pd = ref({  });;//page data 页面元素引用"数据"
     //const pd = ref({ "load": [] }); //特殊变量，页面数据
     const pvs = gd.pd.value; //变量代理访问
     class pgui {
@@ -186,32 +187,17 @@
         //初始（值）
 
         //--界面值
-        pvs.load.unshift('pgui')//从开头添加一个值
+        gd.reg.ui =  this//全局资源
         pvs.sp = 0; //遮罩路由 (0.无，1.名单，2.登入 ,3.管理)
         pvs.info_list = []//交互提示 {info:"2",type:"2"}
         pvs.dat = {}
 
-
-
-
         pvs.searchName = gd.storage.get('searchName') ? gd.storage.get('searchName') : '';//'默认查询名
-
-
-
         //--存储默认值
         pvs.shwoChange = gd.storage.get('shwoChange') ? gd.storage.get('shwoChange') : 1;//设置显示
-
         pvs.tabSele = gd.storage.get('tabSele') ? gd.storage.get('tabSele') : '基本信息';//'默认路径'
-
-
         //初始效果
-        this.hd = { //请求头
-          mode: 'cors',
-          cache: 'no-cache',
-          "headers": {
-            'Content-Type': 'application/json'
-          }
-        }
+  
         this.init();
       }
 
@@ -231,48 +217,12 @@
 
       }
       toSearch() {
+        const ui = gd.reg.ui
+        const se = gd.reg.se
         if (!pvs.searchName) { return }
 
+        gd.storage.set('searchName', pvs.searchName)
 
-        var dboa = {
-          "T_USER": {
-            "@column": "ID,NAME",
-            "NAME": '蔡金凯',
-            "@limit": 1
-          }
-        }
-        var kq = {
-          "USERINFO": {
-            "@column": "BADGENUMBER.用户id,NAME,USERID.设备内id,DEFAULTDEPTID",
-            "NAME": '蔡金凯',
-            "@limit": 1
-          }
-        }
-
-
-        const that = gd.oui
-        //获取数据，发送请求
-        var url = "http://127.0.0.1:2044/jsonapi/get";
-
-      
-        // //发送
-        //return
-        axios.post(url, kq, that.hd)
-          .then(
-            dat => {
-              that.loginLoading(0)
-              that.spto(0)
-              if (dat.data['@code'] < 300) {
-                that.showInfo(dat.data['@msg'], '基本信息完成')
-                pvs.dat.USERINFO = dat.data.USERINFO
-                console.log('ph==', dat.data )
-              } else {
-                that.showInfo('出现错误', '基本信息')
-                console.log('ph==', dat )
-              }
-            }
-          )
-          .catch(that.getErr)
 
         // fetch(url, opt)
         //     .then(res => res.json())
@@ -280,8 +230,10 @@
         //     .then(dat => er.emit('更新.发音人完成', dat))
         //     ;
         //动画效果
-        that.loginLoading(1)
-        that.spto(1) //loading 
+        ui.loginLoading(1)
+        ui.spto(1) //loading 
+        er.emit('se.user')
+        er.emit('se.kq')
 
 
       }
@@ -293,72 +245,7 @@
         console.log("name=", pvs.searchName)
         that.toSearch(1)
       }
-      play(n) {
-        //播
-        console.log('播放=', n)
-        //播放指定 document.querySelectorAll('audio')[0].play()
-        document.querySelectorAll('audio')[n].play()
-
-      }
-      // toChange(dc) {
-      //     // 设置 修改选择框 男女、中英
-
-      //     pvs.mknew = Object.assign({}, pvs.mknew, dc);
-      // }
- 
-      toMake(dc) {
-        // 设置 修改选择框 男女、中英
-        const that = gd.oui
-        //获取数据，发送请求
-        var url = "http://127.0.0.1:2028/make";
-        var data = dc;
-        data['zh'] = pvs.row.zh
-        data['en'] = pvs.row.en
-        data['dir'] = pvs.defPath
-        console.log(data)
-        // //发送
-        //return
-        axios.post(url, data, that.hd)
-          .then(
-            dat => {
-              that.showInfo(dat.data['@msg'], '创建声音：')
-              that.loginLoading(0)
-              that.spto(0)
-
-              setTimeout(function () { location.reload(true); }, 1000);
-            }
-          )
-          .catch(that.getErr)
-        //动画效果
-        that.loginLoading(1)
-        that.spto(1) //loading 
-      }
-
-
-      toGet(e) {
-        const that = gd.oui
-        //获取数据单词
-        var url = "http://127.0.0.1:2028/jsonapi/get";
-        //url = "http://127.0.0.1:2028/jsonapi";
-        var ja = {}
-
-        ja['@limit'] = 1
-        ja['@page'] = pvs.page
-        ja['mkimg'] = 1 //是否显示
-        if (pvs.defFrom) { ja['f'] = pvs.defFrom } //来源条件
-        //发送
-        var data = {};
-        data[pvs.defTable] = ja
-        axios.post(url, data, that.hd)
-          //fetch(url, opt)
-          //.then(res => res.json())
-          .catch(that.getErr)
-          .then(dat => er.emit('收到.单词', dat))
-          ;
-        //动画效果
-        that.loginLoading(1)
-        that.spto(1) //loading 
-      }
+     
       loginLoading(n) {
         //登入中效果
         pvs.loginLoding = n
@@ -369,8 +256,8 @@
         pvs.sp = n
       }
 
- 
- 
+
+
       showInfo(info, type = '') {
         //结果提示信息 （数据驱动）
         //添加数据，来添加提示
@@ -378,14 +265,7 @@
         //缺少动效
         setTimeout(function () { pvs.info_list.splice(0, 1); }, 4000);
       }
-      getErr(error) {
-        //登入错误处理
-        const that = gd.oui
-        console.log('Error:', error);
-        that.loginLoading(0) //loading 
-        that.spto(0) //loading  
-        that.showInfo('无法加载到数据，刷新重试', '载入数据：') //loading  
-      }
+
 
       watchPg(newValue, oldValue) {
         //watch
@@ -395,10 +275,125 @@
 
     }
 
+    class select {
+      /* 界面控制类 初始化界面默认值 */
+      constructor(arg) {
+        //初始（值）
+
+        //--界面值
+        gd.reg.se =  this//全局资源
+       
+        pvs.dat = {}
+ 
+        //初始效果
+        this.hd = { //请求头
+          mode: 'cors',
+          cache: 'no-cache',
+          "headers": {
+            'Content-Type': 'application/json'
+          }
+        }
+        this.init();
+      }
+
+      init() {
+        //初始（设置）
+        //绑定事件
+        er.on('se.user', this.seUser)
+        er.on('se.dep', this.seDep)
+        er.on('se.kq', this.seKq)
+
+      }
+      seKq(){
+        const ui = gd.reg.ui
+        const se = gd.reg.se
+        //查询考勤
+        var kq = {
+          "USERINFO": {
+            "@column": "BADGENUMBER.用户id,NAME,USERID.设备内id,DEFAULTDEPTID",
+            "NAME": '蔡金凯',
+            "@limit": 1
+          }
+        }
+        var url = "http://127.0.0.1:2044/jsonapi/get";
+
+                // //发送
+        //return
+        axios.post(url, kq, se.hd)
+          .then(
+            dat => {
+              ui.loginLoading(0)
+              ui.spto(0)
+              if (dat.data['@code'] < 300) {
+                ui.showInfo(dat.data['@msg'], '基本信息完成')
+                pvs.dat.USERINFO = dat.data.USERINFO
+                console.log('ph==', dat.data.USERINFO[0]
+                )
+              } else {
+                ui.showInfo('出现错误', '基本信息')
+                console.log('ph==', dat)
+              }
+            }
+          )
+          .catch(se.getErr)
+
+      }
+      seDep(){
+        const ui = gd.reg.ui
+        const se = gd.reg.se
+        //查询部门
+      }
+      seUser(){
+        const ui = gd.reg.ui
+        const se = gd.reg.se
+        //查询用户
+        var oaUser = {
+          "T_USER": {
+            "@column": "ID,NAME",
+            "NAME": '蔡金凯',
+            "@limit": 1
+          }
+        }
+        //获取数据，发送请求
+        var url = "http://127.0.0.1:2022/jsonapi/get";
+
+             // //发送
+        //return
+        axios.post(url, oaUser, se.hd)
+          .then(
+            dat => {
+              ui.loginLoading(0)
+              ui.spto(0)
+              if (dat.data['@code'] < 300) {
+                ui.showInfo(dat.data['@msg'], '基本信息完成')
+                console.log('ph==', dat   )
+                pvs.dat.T_USER = dat.data.T_USER
+                
+              } else {
+                ui.showInfo('出现错误', '基本信息')
+                console.log('ph==', dat)
+              }
+            }
+          )
+          .catch(ui.getErr)
+
+      }
+      getErr(error) {
+        const ui = gd.ui
+        const se = gd.se
+        //登入错误处理
+        console.log('Error:', error);
+        ui.loginLoading(0) //loading 
+        ui.spto(0) //loading  
+        ui.showInfo('无法加载到数据，刷新重试', '载入数据：') //loading  
+      }
+    }
+
     //----------开始
     let appdat = {
       setup() {
         const oui = new pgui(); //界面更改"方法"
+        const se = new select(); //界面更改"方法"
         //const ocls = new cls(12);//默认选择
         //---放入全局解决this问题
         //gd.ocls = ocls; //抽奖类
@@ -413,7 +408,7 @@
         //onMounted(() => oui.remount()); //已经登入刷新处理
         onMounted(() => oui.nextPage(0)); //已经登入刷新处理
         //--变量关联到html的映射 js访问要加.value
-        return { er, oui, "pd": gd.pd, "ref_login_manage": gd.pd.refManageEmt, }
+        return { er,   "pd": gd.pd, "ref_login_manage": gd.pd.refManageEmt, }
       }
     }
     const app = createApp(appdat)
