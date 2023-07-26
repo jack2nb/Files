@@ -154,6 +154,8 @@
   <script src="https://cdnjs.cloudflare.com/ajax/libs/axios/1.4.0/axios.min.js"></script>
 
 
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.29.4/moment.min.js"></script>
+
 
 
 
@@ -162,7 +164,7 @@
     const { onMounted, emits, createApp, ref, watch, computed } = Vue
 
     const gd = {};//全局数据 解决调用引用问题
-    gd.reg={} //组成类到全局调用
+    gd.reg = {} //组成类到全局调用
     gd.storage = {
       //本地浏览器 存取组件
       set(key, value, area) {
@@ -178,7 +180,7 @@
         localStorage.removeItem(key);
       },
     }
-    gd.pd = ref({  });;//page data 页面元素引用"数据"
+    gd.pd = ref({});;//page data 页面元素引用"数据"
     //const pd = ref({ "load": [] }); //特殊变量，页面数据
     const pvs = gd.pd.value; //变量代理访问
     class pgui {
@@ -187,7 +189,7 @@
         //初始（值）
 
         //--界面值
-        gd.reg.ui =  this//全局资源
+        gd.reg.ui = this//全局资源
         pvs.sp = 0; //遮罩路由 (0.无，1.名单，2.登入 ,3.管理)
         pvs.info_list = []//交互提示 {info:"2",type:"2"}
         pvs.dat = {}
@@ -197,7 +199,7 @@
         pvs.shwoChange = gd.storage.get('shwoChange') ? gd.storage.get('shwoChange') : 1;//设置显示
         pvs.tabSele = gd.storage.get('tabSele') ? gd.storage.get('tabSele') : '基本信息';//'默认路径'
         //初始效果
-  
+
         this.init();
       }
 
@@ -245,7 +247,7 @@
         console.log("name=", pvs.searchName)
         that.toSearch(1)
       }
-     
+
       loginLoading(n) {
         //登入中效果
         pvs.loginLoding = n
@@ -281,10 +283,10 @@
         //初始（值）
 
         //--界面值
-        gd.reg.se =  this//全局资源
-       
+        gd.reg.se = this//全局资源
+
         pvs.dat = {}
- 
+
         //初始效果
         this.hd = { //请求头
           mode: 'cors',
@@ -303,53 +305,80 @@
         er.on('se.dep', this.seDep)
         er.on('se.kq', this.seKq)
 
+        er.on('se.kq_list', this.seKqList)
+
+
+        er.on('bd', this.binding)
+        er.on('getErr', this.getErr)
+
+
+
       }
-      seKq(){
+      seKqList() {
+        //moment().subtract(2, 'month').format('YYYY-MM')
+        const ui = gd.reg.ui
+        const se = gd.reg.se
+        //查询考勤
+        var kqid = pvs.dat.USERINFO[0]['考勤id']
+        var kq = {
+          "CHECKINOUT": {
+            "@column": "USERID,CHECKTIME",
+            "USERID": kqid
+            , 'CHECKTIME&': ">" + moment().subtract(2, 'month').format('YYYY-MM') + '-01'
+            , "@order": "-CHECKTIME"
+            // , "@limit": 3
+          }
+        }
+        var url = "http://127.0.0.1:2044/jsonapi/get";
+
+        // //发送
+        //return
+        axios.post(url, kq, se.hd)
+          .then(dat => {
+            er.emit('bd', dat, 'CHECKINOUT', '考勤记录')
+          })
+          .catch(err => { er.emit(err, 'CHECKINOUT', '考勤记录') })
+
+      }
+
+      seKq() {
         const ui = gd.reg.ui
         const se = gd.reg.se
         //查询考勤
         var kq = {
           "USERINFO": {
-            "@column": "BADGENUMBER.用户id,NAME,USERID.设备内id,DEFAULTDEPTID",
+            "@column": "BADGENUMBER.用户id,NAME,USERID.考勤id,DEFAULTDEPTID",
             "NAME": '蔡金凯',
             "@limit": 1
           }
         }
         var url = "http://127.0.0.1:2044/jsonapi/get";
 
-                // //发送
+        // //发送
         //return
         axios.post(url, kq, se.hd)
-          .then(
-            dat => {
-              ui.loginLoading(0)
-              ui.spto(0)
-              if (dat.data['@code'] < 300) {
-                ui.showInfo(dat.data['@msg'], '基本信息完成')
-                pvs.dat.USERINFO = dat.data.USERINFO
-                console.log('ph==', dat.data.USERINFO[0]
-                )
-              } else {
-                ui.showInfo('出现错误', '基本信息')
-                console.log('ph==', dat)
-              }
-            }
-          )
-          .catch(se.getErr)
-
+          .then(dat => {
+            er.emit('bd', dat, 'USERINFO', '考勤信息', 'se.kq_list')
+          })
+          .catch(err => {
+            er.emit(err, 'USERINFO', '考勤信息')
+          })
       }
-      seDep(){
+      seDep() {
         const ui = gd.reg.ui
         const se = gd.reg.se
         //查询部门
+
+
+        console.log('seDep')
       }
-      seUser(){
+      seUser() {
         const ui = gd.reg.ui
         const se = gd.reg.se
         //查询用户
         var oaUser = {
           "T_USER": {
-            "@column": "ID,NAME",
+            "@column": "ID,NAME,DEFAULTDEPARTMENT",
             "NAME": '蔡金凯',
             "@limit": 1
           }
@@ -357,35 +386,43 @@
         //获取数据，发送请求
         var url = "http://127.0.0.1:2022/jsonapi/get";
 
-             // //发送
+        // //发送
         //return
         axios.post(url, oaUser, se.hd)
-          .then(
-            dat => {
-              ui.loginLoading(0)
-              ui.spto(0)
-              if (dat.data['@code'] < 300) {
-                ui.showInfo(dat.data['@msg'], '基本信息完成')
-                console.log('ph==', dat   )
-                pvs.dat.T_USER = dat.data.T_USER
-                
-              } else {
-                ui.showInfo('出现错误', '基本信息')
-                console.log('ph==', dat)
-              }
-            }
-          )
-          .catch(ui.getErr)
+          .then( dat => {
+              er.emit('bd', dat, 'T_USER', '用户信息', 'se.dep')
+
+            } )
+          .catch(err => {
+            er.emit(err, 'T_USER', '用户信息')
+          })
 
       }
-      getErr(error) {
-        const ui = gd.ui
-        const se = gd.se
+      binding(dat, name, info, next = '') {
+        const ui = gd.reg.ui
+        const se = gd.reg.se
+        //数据挂在到dat
+        console.log('binding==', name, info)
+        ui.loginLoading(0)
+        ui.spto(0)
+        if (dat.data['@code'] < 300) {
+          ui.showInfo(dat.data['@msg'], info)
+          pvs.dat[name] = dat.data[name]
+          console.log(info + '==', dat.data[name][0])
+          if (next) { er.emit(next) } //下一步事件
+        } else {
+          ui.showInfo('出现错误', info)
+          console.log(info + '==', dat)
+        }
+      }
+      getErr(error, naem, info) {
+        const ui = gd.reg.ui
+        const se = gd.reg.se
         //登入错误处理
-        console.log('Error:', error);
+        console.log('Error:', error, naem);
         ui.loginLoading(0) //loading 
         ui.spto(0) //loading  
-        ui.showInfo('无法加载到数据，刷新重试', '载入数据：') //loading  
+        ui.showInfo('无法加载到数据，刷新重试', info) //loading  
       }
     }
 
@@ -408,7 +445,7 @@
         //onMounted(() => oui.remount()); //已经登入刷新处理
         onMounted(() => oui.nextPage(0)); //已经登入刷新处理
         //--变量关联到html的映射 js访问要加.value
-        return { er,   "pd": gd.pd, "ref_login_manage": gd.pd.refManageEmt, }
+        return { er, "pd": gd.pd, "ref_login_manage": gd.pd.refManageEmt, }
       }
     }
     const app = createApp(appdat)
