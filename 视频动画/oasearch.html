@@ -10,6 +10,14 @@
     href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.6.1/css/bootstrap.min.css">
   <link rel="stylesheet" crossorigin="anonymous"
     href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.5.1/animate.min.css">
+
+  <link rel="stylesheet" crossorigin="anonymous"
+    href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-table/1.18.0/bootstrap-table.min.css">
+
+
+  <link rel="stylesheet" crossorigin="anonymous"
+    href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-table/1.18.0/themes/bootstrap-table/bootstrap-table.min.css">
+
   <style>
     .glassbga {
       /*渐变*/
@@ -90,13 +98,13 @@
 
 
   <!--功能选择--->
-  <div class="  mx-2 mx-sm-3   justify-content-start     ">
-    <div class="   row   ">
+  <div v-cloak class="  container-md     glassbga  mt-4  mb-4   pt-3  pb-3  ">
+    <div class="     justify-content-center  ">
 
 
       <ul class="nav nav-tabs   ">
         <li class="nav-item">
-          <a class="nav-link shadow  bg-secondary  text-white  px-lg-5 mx-md-2 mx-lg-2   "
+          <a class="nav-link shadow  bg-secondary  text-white  px-lg-5 mx-md-2 mx-lg-1   "
             :class="[{' active bg-info ': ('基本信息' == pd.tabSele )} ]">基本信息</a>
         </li>
         <li class="nav-item" id="prac">
@@ -116,9 +124,24 @@
             :class="[{' active bg-info ': ('考勤' == pd.tabSele )} ]">考勤</a>
         </li>
       </ul>
+      <table class="  bg-white" id="table"></table>
     </div>
 
   </div>
+
+
+
+
+  <!---上面的结果框val--->
+  <div v-cloak class="container-sm ">
+
+    <div class="  row justify-content-center  ">
+
+
+    </div>
+  </div>
+
+
 
   <!---info提示信息--->
   <transition v-cloak mode="out-in" enter-active-class="animated pulse" leave-active-class="animated bounceOutRight">
@@ -148,14 +171,22 @@
 
 
   <script src="https://cdnjs.cloudflare.com/ajax/libs/vue/3.2.47/vue.global.prod.min.js"></script>
-  <!--script src="https://cdnjs.cloudflare.com/ajax/libs/lodash.js/2.4.2/lodash.min.js"></script--->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/lodash.js/3.2.0/lodash.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/EventEmitter/5.2.8/EventEmitter.min.js"></script>
 
   <script src="https://cdnjs.cloudflare.com/ajax/libs/axios/1.4.0/axios.min.js"></script>
 
 
   <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.29.4/moment.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.js"></script>
 
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-table/1.18.0/bootstrap-table.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-table/1.18.0/bootstrap-table-vue.min.js"></script>
+  <script
+    src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-table/1.18.0/locale/bootstrap-table-zh-CN.min.js"></script>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/mustache.js/3.2.0/mustache.min.js"></script>
+  <!---Mustache-->
 
 
 
@@ -210,7 +241,7 @@
         er.on('遮罩', this.spto)
 
 
-        er.on('翻页', this.nextPage)
+        er.on('show.base', this.showTab)
         //er.on('修改', this.toChange)
 
         er.on('查询', this.toSearch)
@@ -241,11 +272,52 @@
       }
 
 
-      nextPage(n) {
+      showTab(n) {
         //跳转、翻页
         const that = gd.oui
         console.log("name=", pvs.searchName)
-        that.toSearch(1)
+        // ID,NAME,DEFAULTDEPARTMENT
+
+        pvs.dat.T_DEPARTMENT
+
+        var rows = pvs.dat.T_USER//[]
+        
+        $('#table').bootstrapTable({
+          data: rows,        // 表格数据来源
+          classes: 'table table-hover',
+          theadClasses: 'thead',
+          sortStable: true,
+          search: true,                      //是否显示表格搜索
+          striped: true,                      //是否显示行间隔色
+          pageList: [5, 10, 20, 30],//可选择单页记录数
+          //showRefresh: true,//刷新按钮
+          pageNumber: 1, //初始化加载第一页
+          pagination: true,//是否分页
+          sidePagination: 'client',//server:服务器端分页|client：前端分页
+          pageSize: 4,//单页记录数
+
+
+          columns: [{
+            field: 'ID',
+            title: '用户id'
+          }, {
+            sortable:true,
+            field: 'NAME',
+            title: '用户名'
+            
+
+          }, {
+            field: 'DEFAULTDEPARTMENT',
+            title: '部门id'
+          }
+            , {
+            field: 'DEFAULTDEPARTMENT',
+            title: '部门id'
+          }]
+        });
+
+
+
       }
 
       loginLoading(n) {
@@ -295,6 +367,17 @@
             'Content-Type': 'application/json'
           }
         }
+        this.keys = [] //完成清单
+        //数据配置
+        this.dcfg = {
+          "T_USER": {
+            "@column": "ID,NAME,DEFAULTDEPARTMENT",
+            "NAME": '蔡金凯',
+            "@limit": 1
+          }
+        }
+        this.knum = _.keys(this.dcfg).length; //完成清单
+
         this.init();
       }
 
@@ -312,8 +395,82 @@
         er.on('getErr', this.getErr)
 
 
+        er.on('se.补考勤', this.补考勤)
+        er.on('se.请假', this.请假)
+
+        er.on('se.公出', this.公出)
 
       }
+
+      公出() {
+        //moment().subtract(2, 'month').format('YYYY-MM')
+        const ui = gd.reg.ui
+        const se = gd.reg.se
+        //查询考勤
+        var userid = pvs.dat.T_USER[0]['ID']
+        var vn = {
+          "AUTHOR": userid
+          , "ITEM_TRAVEL_OT&": ">" + moment().subtract(2, 'month').format('YYYY-MM') + '-01'
+          , "@order": "-CREATED"
+          , "@column": "AUTHOR,ITEM_TRAVEL_ST,ITEM_TRAVEL_OT,ITEM_TRAVEL_R.理由, ITEM_TRAVEL_CITY.公出城市, FORMNAME.模块,STATELABELINFO"
+          , "#url": "http://127.0.0.1:2022/jsonapi/get"
+
+        }
+
+
+
+        var url = "http://127.0.0.1:2022/jsonapi/get";
+
+        // //发送
+        se.se("TLK_BUSINESS_PUBLIC_TRIP", vn, url, 'TLK_BUSINESS_PUBLIC_TRIP', '公出')
+
+
+      }
+
+
+      请假() {
+        //moment().subtract(2, 'month').format('YYYY-MM')
+        const ui = gd.reg.ui
+        const se = gd.reg.se
+        //查询考勤
+        var userid = pvs.dat.T_USER[0]['ID']
+        var vn = {
+          "AUTHOR": userid
+          , "ITEM_LEAVE_T&": ">" + moment().subtract(2, 'month').format('YYYY-MM') + '-01'
+          , "@order": "-CREATED"
+          , "@column": "AUTHOR, ITEM_START_T.开始事件,ITEM_LEAVE_T.结束事件,ITEM_LEAVE_R.理由,   ITEM_TITLE.模块,ITEM_APPLICANT"
+        }
+
+
+
+        var url = "http://127.0.0.1:2022/jsonapi/get";
+
+        // //发送
+        se.se("TLK_APPLY_LEAVE", vn, url, 'TLK_APPLY_LEAVE', '请假')
+
+
+      }
+      补考勤() {
+        //moment().subtract(2, 'month').format('YYYY-MM')
+        const ui = gd.reg.ui
+        const se = gd.reg.se
+        //查询考勤
+        var userid = pvs.dat.T_USER[0]['ID']
+        var vn = {
+          "AUTHOR": userid
+          , "ITEM_ATTDATE&": ">" + moment().subtract(2, 'month').format('YYYY-MM') + '-01'
+          , "@order": "-CREATED"
+          , "@column": "ITEM_ATTDATE, FORMNAME,AUTHOR"
+        }
+
+        var url = "http://127.0.0.1:2022/jsonapi/get";
+
+        // //发送
+        se.se("TLK_ATTENDANCEDETAIL", vn, url, 'TLK_ATTENDANCEDETAIL', '补考勤')
+
+      }
+
+
       seKqList() {
         //moment().subtract(2, 'month').format('YYYY-MM')
         const ui = gd.reg.ui
@@ -321,23 +478,15 @@
         //查询考勤
         var kqid = pvs.dat.USERINFO[0]['考勤id']
         var kq = {
-          "CHECKINOUT": {
-            "@column": "USERID,CHECKTIME",
-            "USERID": kqid
-            , 'CHECKTIME&': ">" + moment().subtract(2, 'month').format('YYYY-MM') + '-01'
-            , "@order": "-CHECKTIME"
-            // , "@limit": 3
-          }
+          "@column": "USERID,CHECKTIME",
+          "USERID": kqid
+          , 'CHECKTIME&': ">" + moment().subtract(2, 'month').format('YYYY-MM') + '-01'
+          , "@order": "-CHECKTIME"
         }
         var url = "http://127.0.0.1:2044/jsonapi/get";
 
         // //发送
-        //return
-        axios.post(url, kq, se.hd)
-          .then(dat => {
-            er.emit('bd', dat, 'CHECKINOUT', '考勤记录')
-          })
-          .catch(err => { er.emit(err, 'CHECKINOUT', '考勤记录') })
+        se.se("CHECKINOUT", kq, url, 'CHECKINOUT', '考勤记录')
 
       }
 
@@ -346,28 +495,32 @@
         const se = gd.reg.se
         //查询考勤
         var kq = {
-          "USERINFO": {
-            "@column": "BADGENUMBER.用户id,NAME,USERID.考勤id,DEFAULTDEPTID",
-            "NAME": '蔡金凯',
-            "@limit": 1
-          }
+          "@column": "BADGENUMBER.用户id,NAME,USERID.考勤id,DEFAULTDEPTID",
+          "NAME": '蔡金凯',
+          "@limit": 1
         }
         var url = "http://127.0.0.1:2044/jsonapi/get";
-
         // //发送
-        //return
-        axios.post(url, kq, se.hd)
-          .then(dat => {
-            er.emit('bd', dat, 'USERINFO', '考勤信息', 'se.kq_list')
-          })
-          .catch(err => {
-            er.emit(err, 'USERINFO', '考勤信息')
-          })
+        se.se("USERINFO", kq, url, 'USERINFO', '考勤信息', 'se.kq_list')
+
+
       }
       seDep() {
         const ui = gd.reg.ui
         const se = gd.reg.se
         //查询部门
+
+        //获取数据，发送请求
+        var url = "http://127.0.0.1:2022/jsonapi/get";
+        // //发送
+        //return
+        var depid = pvs.dat.T_USER[0]['DEFAULTDEPARTMENT']
+        var oaUser = {
+          "@column": "ID,NAME",
+          "ID": depid,
+          "@limit": 1
+        }
+        se.se("T_DEPARTMENT", oaUser, url, 'T_DEPARTMENT', '用户部门')
 
 
         console.log('seDep')
@@ -377,48 +530,61 @@
         const se = gd.reg.se
         //查询用户
         var oaUser = {
-          "T_USER": {
-            "@column": "ID,NAME,DEFAULTDEPARTMENT",
-            "NAME": '蔡金凯',
-            "@limit": 1
-          }
+          "@column": "ID,NAME,DEFAULTDEPARTMENT",
+          "NAME": '蔡金凯',
+          "@limit": 1
         }
         //获取数据，发送请求
         var url = "http://127.0.0.1:2022/jsonapi/get";
-
         // //发送
         //return
-        axios.post(url, oaUser, se.hd)
-          .then( dat => {
-              er.emit('bd', dat, 'T_USER', '用户信息', 'se.dep')
+        se.se("T_USER", oaUser, url, 'T_USER', '用户信息', ['se.dep', 'se.补考勤', 'se.请假', 'se.公出', 'show.base'])
 
-            } )
-          .catch(err => {
-            er.emit(err, 'T_USER', '用户信息')
-          })
+
 
       }
       binding(dat, name, info, next = '') {
+        //数据收集挂在到dat
         const ui = gd.reg.ui
         const se = gd.reg.se
         //数据挂在到dat
-        console.log('binding==', name, info)
+        //console.log('binding==', name, info)
         ui.loginLoading(0)
         ui.spto(0)
         if (dat.data['@code'] < 300) {
           ui.showInfo(dat.data['@msg'], info)
           pvs.dat[name] = dat.data[name]
-          console.log(info + '==', dat.data[name][0])
-          if (next) { er.emit(next) } //下一步事件
+          if (dat.data[name].length > 0) {
+            console.log(info + '==', dat.data[name][0])
+          } else {
+            console.log(name, info, '无上数据')
+          }
+
+          //
+          if (_.isString(next)) { er.emit(next) } //下一步事件
+          if (_.isArray(next)) { _.map(next, (n) => { er.emit(n) }) } //下一步事件
         } else {
           ui.showInfo('出现错误', info)
-          console.log(info + '==', dat)
+          console.log('出现错误', info + '==', dat)
         }
       }
+      se(tab, dt, url, name, info, next = '') {
+        //单发送请求
+        const se = gd.reg.se
+        var vn = {}
+        vn[tab] = dt
+        axios.post(url + '?' + tab, vn, se.hd)
+          .then(dat => {
+            er.emit('bd', dat, name, info, next)
+          })
+          .catch(err => {
+            er.emit(err, name, info)
+          })
+      }
       getErr(error, naem, info) {
+        //请求错误处理
         const ui = gd.reg.ui
         const se = gd.reg.se
-        //登入错误处理
         console.log('Error:', error, naem);
         ui.loginLoading(0) //loading 
         ui.spto(0) //loading  
@@ -443,7 +609,7 @@
 
         //onMounted(() => ocls.bindEvt()); //窗口大小变动事件
         //onMounted(() => oui.remount()); //已经登入刷新处理
-        onMounted(() => oui.nextPage(0)); //已经登入刷新处理
+        onMounted(() => oui.toSearch(0)); //已经登入刷新处理
         //--变量关联到html的映射 js访问要加.value
         return { er, "pd": gd.pd, "ref_login_manage": gd.pd.refManageEmt, }
       }
