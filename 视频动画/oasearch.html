@@ -76,7 +76,7 @@
   <transition v-cloak enter-active-class="animated bounceIn" leave-active-class="animated bounceOut">
     <div v-if="pd.shwoChange==0?false:true" class="container-md     glassbga  mt-4  mb-4   pt-3  pb-3">
       <div class=" row  align-items-center   justify-content-around  ">
-        <div class="  p-0 m-0 d-flex col-1 col-md-1 col-sm-1  justify-content-end  ">
+        <div class="col-2  p-0 m-0 d-flex col-1 col-md-1 col-sm-1  justify-content-end  ">
           <label class="text-dark    mt-1       ">名字</label>
         </div>
         <div class="  p-0 m-0 col-6   col-md-4 col-sm-4   align-items-center  justify-content-start ">
@@ -98,36 +98,43 @@
 
 
   <!--功能选择--->
-  <div v-cloak class="  container-md     glassbga  mt-4  mb-4   pt-3  pb-3  ">
-    <div class="     justify-content-center  ">
+  <transition v-cloak enter-active-class="animated bounceIn" leave-active-class="animated bounceOut">
+    <div v-cloak v-if="pd.searchName" class="  container-md     glassbga  mt-4  mb-4   pt-3  pb-3  ">
+      <div class="     justify-content-center  ">
 
 
-      <ul class="nav nav-tabs   ">
-        <li class="nav-item">
-          <a class="nav-link shadow  bg-secondary  text-white  px-lg-5 mx-md-2 mx-lg-1   "
-            :class="[{' active bg-info ': ('基本信息' == pd.tabSele )} ]">基本信息</a>
-        </li>
-        <li class="nav-item" id="prac">
-          <a class="nav-link shadow   bg-secondary text-white  px-lg-5 mx-md-2 mx-lg-2"
-            :class="[{' active bg-info ': ('请假' == pd.tabSele )} ]">请假</a>
-        </li>
-        <li class="nav-item" id="test">
-          <a class="nav-link shadow   bg-secondary  text-white  px-lg-5 mx-md-2 mx-lg-2"
-            :class="[{' active bg-info ': ('公出' == pd.tabSele )} ]">公出</a>
-        </li>
-        <li class="nav-item" id="test">
-          <a class="nav-link shadow   bg-secondary  text-white  px-lg-5 mx-md-2 mx-lg-2"
-            :class="[{' active bg-info ': ('补考勤' == pd.tabSele )} ]">补考勤</a>
-        </li>
-        <li class="nav-item" id="test">
-          <a class="nav-link shadow   bg-secondary  text-white  px-lg-5 mx-md-2 mx-lg-2"
-            :class="[{' active bg-info ': ('考勤' == pd.tabSele )} ]">考勤</a>
-        </li>
-      </ul>
-      <table class="  bg-white" id="table"></table>
+        <ul class="nav nav-tabs   ">
+          <li class="nav-item">
+            <a class="nav-link shadow  bg-secondary  text-white  px-1 px-sm-3 px-lg-5 mx-1 mx-sm-2 mx-lg-1   "
+              @click="pd.tabSele  = '基本信息' " :class="[{' active bg-info ': ('基本信息' == pd.tabSele )} ]">基本信息</a>
+          </li>
+          <li class="nav-item" id="prac">
+            <a class="nav-link shadow   bg-secondary text-white  px-1 px-sm-3 px-lg-5 mx-1 mx-sm-2 mx-lg-2"
+              @click="pd.tabSele  = '请假' " :class="[{' active bg-info ': ('请假' == pd.tabSele )} ]">请假</a>
+          </li>
+          <li class="nav-item" id="test">
+            <a class="nav-link shadow   bg-secondary  text-white px-1 px-lg-3 px-lg-5 mx-1 mx-sm-2 mx-lg-2"
+              @click="pd.tabSele  = '公出' " :class="[{' active bg-info ': ('公出' == pd.tabSele )} ]">公出</a>
+          </li>
+          <li class="nav-item" id="test">
+            <a class="nav-link shadow   bg-secondary  text-white  px-1 px-sm-3 px-lg-5 mx-1 mx-sm-2 mx-lg-2"
+              @click="pd.tabSele  = '补考勤' " :class="[{' active bg-info ': ('补考勤' == pd.tabSele )} ]">补考勤</a>
+          </li>
+          <li class="nav-item" id="test">
+            <a class="nav-link shadow   bg-secondary  text-white  px-1 px-sm-3 px-lg-5 mx-1 mx-sm-2 mx-lg-2"
+              @click="pd.tabSele  = '考勤' " :class="[{' active bg-info ': ('考勤' == pd.tabSele )} ]">考勤</a>
+          </li>
+        </ul>
+        <div :class="[{' d-none ': ! (  '基本信息' == pd.tabSele )} ]">
+          <table class="  bg-white" id="table"></table>
+        </div>
+        <div :class="[{' d-none ': ! (  '考勤' == pd.tabSele )} ]">
+          <table class="  bg-white" id="考勤"></table>
+        </div>
+      </div>
+
     </div>
-
-  </div>
+  </transition>
 
 
 
@@ -185,6 +192,9 @@
   <script
     src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-table/1.18.0/locale/bootstrap-table-zh-CN.min.js"></script>
 
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/URI.js/1.19.11/URI.min.js"></script>
+
+
   <script src="https://cdnjs.cloudflare.com/ajax/libs/mustache.js/3.2.0/mustache.min.js"></script>
   <!---Mustache-->
 
@@ -218,14 +228,16 @@
       /* 界面控制类 初始化界面默认值 */
       constructor(arg) {
         //初始（值）
-
+        //----页面参数
+        pvs.url = new URI() //获取去 type，pid ，默认访问本站，数据加载主站
+        var dc = pvs.url.query(true);//参数
         //--界面值
         gd.reg.ui = this//全局资源
         pvs.sp = 0; //遮罩路由 (0.无，1.名单，2.登入 ,3.管理)
         pvs.info_list = []//交互提示 {info:"2",type:"2"}
         pvs.dat = {}
 
-        pvs.searchName = gd.storage.get('searchName') ? gd.storage.get('searchName') : '';//'默认查询名
+        pvs.searchName = dc['name'] ? dc['name'] : gd.storage.get('searchName') ? gd.storage.get('searchName') : '';//'默认查询名
         //--存储默认值
         pvs.shwoChange = gd.storage.get('shwoChange') ? gd.storage.get('shwoChange') : 1;//设置显示
         pvs.tabSele = gd.storage.get('tabSele') ? gd.storage.get('tabSele') : '基本信息';//'默认路径'
@@ -242,86 +254,104 @@
         er.on('遮罩', this.spto)
 
 
-        er.on('show.base', this.showTab)
+        er.on('show.base', this.tabBase)
         //er.on('修改', this.toChange)
 
         er.on('查询', this.toSearch)
+        er.on('展示考勤', this.tab考勤)
 
         //er.on('获取音标', this.toGetPh) //获取音标
 
       }
       toSearch() {
+        //查询数据
         const ui = gd.reg.ui
         const se = gd.reg.se
         if (!pvs.searchName) { return }
-
         gd.storage.set('searchName', pvs.searchName)
-
-
-        // fetch(url, opt)
-        //     .then(res => res.json())
-        //     .catch(that.getErr)
-        //     .then(dat => er.emit('更新.发音人完成', dat))
-        //     ;
         //动画效果
         ui.loginLoading(1)
         ui.spto(1) //loading 
         er.emit('se.user')
         er.emit('se.kq')
-
-
       }
 
-
-      showTab(n) {
+      tab考勤() {
         //跳转、翻页
-        const that = gd.oui
+        const ui = gd.reg.ui
+        const se = gd.reg.se
         //
-       
-
-        pvs.rowBase = pvs.dat.T_USER//用户表
-        if(pvs.dat.T_DEPARTMENT && pvs.dat.T_DEPARTMENT.length>0){
-          var dep = _.keyBy(pvs.dat.T_DEPARTMENT,'ID')
-          var deprow = dep[ pvs.rowBase [0] ['DEFAULTDEPARTMENT'] ]
-          console.log('---------------',deprow['NAME'] )
-          pvs.rowBase[0]['DEPARTMENT'] = deprow['NAME']
-
-          $('#table').bootstrapTable('destroy'); 
+        pvs.rowBase = pvs.dat.CHECKINOUT//考勤表
+        if (pvs.dat.T_DEPARTMENT && pvs.dat.T_DEPARTMENT.length > 0) {
 
         }
-        
-        $('#table').bootstrapTable({
-          data: pvs.rowBase ,        // 表格数据来源
+        var columns = [{
+          field: 'USERID',
+          title: '用户id'
+        }, {
+          sortable: true,
+          field: 'CHECKTIME',
+          title: '打卡时间'
+
+
+        }]
+
+        ui.showTab('#考勤', columns, pvs.rowBase)
+      }
+
+      tabBase() {
+        //跳转、翻页
+        const ui = gd.reg.ui
+        const se = gd.reg.se
+        //
+        pvs.rowBase = pvs.dat.T_USER//用户表
+        if (pvs.dat.T_DEPARTMENT && pvs.dat.T_DEPARTMENT.length > 0) {
+          var dep = _.keyBy(pvs.dat.T_DEPARTMENT, 'ID')
+          var deprow = dep[pvs.rowBase[0]['DEFAULTDEPARTMENT']]
+          console.log('---------------', deprow['NAME'])
+          pvs.rowBase[0]['DEPARTMENT'] = deprow['NAME']
+          ui.showTab('#table') //$('#table').bootstrapTable('destroy');
+        }
+        var columns = [{
+          field: 'ID',
+          title: '用户id'
+        }, {
+          sortable: true,
+          field: 'NAME',
+          title: '用户名'
+
+
+        }, {
+          field: 'DEFAULTDEPARTMENT',
+          title: '部门id'
+        }
+          , {
+          field: 'DEPARTMENT',
+          title: '部门'
+        }]
+
+        ui.showTab('#table', columns, pvs.rowBase)
+      }
+      showTab(eid, col, dat) {
+        // 生成和销毁表格
+        if (_.isEmpty(col)) {
+          $(eid).bootstrapTable('destroy');
+          return
+        }
+        $(eid).bootstrapTable({
+          data: dat,        // 表格数据来源
           classes: 'table table-hover',
           theadClasses: 'thead',
           sortStable: true,
           search: true,                      //是否显示表格搜索
           striped: true,                      //是否显示行间隔色
-          pageList: [5, 10, 20, 30],//可选择单页记录数
           //showRefresh: true,//刷新按钮
           pageNumber: 1, //初始化加载第一页
           pagination: true,//是否分页
           sidePagination: 'client',//server:服务器端分页|client：前端分页
-          pageSize: 4,//单页记录数
-
-
-          columns: [{
-            field: 'ID',
-            title: '用户id'
-          }, {
-            sortable:true,
-            field: 'NAME',
-            title: '用户名'
-            
-
-          }, {
-            field: 'DEFAULTDEPARTMENT',
-            title: '部门id'
-          }
-            , {
-            field: 'DEPARTMENT',
-            title: '部门'
-          }]
+          pageSize: 10,//单页记录数
+          pageList: [10],
+          columns: col
         });
 
 
@@ -396,7 +426,7 @@
         er.on('se.dep', this.seDep)
         er.on('se.kq', this.seKq)
 
-        er.on('se.kq_list', this.seKqList)
+        er.on('查考勤', this.查考勤)
 
 
         er.on('bd', this.binding)
@@ -427,7 +457,7 @@
 
 
 
-        var url = "http://127.0.0.1:2022/jsonapi/get";
+        var url = "//127.0.0.1:2022/jsonapi/get";
 
         // //发送
         se.se("TLK_BUSINESS_PUBLIC_TRIP", vn, url, 'TLK_BUSINESS_PUBLIC_TRIP', '公出')
@@ -451,7 +481,7 @@
 
 
 
-        var url = "http://127.0.0.1:2022/jsonapi/get";
+        var url = `//${pvs.url.hostname()}:2022/jsonapi/get`;
 
         // //发送
         se.se("TLK_APPLY_LEAVE", vn, url, 'TLK_APPLY_LEAVE', '请假')
@@ -471,7 +501,7 @@
           , "@column": "ITEM_ATTDATE, FORMNAME,AUTHOR"
         }
 
-        var url = "http://127.0.0.1:2022/jsonapi/get";
+        var url = `//${pvs.url.hostname()}:2022/jsonapi/get`;
 
         // //发送
         se.se("TLK_ATTENDANCEDETAIL", vn, url, 'TLK_ATTENDANCEDETAIL', '补考勤')
@@ -479,7 +509,7 @@
       }
 
 
-      seKqList() {
+      查考勤() {
         //moment().subtract(2, 'month').format('YYYY-MM')
         const ui = gd.reg.ui
         const se = gd.reg.se
@@ -491,10 +521,10 @@
           , 'CHECKTIME&': ">" + moment().subtract(2, 'month').format('YYYY-MM') + '-01'
           , "@order": "-CHECKTIME"
         }
-        var url = "http://127.0.0.1:2044/jsonapi/get";
+        var url = `//${pvs.url.hostname()}:2044/jsonapi/get`;
 
         // //发送
-        se.se("CHECKINOUT", kq, url, 'CHECKINOUT', '考勤记录')
+        se.se("CHECKINOUT", kq, url, 'CHECKINOUT', '考勤记录', ['展示考勤'])
 
       }
 
@@ -504,12 +534,12 @@
         //查询考勤
         var kq = {
           "@column": "BADGENUMBER.用户id,NAME,USERID.考勤id,DEFAULTDEPTID",
-          "NAME": '蔡金凯',
+          "NAME": pvs.searchName,
           "@limit": 1
         }
-        var url = "http://127.0.0.1:2044/jsonapi/get";
+        var url = `//${pvs.url.hostname()}:2044/jsonapi/get`;
         // //发送
-        se.se("USERINFO", kq, url, 'USERINFO', '考勤信息', 'se.kq_list')
+        se.se("USERINFO", kq, url, 'USERINFO', '考勤信息', '查考勤')
 
 
       }
@@ -519,7 +549,7 @@
         //查询部门
 
         //获取数据，发送请求
-        var url = "http://127.0.0.1:2022/jsonapi/get";
+        var url = `//${pvs.url.hostname()}:2022/jsonapi/get`;
         // //发送
         //return
         var depid = pvs.dat.T_USER[0]['DEFAULTDEPARTMENT']
@@ -528,9 +558,9 @@
           "ID": depid,
           "@limit": 1
         }
-        se.se("T_DEPARTMENT", oaUser, url, 'T_DEPARTMENT', '用户部门','show.base')
+        se.se("T_DEPARTMENT", oaUser, url, 'T_DEPARTMENT', '用户部门', 'show.base')
 
- 
+
       }
       seUser() {
         const ui = gd.reg.ui
@@ -538,11 +568,11 @@
         //查询用户
         var oaUser = {
           "@column": "ID,NAME,DEFAULTDEPARTMENT",
-          "NAME": '蔡金凯',
+          "NAME": pvs.searchName,
           "@limit": 1
         }
         //获取数据，发送请求
-        var url = "http://127.0.0.1:2022/jsonapi/get";
+        var url = `//${pvs.url.hostname()}:2022/jsonapi/get`;
         // //发送
         //return
         se.se("T_USER", oaUser, url, 'T_USER', '用户信息', ['se.dep', 'se.补考勤', 'se.请假', 'se.公出', 'show.base'])
