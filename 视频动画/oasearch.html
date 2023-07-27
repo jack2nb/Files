@@ -128,6 +128,15 @@
         <div :class="[{' d-none ': ! (  '基本信息' == pd.tabSele )} ]">
           <table class="  bg-white" id="table"></table>
         </div>
+        <div :class="[{' d-none ': ! (  '请假' == pd.tabSele )} ]">
+          <table class="  bg-white" id="请假"></table>
+        </div>
+        <div :class="[{' d-none ': ! (  '公出' == pd.tabSele )} ]">
+          <table class="  bg-white" id="公出"></table>
+        </div>
+        <div :class="[{' d-none ': ! (  '补考勤' == pd.tabSele )} ]">
+          <table class="  bg-white" id="补考勤"></table>
+        </div>
         <div :class="[{' d-none ': ! (  '考勤' == pd.tabSele )} ]">
           <table class="  bg-white" id="考勤"></table>
         </div>
@@ -255,11 +264,12 @@
 
 
         er.on('show.base', this.tabBase)
-        //er.on('修改', this.toChange)
 
         er.on('查询', this.toSearch)
         er.on('展示考勤', this.tab考勤)
-
+        er.on('展示补考勤', this.tab补考勤)
+        er.on('展示请假', this.tab请假)
+        er.on('展示公出', this.tab公出)
         //er.on('获取音标', this.toGetPh) //获取音标
 
       }
@@ -275,11 +285,101 @@
         er.emit('se.user')
         er.emit('se.kq')
       }
+      tab请假() {
+        const ui = gd.reg.ui
+        /*
+        AUTHOR: "11ed-a9b8-191b765e-a8b2-a36392a02a45"
+ITEM_APPLICANT: "蔡金凯"
+开始事件: "2023-05-25 16:46:00"
+模块: "请假申请"
+理由: "测试"
+结束事件: "2023-05-25 16:46:00"
+*/
+        var rows  = pvs.dat.TLK_APPLY_LEAVE//考勤表
+        if (pvs.dat.T_DEPARTMENT && pvs.dat.T_DEPARTMENT.length > 0) {
 
+
+        }
+        var columns = [{
+          field: '开始时间',
+          title: '开始时间'
+        }, {
+          sortable: true,
+          field: '结束时间',
+          title: '结束时间'
+        }
+          , {
+          sortable: true,
+          field: '公出城市',
+          title: '公出城市'
+        }
+          , {
+          sortable: true,
+          field: '理由',
+          title: '理由'
+        }
+        ]
+
+        ui.showTab('#请假', columns, rows)
+
+       }
+      tab公出() {
+        const ui = gd.reg.ui
+        //
+        var rows  = pvs.dat.TLK_BUSINESS_PUBLIC_TRIP//考勤表
+        if (pvs.dat.T_DEPARTMENT && pvs.dat.T_DEPARTMENT.length > 0) {
+
+
+        }
+        var columns = [{
+          field: 'ITEM_TRAVEL_OT',
+          title: '起始时间'
+        }, {
+          sortable: true,
+          field: 'ITEM_TRAVEL_ST',
+          title: '结束时间'
+        }
+          , {
+          sortable: true,
+          field: '公出城市',
+          title: '公出城市'
+        }
+          , {
+          sortable: true,
+          field: '理由',
+          title: '理由'
+        }
+        ]
+
+        ui.showTab('#公出', columns, rows)
+
+      }
+      tab补考勤() {
+        //跳转、翻页
+        const ui = gd.reg.ui
+
+        //
+        var rows  =  pvs.dat.TLK_ATTENDANCEDETAIL//考勤表
+        if (pvs.dat.T_DEPARTMENT && pvs.dat.T_DEPARTMENT.length > 0) {
+
+        }
+        var columns = [{
+          field: 'AUTHOR',
+          title: '用户id'
+        }, {
+          sortable: true,
+          field: 'ITEM_ATTDATE',
+          title: '补卡时间'
+
+
+        }]
+
+        ui.showTab('#补考勤', columns, rows)
+      }
       tab考勤() {
         //跳转、翻页
         const ui = gd.reg.ui
-        const se = gd.reg.se
+
         //
         pvs.rowBase = pvs.dat.CHECKINOUT//考勤表
         if (pvs.dat.T_DEPARTMENT && pvs.dat.T_DEPARTMENT.length > 0) {
@@ -302,7 +402,7 @@
       tabBase() {
         //跳转、翻页
         const ui = gd.reg.ui
-        const se = gd.reg.se
+
         //
         pvs.rowBase = pvs.dat.T_USER//用户表
         if (pvs.dat.T_DEPARTMENT && pvs.dat.T_DEPARTMENT.length > 0) {
@@ -340,7 +440,7 @@
         }
         $(eid).bootstrapTable({
           data: dat,        // 表格数据来源
-          classes: 'table table-hover',
+          classes: "table table-bordered table-striped", //table-striped表示隔行变色
           theadClasses: 'thead',
           sortStable: true,
           search: true,                      //是否显示表格搜索
@@ -427,16 +527,16 @@
         er.on('se.kq', this.seKq)
 
         er.on('查考勤', this.查考勤)
+        er.on('se.补考勤', this.补考勤)
+        er.on('se.请假', this.请假)
 
+        er.on('se.公出', this.公出)
 
         er.on('bd', this.binding)
         er.on('getErr', this.getErr)
 
 
-        er.on('se.补考勤', this.补考勤)
-        er.on('se.请假', this.请假)
 
-        er.on('se.公出', this.公出)
 
       }
 
@@ -460,7 +560,7 @@
         var url = "//127.0.0.1:2022/jsonapi/get";
 
         // //发送
-        se.se("TLK_BUSINESS_PUBLIC_TRIP", vn, url, 'TLK_BUSINESS_PUBLIC_TRIP', '公出')
+        se.se("TLK_BUSINESS_PUBLIC_TRIP", vn, url, 'TLK_BUSINESS_PUBLIC_TRIP', '公出', ['展示公出'])
 
 
       }
@@ -476,7 +576,7 @@
           "AUTHOR": userid
           , "ITEM_LEAVE_T&": ">" + moment().subtract(2, 'month').format('YYYY-MM') + '-01'
           , "@order": "-CREATED"
-          , "@column": "AUTHOR, ITEM_START_T.开始事件,ITEM_LEAVE_T.结束事件,ITEM_LEAVE_R.理由,   ITEM_TITLE.模块,ITEM_APPLICANT"
+          , "@column": "AUTHOR, ITEM_START_T.开始时间,ITEM_LEAVE_T.结束时间,ITEM_LEAVE_R.理由,   ITEM_TITLE.模块,ITEM_APPLICANT"
         }
 
 
@@ -484,7 +584,7 @@
         var url = `//${pvs.url.hostname()}:2022/jsonapi/get`;
 
         // //发送
-        se.se("TLK_APPLY_LEAVE", vn, url, 'TLK_APPLY_LEAVE', '请假')
+        se.se("TLK_APPLY_LEAVE", vn, url, 'TLK_APPLY_LEAVE', '请假', ['展示请假'])
 
 
       }
@@ -504,7 +604,7 @@
         var url = `//${pvs.url.hostname()}:2022/jsonapi/get`;
 
         // //发送
-        se.se("TLK_ATTENDANCEDETAIL", vn, url, 'TLK_ATTENDANCEDETAIL', '补考勤')
+        se.se("TLK_ATTENDANCEDETAIL", vn, url, 'TLK_ATTENDANCEDETAIL', '补考勤', ['展示补考勤'])
 
       }
 
