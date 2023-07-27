@@ -171,7 +171,7 @@
 
 
   <script src="https://cdnjs.cloudflare.com/ajax/libs/vue/3.2.47/vue.global.prod.min.js"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/lodash.js/3.2.0/lodash.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/lodash.js/4.10.0/lodash.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/EventEmitter/5.2.8/EventEmitter.min.js"></script>
 
   <script src="https://cdnjs.cloudflare.com/ajax/libs/axios/1.4.0/axios.min.js"></script>
@@ -229,6 +229,7 @@
         //--存储默认值
         pvs.shwoChange = gd.storage.get('shwoChange') ? gd.storage.get('shwoChange') : 1;//设置显示
         pvs.tabSele = gd.storage.get('tabSele') ? gd.storage.get('tabSele') : '基本信息';//'默认路径'
+        pvs.rowBase = []  //基本信息
         //初始效果
 
         this.init();
@@ -275,15 +276,22 @@
       showTab(n) {
         //跳转、翻页
         const that = gd.oui
-        console.log("name=", pvs.searchName)
-        // ID,NAME,DEFAULTDEPARTMENT
+        //
+       
 
-        pvs.dat.T_DEPARTMENT
+        pvs.rowBase = pvs.dat.T_USER//用户表
+        if(pvs.dat.T_DEPARTMENT && pvs.dat.T_DEPARTMENT.length>0){
+          var dep = _.keyBy(pvs.dat.T_DEPARTMENT,'ID')
+          var deprow = dep[ pvs.rowBase [0] ['DEFAULTDEPARTMENT'] ]
+          console.log('---------------',deprow['NAME'] )
+          pvs.rowBase[0]['DEPARTMENT'] = deprow['NAME']
 
-        var rows = pvs.dat.T_USER//[]
+          $('#table').bootstrapTable('destroy'); 
+
+        }
         
         $('#table').bootstrapTable({
-          data: rows,        // 表格数据来源
+          data: pvs.rowBase ,        // 表格数据来源
           classes: 'table table-hover',
           theadClasses: 'thead',
           sortStable: true,
@@ -311,8 +319,8 @@
             title: '部门id'
           }
             , {
-            field: 'DEFAULTDEPARTMENT',
-            title: '部门id'
+            field: 'DEPARTMENT',
+            title: '部门'
           }]
         });
 
@@ -343,7 +351,7 @@
 
       watchPg(newValue, oldValue) {
         //watch
-        console.log('gd pagedata 被修改')
+        //console.log('gd pagedata 被修改')
         //console.log('gd pagedata 被修改\n', newValue, '\n', oldValue)
       }
 
@@ -520,10 +528,9 @@
           "ID": depid,
           "@limit": 1
         }
-        se.se("T_DEPARTMENT", oaUser, url, 'T_DEPARTMENT', '用户部门')
+        se.se("T_DEPARTMENT", oaUser, url, 'T_DEPARTMENT', '用户部门','show.base')
 
-
-        console.log('seDep')
+ 
       }
       seUser() {
         const ui = gd.reg.ui
