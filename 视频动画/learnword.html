@@ -5,6 +5,7 @@
     <meta charset="utf-8">
     <meta name="description" content="单词学习">
     <meta name="keywords" content="单词学习 练习">
+    <meta name="keywords" content="学习无边界，乐在海中游">
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
     <title>英语 培训 单词学习</title>
     <link rel="stylesheet" crossorigin="anonymous"
@@ -91,12 +92,9 @@
 
         div.introjs-tooltip-header,
         div.introjs-tooltiptext {
-            color:  #616161  !important;
-            
+            color: #616161 !important;
+
         }
-
-        
-
     </style>
 </head>
 <!--
@@ -110,14 +108,20 @@
     <!---上面的结果框val--->
     <div v-cloak class="container ">
         <div class="w-100 mb-5   d-none d-md-block"><!---高度垫子 小设备隐藏--></div>
-        <div class="container ">
-            <div class="w-100 pt-5  pb-5 "><!---高度垫子 小设备隐藏--></div>
-        </div>
+
 
     </div>
-
+    <div class="container ">
+        <div class="mt-2 row justify-content-center  ">
+            <div class="w-100 mb-3   d-none d-md-block"><!---高度垫子 小设备隐藏--></div>
+            <div>
+                <h4>双语对照 关联学习</h4>
+            </div>
+            <div class="w-100 mb-3   d-none d-md-block"><!---高度垫子 小设备隐藏--></div>
+        </div>
+    </div>
     <!--卡片-->
-    <div v-cloak class=" container-sm   glassbga  pt-5  pb-5">
+    <div v-cloak class=" container-sm   glassbga  pt-5   ">
 
         <div class=" row   align-items-center   justify-content-around   ">
 
@@ -152,8 +156,25 @@
                 </audio>
             </span>
         </div>
-
+        <!--翻页-->
+        <div class="  row justify-content-center rounded   ">
+            <div class="w-100 mt-5   d-none d-md-block"><!---高度垫子 小设备隐藏--></div>
+            <div class=" d-flex  col-12  col-md-10  bg-secondary glassbga  justify-content-around ">
+                <button @click="er.emit('翻页',-1) " class="btn shadow-lg shadow btn-info">上一个
+                    <span class="position-absolute badge badge-info badge-pill" v-text="pd.nameSize"> </span>
+                </button>
+                <div class=" col-8   row justify-content-around rounded   ">
+                    <label class="  text-dark d-flex  align-items-center  ">当前第</label>
+                    <input @change="er.emit('翻页',0) " type="text" v-model="pd.page" class="w-25 form-control">
+                    <label class="text-dark d-flex  align-items-center  ">个共{{ pd.total }}</label>
+                </div>
+                <button @click="er.emit('翻页',1) " class="btn shadow-lg shadow btn-info">下一个
+                    <span class="position-absolute badge badge-light badge-pill" v-text="pd.nameSize"> </span>
+                </button>
+            </div>
+        </div>
     </div>
+
     <div class=" container">
         <p>看：韦氏英标 结合发音 听：中英对照建立关联</p>
     </div>
@@ -180,26 +201,7 @@
             </div>
         </div>
     </div>
-    <!--翻页-->
-    <div class="fixed-top row justify-content-center rounded   ">
-        <div class="w-100 mt-5   d-none d-md-block"><!---高度垫子 小设备隐藏--></div>
-        <div class=" d-flex  col-md-5 col-sm-8   bg-warning glassbga  justify-content-around ">
-            <button @click="er.emit('翻页',-1) " class="btn shadow-lg shadow btn-danger">上一个
-                <span class="position-absolute badge badge-light badge-pill" v-text="pd.nameSize"> </span>
-            </button>
-            <label class="text-dark d-flex  align-items-center  ">当前第</label>
-            <input @change="er.emit('翻页',0) " type="text" v-model="pd.page" class="w-25 form-control"> <label
-                class="text-dark d-flex  align-items-center  ">个共{{ pd.total }}</label>
 
-
-
-            <button @click="er.emit('翻页',1) " class="btn shadow-lg shadow btn-danger">下一个
-                <span class="position-absolute badge badge-light badge-pill" v-text="pd.nameSize"> </span>
-            </button>
-
-        </div>
-
-    </div>
 
     <!---侧边栏 -->
     <transition v-cloak enter-active-class="animated fadeInLeft" leave-active-class="animated fadeOutLeft">
@@ -270,29 +272,33 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/intro.js/7.0.1/intro.min.js"></script>
 
 
-    <!--script type="text/javascript" onload="console.log(10000)" onerror="console.log(55555)" src="https://disk.17121.top/camb_word/6/5/365/cfg_365.json"></script-->
 
     <script>
         const er = new EventEmitter //事件线
         const { onMounted, emits, createApp, ref, watch, computed } = Vue
 
         const gd = {};//全局数据 解决调用引用问题
+        gd.group = 'eng' //功能应用分组
+        gd.reg = {} //组成类到全局调用
         gd.storage = {
             //本地浏览器 存取组件
-            set(key, value,area) {
-                key = area ? area+':'+key : key ;//分区域分区组
+            set(key, value, area) {
+                key = area ? area + ':' + key : key;//分区域分区组
+                key = gd.group + '.' + key;//分组
                 localStorage.setItem(key, JSON.stringify(value));
             },
-            get(key,area) {
-                key = area ? area+':'+key : key ;//分区域分区组
+            get(key, area) {
+                key = area ? area + ':' + key : key;//分区域分区组
+                key = gd.group + '.' + key;//分组
                 return JSON.parse(localStorage.getItem(key));
             },
-            remove(key,area) {
-                key = area ? area+':'+key : key ;//分区域分区组
+            remove(key, area) {
+                key = area ? area + ':' + key : key;//分区域分区组
+                key = gd.group + '.' + key;//分组
                 localStorage.removeItem(key);
             },
         }
-        gd.pd = ref({ "load": [] });;//page data 页面元素引用"数据"
+        gd.pd = ref({ });//page data 页面元素引用"数据"
         //const pd = ref({ "load": [] }); //特殊变量，页面数据
         const pvs = gd.pd.value; //变量代理访问
         //gd.pd = pd;//page data 页面元素引用"数据"
@@ -301,9 +307,10 @@
             /* 界面控制类 初始化界面默认值 */
             constructor(arg) {
                 //初始（值）
-
+                gd.reg.ui = this//全局资源
+                this.vs = {} //内部变量
                 //--界面值
-                pvs.load.unshift('pgui')//从开头添加一个值
+    
                 pvs.sp = 0; //遮罩路由 (0.无，1.名单，2.登入 ,3.管理)
                 pvs.row = {};//单词数据的一行
                 pvs.showNav = 0;//导航显示
@@ -317,6 +324,36 @@
                 pvs.url = new URI() //获取去 type，pid ，默认访问本站，数据加载主站
                 pvs.leftList = {} //左侧列表
                 this.init();
+                pvs.loadNum = 3 //2+1
+                pvs.reload = 3 
+                pvs.timeOut = 6
+                //console.log(pvs.url.query({ reload: 7, }) )
+                
+            }
+            aoutReload(t){
+                if(t==0){ clearTimeout(pvs.outId) ; return  }
+                //---
+                const ui = gd.reg.ui
+                var ag = new URI().query(true)
+                console.log('1.url == ',ag)
+
+                if(ag.reload && Math.trunc( ag.reload )>  pvs.reload  ){
+                    console.log('2.url == ',ag)
+                    return 
+                }
+                if ( ! ag.reload   ){
+                    ag.reload = 1
+                }else{
+                    ag.reload = Math.trunc(ag.reload) + 1
+                }
+                pvs.outId  = setTimeout(()=>{
+                    console.log('3.url == ',ag)
+                    window.location.href=pvs.url.query(ag);
+                } ,pvs.timeOut * 1000)
+               
+              
+                
+
             }
             init() {
                 //初始（设置）
@@ -336,12 +373,13 @@
             loadJson() {
                 //一次性加载 json数据  默认数据来源当前站点，当前没有访问主站
                 const that = gd.oui
+                that.aoutReload(1) //计时
                 that.progressVal(6)
                 var src = pvs.url.host();//本站
                 var dc = pvs.url.query(true);//参数
                 pvs.type = dc['t'] ? dc['t'] : gd.storage.get('pageType') ? gd.storage.get('pageType') : 'camb_word';//业务类型，url优先
-                pvs.pid = String(dc['p'] ? dc['p'] : gd.storage.get('pid',pvs.type ) ? gd.storage.get('pid',pvs.type ) : 365);//对应id，url优先
-                pvs.pid = pvs.pid.padStart(3, '0'); //id定长
+                pvs.pid = dc['p'] ? dc['p'] : gd.storage.get('pid', pvs.type) ? gd.storage.get('pid', pvs.type) : 365;//对应id，url优先
+                pvs.pid = String(pvs.pid).padStart(3, '0'); //id定长  /5/5/5.json  /1/5/15.json  
                 gd.storage.set('pageType', pvs.type)
                 gd.storage.set(pvs.type + '_pid', pvs.pid)
 
@@ -356,8 +394,8 @@
                 var st = document.createElement("script");
                 st.id = 'dataFromJson';
                 st.src = `//${src}/${pvs.type}/${pvs.pid.substring(pvs.pid.length - 2, pvs.pid.length - 1)}/${pvs.pid.substring(pvs.pid.length - 1)}/cfg_${pvs.pid}.json`
-                //'https://disk.17121.top/camb_word/6/5/365/cfg_365.json';
-                // 'https://p_disk.17121.top/camb_word/6/5/365/cfg_365.json'; //经过代理
+
+
                 st.onerror = that.signErr;
                 st.onload = that.signing;
                 //console.log(dataFromJSON)
@@ -459,6 +497,7 @@
                 pvs.vprogress = pvs.vprogress + n
                 console.log("进度", n, pvs.vprogress)
                 if (pvs.vprogress > 98) {
+                    that.aoutReload(0) //结束计时
                     pvs.vprogress = 100
                     setTimeout(function () { pvs.showProgress = 0 }, 155);
                     that.spto(0)

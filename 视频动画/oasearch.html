@@ -80,7 +80,7 @@
           <label class="text-dark    mt-1       ">名字</label>
         </div>
         <div class="  p-0 m-0 col-6   col-md-4 col-sm-4   align-items-center  justify-content-start ">
-          <input type="text" v-model="pd.searchName" class="  form-control">
+          <input type="text" v-model="pd.searchName" class="  form-control" placeholder="请输入名字">
         </div>
 
         <div class="   d-flex col-auto   justify-content-start  ">
@@ -214,23 +214,27 @@
     const { onMounted, emits, createApp, ref, watch, computed } = Vue
 
     const gd = {};//全局数据 解决调用引用问题
+    gd.group = 'oldoa' //功能应用分组
     gd.reg = {} //组成类到全局调用
     gd.storage = {
       //本地浏览器 存取组件
       set(key, value, area) {
         key = area ? area + ':' + key : key;//分区域分区组
+        key = gd.group + '.' + key;//分组
         localStorage.setItem(key, JSON.stringify(value));
       },
       get(key, area) {
         key = area ? area + ':' + key : key;//分区域分区组
+        key = gd.group + '.' + key;//分组
         return JSON.parse(localStorage.getItem(key));
       },
       remove(key, area) {
         key = area ? area + ':' + key : key;//分区域分区组
+        key = gd.group + '.' + key;//分组
         localStorage.removeItem(key);
       },
     }
-    gd.pd = ref({});;//page data 页面元素引用"数据"
+    gd.pd = ref({});//page data 页面元素引用"数据"
     //const pd = ref({ "load": [] }); //特殊变量，页面数据
     const pvs = gd.pd.value; //变量代理访问
     class pgui {
@@ -279,6 +283,7 @@
         const se = gd.reg.se
         if (!pvs.searchName) { return }
         gd.storage.set('searchName', pvs.searchName)
+        pvs.dat = {}
         //动画效果
         ui.loginLoading(1)
         ui.spto(1) //loading 
@@ -295,7 +300,7 @@ ITEM_APPLICANT: "蔡金凯"
 理由: "测试"
 结束事件: "2023-05-25 16:46:00"
 */
-        var rows  = pvs.dat.TLK_APPLY_LEAVE//考勤表
+        var rows = pvs.dat.TLK_APPLY_LEAVE//考勤表
         if (pvs.dat.T_DEPARTMENT && pvs.dat.T_DEPARTMENT.length > 0) {
 
 
@@ -322,11 +327,11 @@ ITEM_APPLICANT: "蔡金凯"
 
         ui.showTab('#请假', columns, rows)
 
-       }
+      }
       tab公出() {
         const ui = gd.reg.ui
         //
-        var rows  = pvs.dat.TLK_BUSINESS_PUBLIC_TRIP//考勤表
+        var rows = pvs.dat.TLK_BUSINESS_PUBLIC_TRIP//考勤表
         if (pvs.dat.T_DEPARTMENT && pvs.dat.T_DEPARTMENT.length > 0) {
 
 
@@ -359,7 +364,7 @@ ITEM_APPLICANT: "蔡金凯"
         const ui = gd.reg.ui
 
         //
-        var rows  =  pvs.dat.TLK_ATTENDANCEDETAIL//考勤表
+        var rows = pvs.dat.TLK_ATTENDANCEDETAIL//考勤表
         if (pvs.dat.T_DEPARTMENT && pvs.dat.T_DEPARTMENT.length > 0) {
 
         }
@@ -697,9 +702,10 @@ ITEM_APPLICANT: "蔡金凯"
             console.log(name, info, '无上数据')
           }
 
-          //
-          if (_.isString(next)) { er.emit(next) } //下一步事件
-          if (_.isArray(next)) { _.map(next, (n) => { er.emit(n) }) } //下一步事件
+          ////下一步事件
+          if (_.isString(next)) { er.emit(next) }
+          //下一批事件
+          if (_.isArray(next)) { _.map(next, (n) => { er.emit(n) }) }
         } else {
           ui.showInfo('出现错误', info)
           console.log('出现错误', info + '==', dat)
