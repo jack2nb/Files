@@ -281,8 +281,9 @@
         //查询数据
         const ui = gd.reg.ui
         const se = gd.reg.se
-        if (!pvs.searchName) { return }
         gd.storage.set('searchName', pvs.searchName)
+        if (!pvs.searchName) { return }
+
         pvs.dat = {}
         //动画效果
         ui.loginLoading(1)
@@ -415,7 +416,7 @@ ITEM_APPLICANT: "蔡金凯"
           var deprow = dep[pvs.rowBase[0]['DEFAULTDEPARTMENT']]
           console.log('---------------', deprow['NAME'])
           pvs.rowBase[0]['DEPARTMENT'] = deprow['NAME']
-          ui.showTab('#table') //$('#table').bootstrapTable('destroy');
+          //ui.showTab('#table') //$('#table').bootstrapTable('destroy');
         }
         var columns = [{
           field: 'ID',
@@ -439,9 +440,9 @@ ITEM_APPLICANT: "蔡金凯"
       }
       showTab(eid, col, dat) {
         // 生成和销毁表格
-        if (_.isEmpty(col)) {
+        if (  $(eid).bootstrapTable("getOptions").cache == true )  {
           $(eid).bootstrapTable('destroy');
-          return
+          //return
         }
         $(eid).bootstrapTable({
           data: dat,        // 表格数据来源
