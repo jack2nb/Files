@@ -13,7 +13,7 @@
     <link rel="stylesheet" crossorigin="anonymous"
         href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.5.1/animate.min.css">
 
-        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/intro.js/7.0.1/introjs.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/intro.js/7.0.1/introjs.min.css">
     <style>
         @media (min-width: 0px) {
             html {
@@ -92,10 +92,9 @@
 
         div.introjs-tooltip-header,
         div.introjs-tooltiptext {
-            color:  #616161  !important;
-            
-        }
+            color: #616161 !important;
 
+        }
     </style>
 </head>
 <!--
@@ -111,9 +110,9 @@
         <!--题列表-->
         <div class=" row justify-content-center ">
             <div class="w-100 mt-5 d-none d-md-block"><!---高度垫子 小设备隐藏--></div>
-            <div class=" row col-12 flex-wrap bg-warning glassbga d-flex justify-content-center ">
+            <div class=" row col-12 flex-wrap  bg-secondary glassbga  d-flex justify-content-center ">
                 <span v-for="(site, index) in pd.testLs"
-                    :class="[{'text-warning': (index+1  == pd.page )}, {' text-center': (index  != pd.page )} ,{'btn':(index+1  != pd.page )}]"
+                    :class="[{'badge-info': (index+1  == pd.page )}, {' text-center': (index  != pd.page )} ,{'btn ':(index+1  != pd.page )}]"
                     class=" my-1  col-1 badge   badge-secondary mx-1  px-1 my-2"
                     @click="er.emit('跳转',index+1) ">{{index+1}}</span>
             </div>
@@ -154,13 +153,14 @@
         <div class=" d-flex    align-items-center  justify-content-around " style="height: 80px;">
 
             <span class="  w-50  ml-sm-5 mx-sm-2     shadow   badge-info   badge badge-pill">
-                <audio onloadeddata="er.emit('预加载',12) " onended="er.emit('播放完成',0) " class="  w-100   "
-                    controls="controls" v-bind:src="pd.row.zh4mp3">
+                <audio onloadeddata="er.emit('预加载',12) " onerror="er.emit('资源载入失败',event)" onended="er.emit('播放完成',0) "
+                    class="  w-100   " controls="controls" v-bind:src="pd.row.zh4mp3">
                     Your browser does not support the audio element.
                 </audio>
             </span>
             <span class="  w-50    mr-sm-5 mx-sm-2     shadow   badge-info badge   badge-pill">
-                <audio onended="er.emit('播放完成',1) " class="  w-100   " controls="controls" v-bind:src="pd.row.en4mp3">
+                <audio onended="er.emit('播放完成',1) " onerror="er.emit('资源载入失败',event)" class="  w-100   "
+                    controls="controls" v-bind:src="pd.row.en4mp3">
                     Your browser does not support the audio element.
                 </audio>
             </span>
@@ -190,7 +190,8 @@
     <div v-if=" pd.unload " style=" visibility: hidden; max-width:100%; height: 1px;">
         <div v-for="(site, index) in pd.chooseRow">
             <img onload="er.emit('预加载',11) " v-bind:src="site.img">
-            <audio onloadeddata="er.emit('预加载',11) " class="  w-25  " controls="controls" v-bind:src="site.en4m2mp3">
+            <audio onloadeddata="er.emit('预加载',11) " onerror="er.emit('资源载入失败',event)" class="  w-25  "
+                controls="controls" v-bind:src="site.en4m2mp3">
                 Your browser does not support the audio element.
             </audio>
 
@@ -272,9 +273,9 @@
 
     <div v-if="pd.showLoading" @click="er.emit('遮罩',0) " style="z-index: 1081  ;" class=" modal-backdrop show "> </div>
 
-<!---对错判断标签--->
+    <!---对错判断标签--->
     <transition v-cloak enter-active-class="animated flash">
-        <div v-cloak v-if="pd.showJudgment == 0" class="center text-success rounded-circle border glassbg  border-5" 
+        <div v-cloak v-if="pd.showJudgment == 0" class="center text-success rounded-circle border glassbg  border-5"
             style="font-size:55px; z-index:1082; top:35%;    ">
             ✔
         </div>
@@ -335,22 +336,23 @@
         const { onMounted, emits, createApp, ref, watch, computed } = Vue
 
         const gd = {};//全局数据 解决调用引用问题
+        gd.reg = {} //组成类到全局调用
         gd.group = 'eng'
         gd.storage = {
             //本地浏览器 存取组件
-            set(key, value,area) {
-                key = area ? area+':'+key : key ;//分区域分区组
-                key = gd.group + '.'+key ;//分组
+            set(key, value, area) {
+                key = area ? area + ':' + key : key;//分区域分区组
+                key = gd.group + '.' + key;//分组
                 localStorage.setItem(key, JSON.stringify(value));
             },
-            get(key,area) {
-                key = area ? area+':'+key : key ;//分区域分区组
-                key = gd.group + '.'+key ;//分组
+            get(key, area) {
+                key = area ? area + ':' + key : key;//分区域分区组
+                key = gd.group + '.' + key;//分组
                 return JSON.parse(localStorage.getItem(key));
             },
-            remove(key,area) {
-                key = area ? area+':'+key : key ;//分区域分区组
-                key = gd.group + '.'+key ;//分组
+            remove(key, area) {
+                key = area ? area + ':' + key : key;//分区域分区组
+                key = gd.group + '.' + key;//分组
                 localStorage.removeItem(key);
             },
         }
@@ -359,12 +361,12 @@
         //const pd = ref({ "load": [] }); //特殊变量，页面数据
         const pvs = gd.pd.value; //变量代理访问
         //gd.pd = pd;//page data 页面元素引用"数据"
- 
+
         class pgui {
             /* 界面控制类 初始化界面默认值 */
             constructor(arg) {
                 //初始（值）
-
+                gd.reg.ui = this//全局资源
                 //--界面值
                 pvs.load.unshift('pgui')//从开头添加一个值
                 pvs.sp = 0; //遮罩路由 (0.无，1.名单，2.登入 ,3.管理)
@@ -389,6 +391,9 @@
                 pvs.testLs = []
                 pvs.leftList = {} //左侧列表
                 this.init();
+                pvs.loadNum = 6 //4 + 2 
+                pvs.reload = 3
+                pvs.timeOut = 6
             }
             init() {
                 //初始（设置）
@@ -396,7 +401,7 @@
                 er.on('遮罩', this.loginLoading)
                 er.on('播放', this.play)
                 er.on('播放-候选', this.playChoose)
-                
+
 
                 er.on('进度', this.progress)
                 er.on('预加载', this.progress)//预加载
@@ -405,28 +410,64 @@
                 er.on('跳转', this.toPage)
                 er.on('播放完成', this.endPlay)
                 er.on('帮助.更多学习内容', this.help2next)
+                er.on('资源载入失败', this.setReload)//预加载
+            }
+            setReload(evt) {
+                console.log('---资源载入失败---', evt)
+
+            }
+            aoutReload(t) {
+                const ui = gd.reg.ui
+
+                // t =1 开启 ，t=0 结束
+                console.log('aoutReload == ', t)
+                if (t == 0) { clearTimeout(pvs.outId); return }
+                pvs.loaded = 0 //重新加载新数据
+                //---
+                var ag = new URI().query(true)
+                console.log('1.url == ', ag)
+
+                if (ag.reload && Math.trunc(ag.reload) > pvs.reload) {
+                    console.log('2.url == ', ag)
+                    ui.loginLoading(0)
+                    ui.spto(0)
+                    ui.showInfo('加载资源失败', '稍后重试')
+
+                    return
+                }
+                if (!ag.reload) {
+                    ag.reload = 1
+                    ag.page = pvs.page
+                } else {
+                    ag.reload = Math.trunc(ag.reload) + 1
+                }
+                //创建超时
+                pvs.outId = setTimeout(() => {
+                    console.log('3.url == ', ag)
+                    window.location.href = pvs.url.query(ag);
+                }, pvs.timeOut * 1000)
             }
             endPlay(n) {
                 //对错判断后的播放完成
                 const that = gd.oui
                 //选择后 播放结束
                 console.log('endPlay', n)
-                if(! pvs.selected     ){
-                    return 0 
+                if (!pvs.selected) {
+                    return 0
                 }
-           
+
                 //直接进入判断
                 var row = _.find(dataFromJSON.data, { "en": pvs.row.en })//取数据 内部的一行
                 //console.log(row, pvs.row,pvs.selected)
                 //pvs.row 界面显示的数据
-                if (   pvs.selected == pvs.row.en && row.zh == pvs.row.zh ) {
+                if (pvs.selected == pvs.row.en && row.zh == pvs.row.zh) {
                     pvs.showJudgment = 0 //答对
                     if (pvs.page == pvs.testLs.length) {
                         //完成学习  +++  时间停止功能
                         setTimeout(() => {
                             that.showInfo('恭喜 完成了练习', '真棒 ');
                             pvs.showJudgment = -1 //判断结果重置
-                            setTimeout(()=>er.emit('帮助.更多学习内容'),1800);
+                            setTimeout(() => er.emit('帮助.更多学习内容'), 1800);
                             //完成提示进入挑战+++
 
                         }, 1500);
@@ -471,12 +512,13 @@
                 that.progressVal(6)
                 var src = pvs.url.host();//本站
                 var dc = pvs.url.query(true);//参数
+                pvs.page = dc['page'] ? dc['page'] : gd.storage.get('page') ? gd.storage.get('page') : 1;//
                 pvs.type = dc['t'] ? dc['t'] : gd.storage.get('pageType') ? gd.storage.get('pageType') : 'camb_word';//业务类型，url优先
-                pvs.pid = String(dc['p'] ? dc['p'] : gd.storage.get('pid',pvs.type ) ? gd.storage.get('pid',pvs.type ) : 365);//对应id，url优先
+                pvs.pid = String(dc['p'] ? dc['p'] : gd.storage.get('pid', pvs.type) ? gd.storage.get('pid', pvs.type) : 365);//对应id，url优先
                 pvs.pid = pvs.pid.padStart(3, '0'); //id定长
                 gd.storage.set('pageType', pvs.type)
-                gd.storage.set('pid', pvs.pid,pvs.type ) //记录当前项目的学习课程号
-                
+                gd.storage.set('pid', pvs.pid, pvs.type) //记录当前项目的学习课程号
+
                 console.log("script参数=", src, pvs.type, pvs.pid)
                 //document.getElementById('dataFromJson').remove ()
                 // delete  dataFromJSON .data
@@ -488,7 +530,7 @@
                 //'https://disk.17121.top/camb_word/6/5/365/cfg_365.json';
                 // 'https://p_disk.17121.top/camb_word/6/5/365/cfg_365.json'; //经过代理
                 st.onerror = that.signErr;
-                st.onload = that.signing;
+                st.onload = that.endJson;
                 //console.log(dataFromJSON)
                 document.body.appendChild(st);
                 console.log("添加script标签=", pvs.page)
@@ -502,9 +544,25 @@
                 document.body.appendChild(wl);
 
             }
+            endJson(dat) {
+
+                // 读取数据到 json/翻页    页面
+                console.log('dat==', dat)
+                const that = gd.oui
+                if (typeof (dataFromJSON) == "undefined" || dataFromJSON.data.length == 0) { that.showInfo("没找到数据", '翻页'); return; } //没数据
+                that.loginLoading(1) //内部翻页 
+                that.spto(1) //loading 
+                //词展示++++
+                pvs.testLs = _.slice(_.shuffle(dataFromJSON.data), 0, pvs.wordLen)//测试数
+                //pvs.testLs = dataFromJSON.data
+                pvs.total = pvs.testLs.length
+                that.rowLoad(1) //处理 显示第一个单词
+
+            }
+
             getPage() {
                 // 超限 问题处理
-                var page = gd.storage.get('page') ? gd.storage.get('page') : 1;//默认值
+                var page = pvs.page
                 page = parseInt(page);
                 if (page <= 0) { page = 1; }
                 if (page > pvs.total) { page = pvs.total; }
@@ -515,22 +573,22 @@
             }
             toPage(n) {
                 if (pvs.page == n) { return; }
-
                 const that = gd.oui
+
                 //跳转到某页面
                 pvs.page = parseInt(n);
                 //---处理
                 gd.storage.set('page', pvs.page)
                 that.progressVal(6)
                 //载入数据 
-                that.signing(1)
+                that.rowLoad(1)
                 //--重新初始化
                 pvs.unload = 1 //允许预加载mp3 图片
                 pvs.showJudgment = -1 //选择判断结果
                 pvs.selected = '' //选择的单词
                 pvs.selectedCss = 'hidden' //选择的单词
             }
- 
+
             help2next() {
                 var setpList = [
                     {
@@ -582,6 +640,7 @@
                 console.log("进度", n, pvs.vprogress)
                 if (pvs.vprogress > 98) {
                     pvs.vprogress = 100
+                    that.aoutReload(0) //结束计时
                     pvs.unload = 0 //加载完不显示 删除元素
                     setTimeout(function () { pvs.showProgress = 0 }, 155);
                     that.spto(0)
@@ -614,29 +673,20 @@
                 pvs.leftList = _.map(pvs.leftList, (o) => { o.url = './' + pvs.url.filename() + `?p=${o.f}&t=${pvs.type}`; return o })
 
             }
-            signing(dat) {
+            rowLoad(n) {
                 // 读取数据到 json/翻页    页面
-                console.log('dat==', dat)
+                console.log('rowLoad==', n)
                 const that = gd.oui
 
                 that.progressVal(6)
                 that.loginLoading(1) //内部翻页 
                 that.spto(1) //loading 
-                //词展示++++
-                if (dat != 1) {//非内部翻页-首次加载
+                that.aoutReload(1)//开始超时即时
 
-                    pvs.testLs = _.slice(_.shuffle(dataFromJSON.data), 0,pvs.wordLen)//测试数
-
-                    //pvs.testLs = dataFromJSON.data
-                    pvs.total = pvs.testLs.length
-
-                }
-                if (typeof (dataFromJSON) == "undefined" || dataFromJSON.data.length == 0) { that.showInfo("没找到数据", '翻页'); return; } //没数据
-                that.getPage() //if (pvs.page > pvs.total) { pvs.page = 1 }
 
                 //设置数据
-                console.log(dataFromJSON.src, pvs.page, dataFromJSON.data[pvs.page - 1])
-                var row = pvs.testLs[pvs.page - 1]
+                console.log(dataFromJSON.src, pvs.page, dataFromJSON.data[that.getPage() - 1])
+                var row = pvs.testLs[that.getPage() - 1]
                 //创建选区
                 pvs.choose = that.mkchoose(row, dataFromJSON.data)
                 //设置 mp3
@@ -655,9 +705,10 @@
                 return `//${pvs.url.host()}/${pvs.type}/${wrod.substring(0, 1).toLowerCase()}/${wrod.substring(1, 2).toLowerCase()}/`
             }
             loadChoose() {
+                //预加载
                 const that = gd.oui
 
-                //单独处理选择列表
+                
                 //pvs.chooseRow = _.filter(dataFromJSON.data, function (o) { return pvs.choose.indexOf(o.en) >= 0; });//无序
                 pvs.chooseRow = _.map(pvs.choose, function (o) { return _.find(dataFromJSON.data, { "en": o }); });//有序
 
@@ -716,7 +767,7 @@
         app.mount('#q-app')
     </script>
 
- 
+
 
     <script>
             (() => setTimeout(() => {

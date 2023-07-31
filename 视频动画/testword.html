@@ -185,12 +185,14 @@
     <div v-if=" pd.unload " style=" visibility: hidden; max-width:100%; height: 1px;">
         <div v-for="(site, index) in pd.testLs">
 
-            <audio onloadeddata="er.emit('预加载',10) " onerror="er.emit('预加出错',event)" class="  w-25  " controls="controls" v-bind:src="site.en4m2mp3">
+            <audio onloadeddata="er.emit('预加载',10) " onerror="er.emit('资源载入失败',event)" class="  w-25  "
+                controls="controls" v-bind:src="site.en4m2mp3">
                 Your browser does not support the audio element.
             </audio>
 
 
-            <audio onloadeddata="er.emit('预加载',10) "  onerror="er.emit('预加出错',$event)" class="  w-25  " controls="controls" v-bind:src="site.zh4m2mp3">
+            <audio onloadeddata="er.emit('预加载',10) " onerror="er.emit('资源载入失败',event)" class="  w-25  "
+                controls="controls" v-bind:src="site.zh4m2mp3">
                 Your browser does not support the audio element.
             </audio>
 
@@ -361,22 +363,23 @@
         const { onMounted, emits, createApp, ref, watch, computed } = Vue
 
         const gd = {};//全局数据 解决调用引用问题
+        gd.reg = {} //组成类到全局调用
         gd.group = 'eng'
         gd.storage = {
             //本地浏览器 存取组件
-            set(key, value,area) {
-                key = area ? area+':'+key : key ;//分区域分区组
-                key = gd.group + '.'+key ;//分组
+            set(key, value, area) {
+                key = area ? area + ':' + key : key;//分区域分区组
+                key = gd.group + '.' + key;//分组
                 localStorage.setItem(key, JSON.stringify(value));
             },
-            get(key,area) {
-                key = area ? area+':'+key : key ;//分区域分区组
-                key = gd.group + '.'+key ;//分组
+            get(key, area) {
+                key = area ? area + ':' + key : key;//分区域分区组
+                key = gd.group + '.' + key;//分组
                 return JSON.parse(localStorage.getItem(key));
             },
-            remove(key,area) {
-                key = area ? area+':'+key : key ;//分区域分区组
-                key = gd.group + '.'+key ;//分组
+            remove(key, area) {
+                key = area ? area + ':' + key : key;//分区域分区组
+                key = gd.group + '.' + key;//分组
                 localStorage.removeItem(key);
             },
         }
@@ -390,7 +393,7 @@
             /* 界面控制类 初始化界面默认值 */
             constructor(arg) {
                 //初始（值）
-
+                gd.reg.ui = this//全局资源
                 //--界面值
                 pvs.load.unshift('pgui')//从开头添加一个值
                 pvs.sp = 0; //遮罩路由 (0.无，1.名单，2.登入 ,3.管理)
@@ -409,7 +412,7 @@
                 pvs.selectedEn = '' //选择的单词
                 pvs.selecteds = {} //单词选择对
                 pvs.wordLen = 5 //练习词数
-                pvs.loadNum = pvs.wordLen *  2 //加载音频数量
+                pvs.loadNum = pvs.wordLen * 2 //加载音频数量
                 //确认
                 pvs.showConfirm = 0//确认检查
                 pvs.showJudgment = -1//判断对错
@@ -418,6 +421,9 @@
                 pvs.zhLs = []
                 pvs.leftList = {} //左侧列表
                 this.init();
+                pvs.loadNum = pvs.wordLen * 2 // x2
+                pvs.reload = 3
+                pvs.timeOut = 6
             }
             init() {
                 //初始（设置）
@@ -429,12 +435,47 @@
 
                 er.on('进度', this.progress)
                 er.on('预加载', this.progress)//预加载
-                er.on('预加出错', (evt)=>{ console.log('预加出错',evt)})//预加载
+                er.on('资源载入失败', this.setReload)//预加载
                 er.on('导航', this.trunNav)
 
 
                 er.on('播放完成', this.endPlay)//event
                 er.on('帮助.更多学习内容', this.help2next)
+            }
+            setReload(evt) {
+                console.log('---资源载入失败---', evt)
+
+            }
+            aoutReload(t){
+                const ui = gd.reg.ui
+                
+                // t =1 开启 ，t=0 结束
+                console.log('aoutReload == ', t)
+                if (t == 0) { clearTimeout(pvs.outId); return }
+                pvs.loaded = 0 //重新加载新数据
+                //---
+                var ag = new URI().query(true)
+                console.log('1.url == ', ag)
+
+                if (ag.reload && Math.trunc(ag.reload) > pvs.reload) {
+                    console.log('2.url == ', ag)
+                    ui.loginLoading(0)
+                    ui.spto(0)
+                    ui.showInfo('加载资源失败','稍后重试')
+                    
+                    return
+                }
+                if (!ag.reload) {
+                    ag.reload = 1
+                    ag.page = pvs.page
+                } else {
+                    ag.reload = Math.trunc(ag.reload) + 1
+                }
+                //创建超时
+                pvs.outId = setTimeout(() => {
+                    console.log('3.url == ', ag)
+                    window.location.href = pvs.url.query(ag);
+                }, pvs.timeOut * 1000)
             }
             endPlay(n) {
                 //播放 ,判断对错
@@ -446,7 +487,7 @@
             }
             playChoose(dc) {
                 const that = gd.oui
-                if (  pvs.selectedZh != '' &&  pvs.selectedEn != '') {
+                if (pvs.selectedZh != '' && pvs.selectedEn != '') {
                     //防止重复点击
                     return
                 }
@@ -470,11 +511,11 @@
                 }
                 //设置并播放
                 var emt = dc.evt.target
-                
-                /**  连线  **/
-                if (  pvs.selectedZh != '' &&  pvs.selectedEn != '') {
 
-                    var h5div = drawLine(pvs.selecteds['en'],pvs.selecteds['zh'])
+                /**  连线  **/
+                if (pvs.selectedZh != '' && pvs.selectedEn != '') {
+
+                    var h5div = drawLine(pvs.selecteds['en'], pvs.selecteds['zh'])
                     var doc = new DOMParser().parseFromString(h5div, 'text/html');
                     console.log(doc, pvs.selecteds)
                     document.body.appendChild(doc.querySelector('div'));//选区部分，添加到body
@@ -509,13 +550,13 @@
                 _.map(elements, (o) => { o.parentNode.removeChild(o); })
                 pvs.selectedZh = ''; pvs.selectedEn = ''; pvs.selecteds = {};
 
-                if (pvs.enLs.length == 0 ) {
+                if (pvs.enLs.length == 0) {
                     //完成学习  +++  时间停止功能
                     setTimeout(() => {
                         that.showInfo('恭喜 完成了练习', '真棒 ');
                         setTimeout(() => er.emit('帮助.更多学习内容'), 1500);
                         //完成提示进入挑战+++
-                    },1)
+                    }, 1)
                 }
 
             }
@@ -532,7 +573,6 @@
                 //一次性加载 json数据  默认数据来源当前站点，当前没有访问主站
 
                 const that = gd.oui
-
                 that.progressVal(6)
                 var src = pvs.url.host();//本站
                 var dc = pvs.url.query(true);//参数
@@ -552,7 +592,7 @@
                 st.src = `//${src}/${pvs.type}/${pvs.pid.substring(pvs.pid.length - 2, pvs.pid.length - 1)}/${pvs.pid.substring(pvs.pid.length - 1)}/cfg_${pvs.pid}.json`
 
                 st.onerror = that.signErr;
-                st.onload = that.signing;
+                st.onload = that.endJson;
                 //console.log(dataFromJSON)
                 document.body.appendChild(st);
                 console.log("添加script标签=", pvs.page)
@@ -566,7 +606,18 @@
                 document.body.appendChild(wl);
 
             }
+            endJson(dat) {
+                //json加载完成
+                const that = gd.oui
+                that.loginLoading(1) //json加载 
+                that.spto(1) //loading 
 
+                if (typeof (dataFromJSON) == "undefined" || dataFromJSON.data.length == 0) { that.showInfo("没找到数据", ' 加载时 '); return; } //没数据
+                //词展示++++
+                pvs.testLs = _.slice(_.shuffle(dataFromJSON.data), 0, pvs.wordLen)//取得，测试数
+                that.rowLoad(1) //处理 显示第一个单词
+
+            }
 
             help2next() {
                 //帮助，新手引导
@@ -620,6 +671,7 @@
                 console.log("进度", n, pvs.vprogress)
                 if (pvs.vprogress > 98) {
                     pvs.vprogress = 100
+                    that.aoutReload(0) //结束计时
                     pvs.unload = 0 //加载完 删除元素
                     setTimeout(function () { pvs.showProgress = 0 }, 155);
                     that.spto(0)
@@ -652,7 +704,7 @@
                 pvs.leftList = _.map(pvs.leftList, (o) => { o.url = './' + pvs.url.filename() + `?p=${o.f}&t=${pvs.type}`; return o })
 
             }
-            signing(dat) {
+            rowLoad(dat) {
                 // 读取数据到 json/翻页    页面
                 console.log('dat==', dat)
                 const that = gd.oui
@@ -660,13 +712,10 @@
                 that.progressVal(6)
                 that.loginLoading(1) //内部翻页 
                 that.spto(1) //loading 
+                that.aoutReload(1)//超时计时设置
                 //词展示++++
-                if (dat != 1) {//非内部翻页-首次加载
-                    pvs.testLs = _.slice(_.shuffle(dataFromJSON.data), 0, pvs.wordLen)//取得，测试数
-                    //pvs.testLs = dataFromJSON.data
-                }
-                if (typeof (dataFromJSON) == "undefined" || dataFromJSON.data.length == 0) { that.showInfo("没找到数据", ' 加载时 '); return; } //没数据
-                //设置数据
+        
+              //设置数据
                 //  加载2倍的mp3音（异步）
                 that.loadChoose();
                 //分成两份 并打乱

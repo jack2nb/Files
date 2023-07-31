@@ -108,8 +108,6 @@
     <!---上面的结果框val--->
     <div v-cloak class="container ">
         <div class="w-100 mb-5   d-none d-md-block"><!---高度垫子 小设备隐藏--></div>
-
-
     </div>
     <div class="container ">
         <div class="mt-2 row justify-content-center  ">
@@ -125,8 +123,8 @@
 
         <div class=" row   align-items-center   justify-content-around   ">
 
-            <img onload="er.emit('进度',30) " v-bind:src="pd.row.img" style="max-width:100%;overflow:hidden;"
-                class="img-fluid" alt="...">
+            <img onload="er.emit('进度',30) " onerror="er.emit('资源载入失败',event)" v-bind:src="pd.row.img"
+                style="max-width:100%;overflow:hidden;" class="img-fluid" alt="...">
 
         </div>
         <div class=" row   align-items-center   justify-content-around" style="height: 80px;">
@@ -144,14 +142,14 @@
         <div class=" d-flex    align-items-center  justify-content-around " style="height: 80px;">
 
             <span class="  w-50  ml-sm-5 mx-sm-2     shadow   badge-info   badge badge-pill">
-                <audio onloadeddata="er.emit('进度',31) " class="  w-100   " controls="controls"
-                    v-bind:src="pd.row.zh4mp3">
+                <audio onloadeddata="er.emit('进度',31) " onerror="er.emit('资源载入失败',event)" class="  w-100   "
+                    controls="controls" v-bind:src="pd.row.zh4mp3">
                     Your browser does not support the audio element.
                 </audio>
             </span>
             <span class="  w-50    mr-sm-5 mx-sm-2     shadow   badge-info badge   badge-pill">
-                <audio onloadeddata="er.emit('进度',32) " class="  w-100   " controls="controls"
-                    v-bind:src="pd.row.en4mp3">
+                <audio onloadeddata="er.emit('进度',32) " onerror="er.emit('资源载入失败',event)" class="  w-100   "
+                    controls="controls" v-bind:src="pd.row.en4mp3">
                     Your browser does not support the audio element.
                 </audio>
             </span>
@@ -173,11 +171,13 @@
                 </button>
             </div>
         </div>
+
     </div>
 
     <div class=" container">
         <p>看：韦氏英标 结合发音 听：中英对照建立关联</p>
     </div>
+    <div class="w-100 mb-5   d-none d-md-block"><!---高度垫子 小设备隐藏--></div>
 
     <!--功能选择--->
     <div class="fixed-bottom row justify-content-center rounded   ">
@@ -278,8 +278,9 @@
         const { onMounted, emits, createApp, ref, watch, computed } = Vue
 
         const gd = {};//全局数据 解决调用引用问题
-        gd.group = 'eng' //功能应用分组
         gd.reg = {} //组成类到全局调用
+        gd.group = 'eng' //功能应用分组
+
         gd.storage = {
             //本地浏览器 存取组件
             set(key, value, area) {
@@ -298,7 +299,7 @@
                 localStorage.removeItem(key);
             },
         }
-        gd.pd = ref({ });//page data 页面元素引用"数据"
+        gd.pd = ref({});//page data 页面元素引用"数据"
         //const pd = ref({ "load": [] }); //特殊变量，页面数据
         const pvs = gd.pd.value; //变量代理访问
         //gd.pd = pd;//page data 页面元素引用"数据"
@@ -310,13 +311,13 @@
                 gd.reg.ui = this//全局资源
                 this.vs = {} //内部变量
                 //--界面值
-    
+
                 pvs.sp = 0; //遮罩路由 (0.无，1.名单，2.登入 ,3.管理)
                 pvs.row = {};//单词数据的一行
                 pvs.showNav = 0;//导航显示
                 pvs.showLoading = 0 //遮罩
                 pvs.total = 0
-             
+
                 pvs.info_list = []//{info:"2",type:"2"}
                 pvs.vprogress = 100 //进度条
                 pvs.showProgress = 0 //进度条
@@ -325,33 +326,13 @@
                 pvs.leftList = {} //左侧列表
                 this.init();
                 pvs.loadNum = 3 //2+1
-                pvs.reload = 3 
+                pvs.loaded = 0 //已完成载入
+                pvs.reload = 3
                 pvs.timeOut = 6
                 //console.log(pvs.url.query({ reload: 7, }) )
-                
-            }
-            aoutReload(t){
-                if(t==0){ clearTimeout(pvs.outId) ; return  }
-                //---
-                const ui = gd.reg.ui
-                var ag = new URI().query(true)
-                console.log('1.url == ',ag)
 
-                if(ag.reload && Math.trunc( ag.reload )>  pvs.reload  ){
-                    console.log('2.url == ',ag)
-                    return 
-                }
-                if ( ! ag.reload   ){
-                    ag.reload = 1
-                    ag.page = pvs.page
-                }else{
-                    ag.reload = Math.trunc(ag.reload) + 1
-                }
-                pvs.outId  = setTimeout(()=>{
-                    console.log('3.url == ',ag)
-                    window.location.href=pvs.url.query(ag);
-                } ,pvs.timeOut * 1000)
             }
+
             init() {
                 //初始（设置）
 
@@ -361,8 +342,46 @@
                 er.on('进度', this.progress)
                 er.on('导航', this.trunNav)
                 er.on('帮助.练一练', this.help2next)
+                er.on('资源载入失败', this.setReload)//预加载
+
+            }
+            setReload(evt) {
+                console.log('---资源载入失败---', evt)
+
+            }
+            aoutReload(t) {
+                const ui = gd.reg.ui
+                
+                // t =1 开启 ，t=0 结束
+                console.log('aoutReload == ', t)
+                if (t == 0) { clearTimeout(pvs.outId); return }
+                pvs.loaded = 0 //重新加载新数据
+                //---
+                var ag = new URI().query(true)
+                console.log('1.url == ', ag)
+
+                if (ag.reload && Math.trunc(ag.reload) > pvs.reload) {
+                    console.log('2.url == ', ag)
+                    ui.loginLoading(0)
+                    ui.spto(0)
+                    ui.showInfo('加载资源失败','稍后重试')
+                    
+                    return
+                }
+                if (!ag.reload) {
+                    ag.reload = 1
+                    ag.page = pvs.page
+                } else {
+                    ag.reload = Math.trunc(ag.reload) + 1
+                }
+                //创建超时
+                pvs.outId = setTimeout(() => {
+                    console.log('3.url == ', ag)
+                    window.location.href = pvs.url.query(ag);
+                }, pvs.timeOut * 1000)
             }
             trunNav(n) {
+                //导航栏 n 开关
                 const that = gd.oui
                 pvs.showNav = n
                 pvs.showLoading = n
@@ -370,18 +389,16 @@
             loadJson() {
                 //一次性加载 json数据  默认数据来源当前站点，当前没有访问主站
                 const that = gd.oui
-                that.aoutReload(1) //计时
+        
                 that.progressVal(6)
                 var src = pvs.url.host();//本站
                 var dc = pvs.url.query(true);//参数
-                pvs.page =  dc['page'] ? dc['page'] :gd.storage.get('page') ? gd.storage.get('page') : 1;//显示动画
+                pvs.page = dc['page'] ? dc['page'] : gd.storage.get('page') ? gd.storage.get('page') : 1;//
                 pvs.type = dc['t'] ? dc['t'] : gd.storage.get('pageType') ? gd.storage.get('pageType') : 'camb_word';//业务类型，url优先
                 pvs.pid = dc['p'] ? dc['p'] : gd.storage.get('pid', pvs.type) ? gd.storage.get('pid', pvs.type) : 365;//对应id，url优先
                 pvs.pid = String(pvs.pid).padStart(3, '0'); //id定长  /5/5/5.json  /1/5/15.json  
                 gd.storage.set('pageType', pvs.type)
                 gd.storage.set(pvs.type + '_pid', pvs.pid)
-
-
 
                 console.log("script参数=", src, pvs.type, pvs.page, pvs.pid)
 
@@ -395,7 +412,7 @@
 
 
                 st.onerror = that.signErr;
-                st.onload = that.signing;
+                st.onload = that.endJson;
                 //console.log(dataFromJSON)
                 document.body.appendChild(st);
 
@@ -407,6 +424,18 @@
                 wl.src = `//${src}/${pvs.type}/word_list.json`
                 wl.onload = that.leftListLoad;
                 document.body.appendChild(wl);
+            }
+            endJson(dat) {
+                //json加载完成
+                const that = gd.oui
+                that.loginLoading(1) //json加载 
+                that.spto(1) //loading 
+
+                console.log('dat==', dat)
+                pvs.total = dataFromJSON.data.length
+                if (typeof (dataFromJSON) == "undefined" || dataFromJSON.data.length == 0) { that.showInfo("没找到数据", '单词组'); return; } //没数据
+                that.rowLoad(1) //处理 显示第一个单词
+
             }
             getPage() {
                 // 超限 问题处理
@@ -427,7 +456,6 @@
                 console.log('内部翻页', pvs.page, n)
                 //限定page的范围
                 pvs.page = parseInt(pvs.page) + n;
-                console.log('内部翻页', pvs.page, n)
                 if (pvs.page <= 0) {
                     pvs.page = 1;
                     that.showInfo("已经到头", '翻页');
@@ -440,9 +468,10 @@
                 }
                 //---处理
                 gd.storage.set('page', pvs.page)
-                that.progressVal(6)
+                that.progressVal(6) //新的一页
+
                 //载入数据 
-                that.signing(1)
+                that.rowLoad(1)
             }
             help2next() {
                 var setpList = [
@@ -530,29 +559,18 @@
                 pvs.leftList = _.map(pvs.leftList, (o) => { o.url = './' + pvs.url.filename() + `?p=${o.f}&t=${pvs.type}`; return o })
 
             }
-            signing(dat) {
-                // 读取数据到 json/翻页    页面
-
+            rowLoad(n) {
+                // 读取行数据显示
+                
                 const that = gd.oui
+          
                 that.loginLoading(1) //json加载 
                 that.spto(1) //loading 
-                that.progressVal(6)
-                console.log('dat==', dat)
-                //词展示++++
-                if (dat != 1) {//非内部翻页-首次加载
-
-                    pvs.total = dataFromJSON.data.length
-                }
-
-                if (typeof (dataFromJSON) == "undefined" || dataFromJSON.data.length == 0) { that.showInfo("没找到数据", '翻页'); return; } //没数据
-
-
+                that.aoutReload(1) //计时开始
                 //设置数据
-
                 var row = dataFromJSON.data[that.getPage() - 1] //page不存在或超限
                 //pvs.row.img = '/en500word/h/e/健康.png' //  /en500word/h/e/健康.png
-                console.log(dataFromJSON.src, row, dataFromJSON.data)
-
+                console.log(n, dataFromJSON.src, row, dataFromJSON.data)
                 //设置 mp3
                 pvs.row.zh = row.zh
                 pvs.row.en = row.en
