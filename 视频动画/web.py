@@ -166,33 +166,49 @@ class JsonApiHandler(BaseHandler):
         json api 请求
         """
         result = OrderedDict()
+        result["@code"] = 200
+        result["@msg"] = "success"
         #print(self.request.body)
         body = self.request.body.decode('utf8')
         try:
             result["@err"] = "请求数据为空" if not body else None
             metadata = json.loads(body,  object_hook=datetime_parser)
-            
+            if gm.cfg.get('db.ro'):     
+                result["@err"] = 'db readonly'
+                result["@code"] = 450            
             print('metadata==',metadata)
+            
             if args and args[0][:3] == 'get':
                 result = self._get(metadata)
-            if args and args[0][:4] == 'post':
-                result = self._post(metadata)
-            if args and args[0][:3] == 'del':
-                result = self._del(metadata)
-            if args and args[0][:3] == 'put':
-                result = self._put(metadata)
+                result["@err"] = ''
+                result["@code"] = 200
+                result["@msg"] = '读取完成'
+            else:
+                if not gm.cfg.get('db.ro'):
+                    if args and args[0][:4] == 'post'  :
+                        result = self._post(metadata)
+                    if args and args[0][:3] == 'del'  :
+                        result = self._del(metadata)
+                    if args and args[0][:3] == 'put'  :
+                        result = self._put(metadata)
+                    result["@err"] = ''
+                    result["@code"] = 200
+                    result["@msg"] = '修改成功'
+            
+                
             if not args[0] :
                 result = {"args":"empty"}
+                result["@code"] = 410
+                result["@msg"] = '请求参数为空'
 
         except Exception as e:
             tb_str = traceback.format_exc()
             result["@code"] = 400
-            result["@err"] = result.get("@err")  if result.get("@err")   else tb_str  
-            result["@msg"] = result.get("@msg")  if result.get("@msg")   else str(e)
+            result["@err"] = str(e)
+            result["@msg"] = tb_str
             logger.error('错误 %s 详情： %s \ndata:%s'%(e,tb_str,body) )
-        else:
-            result["@code"] = 200
-            result["@msg"] = "success"
+ 
+
         
         #-----返回
         result = json.dumps(result, ensure_ascii=False,cls=DateEncoder)
