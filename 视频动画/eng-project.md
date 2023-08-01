@@ -10,6 +10,19 @@
 
 **单词** ，句子，对话
 
+### 启动动画预览
+
+```
+start-movy.bat
+
+```
+
+```
+movy  eng-v1.js
+```
+
+
+
 ### 进度
 
 ```
@@ -126,18 +139,6 @@ Azure Speech 免费额度 每月5000字
 | m    | yunxia,yunjian | connor |
 | f    | xiaoxiao       | molly, |
 |      |                |        |
-
-| speech | cn                        | en     |
-| ------ | ------------------------- | ------ |
-| m      | 云野(zh-CN-YunyeNeural)   | connor |
-| f      | 晓秋(zh-CN-XiaoqiuNeural) | molly, |
-|        |                           |        |
-
-| speech | cn                         | en     |
-| ------ | -------------------------- | ------ |
-| m      | 云扬(zh-CN-YunyangNeural)  | connor |
-| f      | 晓晓(zh-CN-XiaoxiaoNeural) | molly, |
-|        |                            |        |
 
 ## 2在线系统
 
