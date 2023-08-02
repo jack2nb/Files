@@ -334,7 +334,7 @@ movy\webpack.config.js ; jsdemo/package-lock.json
 npm install --save-dev json-loader
 ```
 
-
+#### 貌似无效
 
 ```json
 rules:{
@@ -346,7 +346,9 @@ rules:{
 
 
 
-js代码中加入 自动识别
+### 使用js代码 加载json内容
+
+package.json/package-lock.json 配置后 自动识别
 
 ```js
 const srcCfg = require('./src.json');
