@@ -1,0 +1,646 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <meta charset="utf-8">
+
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <title>金蝶云星空字典</title>
+  <link rel="stylesheet" crossorigin="anonymous"
+    href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.6.1/css/bootstrap.min.css">
+  <link rel="stylesheet" crossorigin="anonymous"
+    href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.5.1/animate.min.css">
+
+  <link rel="stylesheet" crossorigin="anonymous"
+    href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-table/1.18.0/bootstrap-table.min.css">
+
+
+  <link rel="stylesheet" crossorigin="anonymous"
+    href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-table/1.18.0/themes/bootstrap-table/bootstrap-table.min.css">
+
+  <style>
+    .glassbga {
+      /*渐变*/
+      background: linear-gradient(to right bottom, rgba(255, 255, 255, 0.7), rgba(255, 255, 255, 0.2));
+      ;
+      border-radius: 1rem;
+      box-shadow: 6px 6px 10px rgba(112, 112, 112, 0.2);
+    }
+
+    .glassbg {
+      /*背景*/
+      background: linear-gradient(to right top, #65dfc9, #6cdbeb);
+      border-radius: 1rem;
+    }
+
+    .center {
+      position: absolute;
+      left: 50%;
+      top: 10%;
+      transform: translate(-50%, -50%);
+    }
+
+    [v-cloak] {
+      display: none;
+    }
+  </style>
+</head>
+
+
+<body id="q-app" class="glassbg text-white  ">
+
+  <!---上面的结果框val--->
+  <div v-cloak class="container ">
+    <div class="mt-2 row justify-content-center  ">
+      <div class="w-100 mb-5   d-none d-md-block"><!---高度垫子 小设备隐藏--></div>
+      <div>
+        <h3>数据字典</h3>
+      </div>
+
+    </div>
+  </div>
+
+  <!--功能选择--->
+  <transition v-cloak enter-active-class="animated bounceIn" leave-active-class="animated bounceOut">
+    <div v-cloak class="  container-md     glassbga  mt-4  mb-4   pt-3  pb-3  ">
+      <div class=" justify-content-center  ">
+
+
+        <ul class="nav nav-tabs   ">
+          <li class="nav-item">
+            <a class="nav-link shadow  bg-secondary  text-white  px-1 px-sm-3 px-lg-5 mx-1 mx-sm-2 mx-lg-1   "
+              @click="pd.tabSele  = '数据表' " :class="[{' active bg-info ': ('数据表' == pd.tabSele )} ]">数据表</a>
+          </li>
+          <li class="nav-item" id="prac">
+            <a class="nav-link shadow   bg-secondary text-white  px-1 px-sm-3 px-lg-5 mx-1 mx-sm-2 mx-lg-2"
+              @click="pd.tabSele  = '字段' " :class="[{' active bg-info ': ('字段' == pd.tabSele )} ]">字段</a>
+          </li>
+
+        </ul>
+        <!-- 表1-->
+        <div :class="[{' d-none ': ! (  '数据表' == pd.tabSele )} ]">
+
+          <!--表数据--->
+          <table class="  bg-white" id="数据表tab"></table>
+
+        </div>
+        <!-- 表2-->
+        <div :class="[{' d-none ': ! (  '字段' == pd.tabSele )} ]">
+          <div class="container-md    mt-2     pt-3  pb-3">
+            <div class=" row  align-items-center   justify-content-around  ">
+              <div class="col-4  p-0 d-flex col-1 col-md-1 col-sm-1  justify-content-end  ">
+                <label class="text-dark mt-1 ">字段</label>
+              </div>
+              <div class="  p-0 col-6   col-md-4 col-sm-4   align-items-center  justify-content-start ">
+                <input type="text" v-model="pd.searchCol" class="  form-control" placeholder="请输入名字">
+              </div>
+
+              <div class="   d-flex col-auto   justify-content-start  ">
+                <button @click="er.emit('查询字段4搜索' ) " class="btn shadow-lg btn-danger">全局查询</button>
+              </div>
+            </div>
+          </div>
+          <!--表数据--->
+          <table class="  bg-white" id="字段tab"></table>
+
+        </div>
+      </div>
+
+    </div>
+  </transition>
+
+
+
+
+  <!---上面的结果框val--->
+  <div v-cloak class="container-sm ">
+
+    <div class="  row justify-content-center  ">
+
+
+    </div>
+  </div>
+
+
+
+  <!---info提示信息--->
+  <transition v-cloak mode="out-in" enter-active-class="animated pulse" leave-active-class="animated bounceOutRight">
+    <div class=" container-sm  fixed-top    " style="z-index: 1083 ;" v-for="site in pd.info_list">
+      <div class="alert  alert-warning alert-dismissible fade show" role="alert">
+        <strong>{{site.type}}</strong>{{ site.info }}
+        <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+    </div>
+  </transition>
+  <!---遮罩1024--->
+  <div v-cloak v-if="pd.sp==0?false:true" @click="er.emit('遮罩',0) " style="z-index: 1081  ;"
+    class=" modal-backdrop show ">
+
+  </div>
+  <!---载入动画--->
+  <transition v-cloak leave-active-class="animated fadeOut">
+    <div v-if="pd.sp==0?false:true"
+      class="center w-100 mt-5   row d-flex     align-items-center  justify-content-center  " style="z-index: 1082  ;">
+      <div class="spinner-border   "></div>
+    </div>
+  </transition>
+
+
+
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/vue/3.2.47/vue.global.prod.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/lodash.js/4.10.0/lodash.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/EventEmitter/5.2.8/EventEmitter.min.js"></script>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/axios/1.4.0/axios.min.js"></script>
+
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.29.4/moment.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.js"></script>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-table/1.18.0/bootstrap-table.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-table/1.18.0/bootstrap-table-vue.min.js"></script>
+  <script
+    src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-table/1.18.0/locale/bootstrap-table-zh-CN.min.js"></script>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/URI.js/1.19.11/URI.min.js"></script>
+
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/mustache.js/3.2.0/mustache.min.js"></script>
+  <!---Mustache-->
+
+
+
+  <script>
+    const er = new EventEmitter //事件线
+    const { onMounted, emits, createApp, ref, watch, computed } = Vue
+
+    const gd = {};//全局数据 解决调用引用问题
+    gd.group = 'dataDict' //功能应用分组
+    gd.reg = {} //组成类到全局调用
+    gd.storage = {
+      //本地浏览器 存取组件
+      set(key, value, area) {
+        key = area ? area + ':' + key : key;//分区域分区组
+        key = gd.group + '.' + key;//分组
+        localStorage.setItem(key, JSON.stringify(value));
+      },
+      get(key, area) {
+        key = area ? area + ':' + key : key;//分区域分区组
+        key = gd.group + '.' + key;//分组
+        return JSON.parse(localStorage.getItem(key));
+      },
+      remove(key, area) {
+        key = area ? area + ':' + key : key;//分区域分区组
+        key = gd.group + '.' + key;//分组
+        localStorage.removeItem(key);
+      },
+    }
+    gd.pd = ref({});//page data 页面元素引用"数据"
+    //const pd = ref({ "load": [] }); //特殊变量，页面数据
+    const pvs = gd.pd.value; //变量代理访问
+    class pgui {
+      /* 界面控制类 初始化界面默认值 */
+      constructor(arg) {
+        //初始（值）
+        //----页面参数
+        pvs.url = new URI() //获取去 type，pid ，默认访问本站，数据加载主站
+        var dc = pvs.url.query(true);//参数
+        //--界面值
+        gd.reg.ui = this//全局资源
+        pvs.sp = 0; //遮罩路由 (0.无，1.名单，2.登入 ,3.管理)
+        pvs.info_list = []//交互提示 {info:"2",type:"2"}
+        pvs.rawDat = {} //原始数据
+
+        pvs.searchTab = gd.storage.get('searchTab') ? gd.storage.get('searchTab') : '';//'默认查询名
+        //--存储默认值
+
+        pvs.tabSele = gd.storage.get('tabSele') ? gd.storage.get('tabSele') : '数据表';//'默认路径'
+        pvs.rowBase = []  //基本信息
+        //初始效果
+
+        this.init();
+      }
+
+      init() {
+        //初始（设置）
+        //绑定事件
+
+        er.on('遮罩', this.spto)
+        er.on('查询数据表2show', this.查询数据表2show)
+        er.on('查看字段表2show', this.查看字段表2show)
+        er.on('搜索字段表2show', this.搜索字段表2show)
+
+
+        //er.on('获取音标', this.toGetPh) //获取音标
+        er.on('看数据字段', this.seeCol)
+        er.on('看数据表', this.seeTab)
+      }
+
+      seeCol(id, name) {
+        //看数据字段
+        console.log('看数据字段', id, name)
+        pvs.tabSele = '字段'
+        er.emit('查看查询字段', id, name)
+      }
+      seeTab(text) {
+        var op = $('#数据表tab').bootstrapTable("getOptions")
+        console.log(op.searchText = 'test', op)
+
+        pvs.tabSele = '数据表'
+        $('#数据表tab').bootstrapTable('refreshOptions', {searchText: text});
+      }
+      搜索字段表2show() {
+        //显示字段表
+        const ui = gd.reg.ui
+        var tab = 'K3_Cloud_FieldDescription'
+        let dat = [...pvs.rawDat[tab + '@a'], ...pvs.rawDat[tab + '@b']]
+        dat = _.uniqWith(dat, _.isEqual) //去重
+
+        //字段整理
+        _.forEach(dat, function (value, key) {
+          //整理数据
+          //join查找
+          var trow = _.find(pvs.baseTab, function (o) { return o.fID == value.fID; });
+          value.fSystem = `<a href="#" onclick="er.emit('看数据表', '${trow.fFullName}') "  >${trow.fFullName}</a>${trow.fDescription}`
+        });
+
+        var columns = [{
+          sortable: true,
+          field: 'fName',
+          title: '字段名'
+        }, {
+          field: 'fFiled',
+          title: '描述'
+        }, {
+          field: 'fDataType',
+          title: '字段类型'
+        }, {
+          field: 'fDescription',
+          title: '说明'
+        }, {
+          field: 'fSystem',
+          title: '表'
+        }]
+
+        ui.showTab('#字段tab', columns, dat)
+
+
+      }
+      查看字段表2show() {
+        //显示字段表
+        const ui = gd.reg.ui
+        console.log('K3_Cloud_FieldDescription')
+  
+        var dat = pvs.rawDat['K3_Cloud_FieldDescription']
+
+        _.forEach(dat, function (value, key) {
+          //整理数据
+
+          if (pvs.tab4col) {
+            //通过点击过来看字段
+
+            value.fTableName = pvs.tab4col
+          }
+
+        });
+
+        var columns = [{
+          sortable: true,
+          field: 'fName',
+          title: '字段名'
+        }, {
+          field: 'fFiled',
+          title: '描述'
+        }, {
+          field: 'fDataType',
+          title: '字段类型'
+        }, {
+          field: 'fDescription',
+          title: '说明'
+        }, {
+          field: 'fTableName',
+          title: '表'
+        }]
+
+        ui.showTabAll('#字段tab', columns, dat)
+
+
+      }
+      查询数据表2show() {
+        //跳转、翻页
+        const ui = gd.reg.ui
+        var dat = pvs.rawDat['K3_Cloud_TableDescription']
+        //console.log('K3_Cloud_TableDescription', dat)
+
+
+        _.forEach(dat, function (value, key) {
+          //整理数据
+          var re = /(.*)(\(|（)(.*)(\)|）)/.exec(value.fFullName);
+          if (re) {
+            //拆分字段
+            value.fDescription = re[3]
+            value.fFullName = re[1]
+          }
+          value.fTableName = `<a onclick="er.emit('看数据字段',${value.fID},'${value.fFullName}') " href="#">查看</a>`
+        });
+
+        pvs.baseTab = dat
+        var columns = [{
+          field: 'fSystem',
+          title: '类别'
+        }, {
+          sortable: true,
+          field: 'fFullName',
+          title: '表名'
+
+
+        }, {
+          field: 'fDescription',
+          title: '描述'
+        }
+          , {
+          field: 'fTableName',
+          title: '表'
+        }]
+
+        ui.showTab('#数据表tab', columns, dat)
+      }
+      showTab(eid, col, dat) {
+        // 生成和销毁表格
+        if ($(eid).bootstrapTable("getOptions").cache == true) {
+          $(eid).bootstrapTable('destroy');
+          //return
+        }
+        $(eid).bootstrapTable({
+          data: dat,        // 表格数据来源
+          classes: "table table-bordered table-striped", //table-striped表示隔行变色
+          theadClasses: 'thead',
+          sortStable: true,
+          search: true,      //是否显示表格搜索
+          striped: true,     //是否显示行间隔色
+          //showRefresh: true,//刷新按钮
+          pageNumber: 1, //初始化加载第一页
+          pagination: true,//是否分页
+          sidePagination: 'client',//server:服务器端分页|client：前端分页
+          pageSize: 10,//单页记录数
+          pageList: [10],
+          //customSearch:fnSearch,//自定义搜索，比如只搜索ID字段
+          //searchText:"text",
+          columns: col
+        });
+      }
+
+      showTabAll(eid, col, dat) {
+        // 生成和销毁表格
+        if ($(eid).bootstrapTable("getOptions").cache == true) {
+          $(eid).bootstrapTable('destroy');
+          //return
+        }
+        $(eid).bootstrapTable({
+          data: dat,        // 表格数据来源
+          classes: "table table-bordered table-striped", //table-striped表示隔行变色
+          theadClasses: 'thead',
+          sortStable: true,
+          search: true,                      //是否显示表格搜索
+          striped: true,                      //是否显示行间隔色
+          //showRefresh: true,//刷新按钮
+          pagination: false,//是否分页
+          sidePagination: 'client',//server:服务器端分页|client：前端分页
+          pageSize: 10,//单页记录数
+          pageList: [10],
+          columns: col
+        });
+      }
+
+      loginLoading(n) {
+        //登入中效果
+        pvs.loginLoding = n
+      }
+      spto(n) {
+        //遮罩和二级界面
+        /*切换界面*/
+        pvs.sp = n
+      }
+
+
+
+      showInfo(info, type = '') {
+        //结果提示信息 （数据驱动）
+        //添加数据，来添加提示
+        pvs.info_list.push({ "info": info, "type": type })
+        //缺少动效
+        setTimeout(function () { pvs.info_list.splice(0, 1); }, 4000);
+      }
+
+
+
+    }
+
+    class select {
+      /* 界面控制类 初始化界面默认值 */
+      constructor(arg) {
+        //初始（值）
+        //--界面值
+        gd.reg.se = this//全局资源
+        //初始效果
+        this.hd = { //请求头
+          mode: 'cors',
+          cache: 'no-cache',
+          "headers": {
+            'Content-Type': 'application/json'
+          }
+        }
+
+
+        this.init();
+      }
+
+      init() {
+        //初始（设置）
+        //绑定事件 
+        er.on('查询数据表', this.查询数据表)
+        er.on('查看查询字段', this.查看查询字段)
+        er.on('查询字段4搜索', this.查询字段4搜索)
+
+      }
+      查询字段(vn, next) {
+        //查询字段数据
+        const ui = gd.reg.ui
+        const se = gd.reg.se
+
+
+        //动画效果
+        ui.loginLoading(1)
+        ui.spto(1) //loading 
+
+
+        //--条件
+
+        console.log(vn)
+        //获取数据，发送请求
+        var url = `//${pvs.url.hostname()}:2023/jsonapi/get`;
+        // //发送
+        se.se(vn, url, 'FieldDescription', '查询字段', next)
+
+      }
+      查看查询字段(tabId, tabName) {
+        //查询字段数据
+        const ui = gd.reg.ui
+        const se = gd.reg.se
+
+        if (tabName) {
+          pvs.tab4col = tabName //当前查看的表
+        }
+
+
+        var tab = 'K3_Cloud_FieldDescription'
+        var vn = {
+          "K3_Cloud_FieldDescription": {
+            // "@limit": 4
+          }
+        }
+        //--条件
+        if (tabName) { vn[tab]['fID'] = tabId }
+
+        se.查询字段(vn, ['查看字段表2show'])
+      }
+
+      查询字段4搜索(key) {
+        //搜索字段
+        const ui = gd.reg.ui
+        const se = gd.reg.se
+        pvs.tab4col = '' //当前查看的表
+
+        var tab = 'K3_Cloud_FieldDescription'
+        var vn = {
+          "K3_Cloud_FieldDescription@a": {
+            "fFiled*": '%' + pvs.searchCol + '%',
+
+          },
+          "K3_Cloud_FieldDescription@b": {
+
+            "fName*": '%' + pvs.searchCol + '%'
+          }
+        }
+        console.log(vn)
+        se.查询字段(vn, ['搜索字段表2show'])
+      }
+
+
+      查询数据表() {
+        //查询数据
+        const ui = gd.reg.ui
+        const se = gd.reg.se
+        gd.storage.set('searchTab', pvs.searchTab)
+        if (!pvs.searchTab) { return }
+
+        //动画效果
+        ui.loginLoading(1)
+        ui.spto(1) //loading 
+        //查询用户
+        var vn = {
+          "K3_Cloud_TableDescription": {
+            //"@limit": 4
+          }
+        }
+        //获取数据，发送请求
+        var url = `//${pvs.url.hostname()}:2023/jsonapi/get`;
+        // //发送
+        se.se(vn, url, 'selectTables', '查询表名', ['查询数据表2show'])
+      }
+
+
+
+      binding(dat, name, info, next = '') {
+        //数据收集挂在到dat
+        const ui = gd.reg.ui
+        const se = gd.reg.se
+        //数据挂在到dat
+        //console.log('binding==', name, info)
+        ui.loginLoading(0)
+        ui.spto(0)
+        if (dat.data['@code'] < 300) {
+          //数据让如rawDat中
+          ui.showInfo(dat.data['@msg'], info)
+          //读取数据到 pvs
+          var number = 0
+          _.forEach(dat.data, function (value, key) {
+            if (key.substr(0, 1) == '@') { return }
+            pvs.rawDat[key] = dat.data[key]
+            number = number + dat.data[key].length//行数
+            if (dat.data[key].length > 0) {
+              console.log(key + '==', dat.data[key].length, dat.data[key][0])
+            } else {
+              console.log(key, info, '无上数据')
+            }
+          });
+          console.log(name + '加载', number, '行')
+          ////下一步事件
+          if (_.isString(next)) { er.emit(next) }
+          //下一批事件
+          if (_.isArray(next)) { _.map(next, (n) => { er.emit(n) }) }
+        } else {
+          ui.showInfo('出现错误', info)
+          console.log('出现错误', info + '==', dat)
+        }
+      }
+      se(vn, url, name, info, next = '') {
+        //单发送请求
+        const se = gd.reg.se
+
+        axios.post(url + '?' + name, vn, se.hd)
+          .then(dat => {
+            se.binding(dat, name, info, next)
+          })
+          .catch(err => {
+            se.getErr(err, name, info)
+          })
+      }
+
+
+      getErr(error, naem, info) {
+        //请求错误处理
+        const ui = gd.reg.ui
+        const se = gd.reg.se
+        console.log('Error:', error, naem);
+        ui.loginLoading(0) //loading 
+        ui.spto(0) //loading  
+        ui.showInfo('无法加载到数据，刷新重试', info) //loading  
+      }
+    }
+
+    //----------开始
+    let appdat = {
+      setup() {
+        const oui = new pgui(); //界面更改"方法"
+        const se = new select(); //界面更改"方法"
+        //const ocls = new cls(12);//默认选择
+        //---放入全局解决this问题
+        //gd.ocls = ocls; //抽奖类
+        //gd.oin = oin; //通信逻辑
+        gd.oui = oui; //ui界面
+
+        //watch(gd.pd, oui.watchPg, { deep: true });
+        //pvs.opList = computed(() => oui.showOp('', '')); //二次计算pvs.opList
+        //------
+
+        //onMounted(() => ocls.bindEvt()); //窗口大小变动事件
+        //onMounted(() => oui.remount()); //已经登入刷新处理
+        onMounted(() => er.emit('查询数据表')); //已经登入刷新处理
+        //--变量关联到html的映射 js访问要加.value
+        return { er, "pd": gd.pd, "ref_login_manage": gd.pd.refManageEmt, }
+      }
+    }
+    const app = createApp(appdat)
+    //app.use(Quasar) //vue的ui
+    app.mount('#q-app')
+  </script>
+
+
+
+</body>
+
+</html>
