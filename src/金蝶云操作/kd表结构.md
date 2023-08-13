@@ -1,12 +1,28 @@
 
 
+## 任务/消息
+
+```sql
+	
+```
+
+
+
 ## 用户相关
+
+
 
 ### 用户信息表
 
 ```sql
 select top 10 *  from t_sec_user
 	
+```
+
+### 员工表
+
+```sql
+T_BD_STAFF_L
 ```
 
 
