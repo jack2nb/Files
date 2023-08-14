@@ -1,0 +1,649 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <meta charset="utf-8">
+
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <title>金蝶云星 数据查询</title>
+  <link rel="stylesheet" crossorigin="anonymous"
+    href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.6.1/css/bootstrap.min.css">
+  <link rel="stylesheet" crossorigin="anonymous"
+    href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.5.1/animate.min.css">
+
+  <link rel="stylesheet" crossorigin="anonymous"
+    href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-table/1.18.0/bootstrap-table.min.css">
+
+
+  <link rel="stylesheet" crossorigin="anonymous"
+    href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-table/1.18.0/themes/bootstrap-table/bootstrap-table.min.css">
+
+  <style>
+    .glassbga {
+      /*渐变*/
+      background: linear-gradient(to right bottom, rgba(255, 255, 255, 0.7), rgba(255, 255, 255, 0.2));
+      ;
+      border-radius: 1rem;
+      box-shadow: 6px 6px 10px rgba(112, 112, 112, 0.2);
+    }
+
+    .glassbg {
+      /*背景*/
+      background: linear-gradient(to right top, #65dfc9, #6cdbeb);
+      border-radius: 1rem;
+    }
+
+    .center {
+      position: absolute;
+      left: 50%;
+      top: 10%;
+      transform: translate(-50%, -50%);
+    }
+
+    [v-cloak] {
+      display: none;
+    }
+  </style>
+</head>
+
+
+<body id="q-app" class="glassbg text-white  ">
+
+  <!---上面的结果框val--->
+  <div v-cloak class="container ">
+    <div class="mt-2 row justify-content-center  ">
+      <div class="w-100 mb-5   d-none d-md-block"><!---高度垫子 小设备隐藏--></div>
+      <div>
+        <h3>数据</h3>
+      </div>
+
+    </div>
+  </div>
+
+  <!--功能选择--->
+  <transition v-cloak enter-active-class="animated bounceIn" leave-active-class="animated bounceOut">
+    <div v-cloak class=" container-lg   justify-content-center    glassbga  mt-4  mb-4   pt-3  pb-3  ">
+    
+      <div class=" justify-content-center  ">
+
+
+        <ul class="nav nav-tabs   ">
+          <li class="nav-item">
+            <a class="nav-link shadow  bg-secondary  text-white  px-1 px-sm-3 px-lg-5 mx-1 mx-sm-2 mx-lg-1   "
+              @click="pd.tabSele  = '代办任务' " :class="[{' active bg-info ': ('代办任务' == pd.tabSele )} ]">代办任务</a>
+          </li>
+          <li class="nav-item" id="prac">
+            <a class="nav-link shadow   bg-secondary text-white  px-1 px-sm-3 px-lg-5 mx-1 mx-sm-2 mx-lg-2"
+              @click="pd.tabSele  = '字段' " :class="[{' active bg-info ': ('字段' == pd.tabSele )} ]">字段</a>
+          </li>
+
+        </ul>
+        <!-- 表1-->
+        <div :class="[{' d-none ': ! (  '代办任务' == pd.tabSele )} ]">
+
+          <!--表数据--->
+          <table class="  bg-white" id="代办任务tab"></table>
+
+        </div>
+        <!-- 表2-->
+        <div :class="[{' d-none ': ! (  '字段' == pd.tabSele )} ]">
+          <div class="container-md    mt-2     pt-3  pb-3">
+            <div class=" row  align-items-center   justify-content-around  ">
+              <div class="col-4  p-0 d-flex col-1 col-md-1 col-sm-1  justify-content-end  ">
+                <label class="text-dark mt-1 ">字段</label>
+              </div>
+              <div class="  p-0 col-6   col-md-4 col-sm-4   align-items-center  justify-content-start ">
+                <input type="text" v-model="pd.searchCol" class="  form-control" placeholder="请输入名字">
+              </div>
+
+              <div class="   d-flex col-auto   justify-content-start  ">
+                <button @click="er.emit('查询字段4搜索' ) " class="btn shadow-lg btn-danger">全局查询</button>
+              </div>
+            </div>
+          </div>
+          <!--表数据--->
+          <table class="  bg-white" id="字段tab"></table>
+
+        </div>
+      </div>
+
+    </div>
+  </transition>
+
+
+
+
+  <!---上面的结果框val--->
+  <div v-cloak class="container-sm ">
+
+    <div class="  row justify-content-center  ">
+
+
+    </div>
+  </div>
+
+
+
+  <!---info提示信息--->
+  <transition v-cloak mode="out-in" enter-active-class="animated pulse" leave-active-class="animated bounceOutRight">
+    <div class=" container-sm  fixed-top    " style="z-index: 1083 ;" v-for="site in pd.info_list">
+      <div class="alert  alert-warning alert-dismissible fade show" role="alert">
+        <strong>{{site.type}}</strong>{{ site.info }}
+        <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+    </div>
+  </transition>
+  <!---遮罩1024--->
+  <div v-cloak v-if="pd.sp==0?false:true" @click="er.emit('遮罩',0) " style="z-index: 1081  ;"
+    class=" modal-backdrop show ">
+
+  </div>
+  <!---载入动画--->
+  <transition v-cloak leave-active-class="animated fadeOut">
+    <div v-if="pd.sp==0?false:true"
+      class="center w-100 mt-5   row d-flex     align-items-center  justify-content-center  " style="z-index: 1082  ;">
+      <div class="spinner-border   "></div>
+    </div>
+  </transition>
+
+
+
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/vue/3.2.47/vue.global.prod.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/lodash.js/4.10.0/lodash.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/EventEmitter/5.2.8/EventEmitter.min.js"></script>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/axios/1.4.0/axios.min.js"></script>
+
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.29.4/moment.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.js"></script>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-table/1.18.0/bootstrap-table.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-table/1.18.0/bootstrap-table-vue.min.js"></script>
+  <script
+    src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-table/1.18.0/locale/bootstrap-table-zh-CN.min.js"></script>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/URI.js/1.19.11/URI.min.js"></script>
+
+
+
+  <script src="./danfo1.1.2.js"></script>
+  <!---bootstraptable行合并  onLoadSuccess  mergeCells-->
+
+
+
+  <script>
+    const er = new EventEmitter //事件线
+    const { onMounted, emits, createApp, ref, watch, computed } = Vue
+
+    const gd = {};//全局数据 解决调用引用问题
+    gd.group = 'dataDict' //功能应用分组
+    gd.reg = {} //组成类到全局调用
+    gd.storage = {
+      //本地浏览器 存取组件
+      set(key, value, area) {
+        key = area ? area + ':' + key : key;//分区域分区组
+        key = gd.group + '.' + key;//分组
+        localStorage.setItem(key, JSON.stringify(value));
+      },
+      get(key, area) {
+        key = area ? area + ':' + key : key;//分区域分区组
+        key = gd.group + '.' + key;//分组
+        return JSON.parse(localStorage.getItem(key));
+      },
+      remove(key, area) {
+        key = area ? area + ':' + key : key;//分区域分区组
+        key = gd.group + '.' + key;//分组
+        localStorage.removeItem(key);
+      },
+    }
+    gd.pd = ref({});//page data 页面元素引用"数据"
+    //const pd = ref({ "load": [] }); //特殊变量，页面数据
+    const pvs = gd.pd.value; //变量代理访问
+    pvs.datUrl = `//${new URI().hostname()}:2048/jsonapi/get`;
+    class pgui {
+      /* 界面控制类 初始化界面默认值 */
+      constructor(arg) {
+        //初始（值）
+        //----页面参数
+        pvs.url = new URI() //获取去 type，pid ，默认访问本站，数据加载主站
+
+        //--界面值
+        gd.reg.ui = this//全局资源
+        pvs.sp = 0; //遮罩路由 (0.无，1.名单，2.登入 ,3.管理)
+        pvs.info_list = []//交互提示 {info:"2",type:"2"}
+        pvs.rawDat = {} //原始数据
+
+        pvs.searchTab = gd.storage.get('searchTab') ? gd.storage.get('searchTab') : '';//'默认查询名
+        //--存储默认值
+
+        pvs.tabSele = gd.storage.get('tabSele') ? gd.storage.get('tabSele') : '代办任务';//'默认路径'
+        pvs.rowBase = []  //基本信息
+        //初始效果
+
+        this.init();
+      }
+
+      init() {
+        //初始（设置）
+        //绑定事件
+
+        er.on('遮罩', this.spto)
+
+
+        //er.on('获取音标', this.toGetPh) //获取音标
+        er.on('看数据字段', this.seeCol)
+        er.on('看数据表', this.seeTab)
+      }
+
+      seeCol(id, name) {
+        //看数据字段
+        console.log('看数据字段', id, name)
+        pvs.tabSele = '字段'
+        er.emit('查看查询字段', id, name)
+      }
+      seeTab(text) {
+        var op = $('#数据表tab').bootstrapTable("getOptions")
+        console.log(op.searchText = 'test', op)
+
+        pvs.tabSele = '数据表'
+        $('#数据表tab').bootstrapTable('refreshOptions', { searchText: text });
+      }
+
+
+      showTab(eid, col, dat) {
+        // 生成和销毁表格
+        if ($(eid).bootstrapTable("getOptions").cache == true) {
+          $(eid).bootstrapTable('destroy');
+          //return
+        }
+        $(eid).bootstrapTable({
+          data: dat,        // 表格数据来源
+          classes: "table table-bordered table-striped", //table-striped表示隔行变色
+          theadClasses: 'thead',
+          sortStable: true,
+          search: true,      //是否显示表格搜索
+          striped: true,     //是否显示行间隔色
+          //showRefresh: true,//刷新按钮
+          pageNumber: 1, //初始化加载第一页
+          pagination: true,//是否分页
+          sidePagination: 'client',//server:服务器端分页|client：前端分页
+          pageSize: 10,//单页记录数
+          pageList: [10],
+          //customSearch:fnSearch,//自定义搜索，比如只搜索ID字段
+          //searchText:"text",
+          columns: col
+        });
+      }
+
+      showTabAll(eid, col, dat) {
+        // 生成和销毁表格
+        if ($(eid).bootstrapTable("getOptions").cache == true) {
+          $(eid).bootstrapTable('destroy');
+          //return
+        }
+        $(eid).bootstrapTable({
+          data: dat,        // 表格数据来源
+          classes: "table table-bordered table-striped", //table-striped表示隔行变色
+          theadClasses: 'thead',
+          sortStable: true,
+          search: true,                      //是否显示表格搜索
+          striped: true,                      //是否显示行间隔色
+          //showRefresh: true,//刷新按钮
+          pagination: false,//是否分页
+          sidePagination: 'client',//server:服务器端分页|client：前端分页
+          pageSize: 10,//单页记录数
+          pageList: [10],
+          columns: col
+        });
+      }
+
+      loginLoading(n) {
+        //登入中效果
+        pvs.loginLoding = n
+      }
+      spto(n) {
+        //遮罩和二级界面
+        /*切换界面*/
+        pvs.sp = n
+      }
+
+
+
+      showInfo(info, type = '') {
+        //结果提示信息 （数据驱动）
+        //添加数据，来添加提示
+        pvs.info_list.push({ "info": info, "type": type })
+        //缺少动效
+        setTimeout(function () { pvs.info_list.splice(0, 1); }, 4000);
+      }
+
+
+
+    }
+
+    class select {
+      /* 界面控制类 初始化界面默认值 */
+      constructor(arg) {
+        //初始（值）
+        //--界面值
+        gd.reg.se = this//全局资源
+        //初始效果
+        this.hd = { //请求头
+          mode: 'cors',
+          cache: 'no-cache',
+          "headers": {
+            'Content-Type': 'application/json'
+          }
+        }
+
+
+        this.init();
+      }
+
+      init() {
+        //初始（设置）
+        //绑定事件 
+        er.on('查询代办', this.查询代办)
+        er.on('查看查询字段', this.查看查询字段)
+        er.on('查询代办2show', this.查询代办2show)
+
+      }
+      查询字段(vn, next) {
+        //查询字段数据
+        const ui = gd.reg.ui
+        const se = gd.reg.se
+
+
+        //动画效果
+        ui.loginLoading(1)
+        ui.spto(1) //loading 
+
+
+        //--条件
+
+        console.log(vn)
+        //获取数据，发送请求
+        var url = `//${pvs.url.hostname()}:2023/jsonapi/get`;
+        // //发送
+        se.se(vn, url, 'FieldDescription', '查询字段', next)
+
+      }
+      查看查询字段(tabId, tabName) {
+        //查询字段数据
+        const ui = gd.reg.ui
+        const se = gd.reg.se
+
+        if (tabName) {
+          pvs.tab4col = tabName //当前查看的表
+        }
+
+
+        var tab = 'K3_Cloud_FieldDescription'
+        var vn = {
+          "K3_Cloud_FieldDescription": {
+            // "@limit": 4
+          }
+        }
+        //--条件
+        if (tabName) { vn[tab]['fID'] = tabId }
+
+        se.查询字段(vn, ['查看字段表2show'])
+      }
+
+      查询字段4搜索(key) {
+        //搜索字段
+        const ui = gd.reg.ui
+        const se = gd.reg.se
+        pvs.tab4col = '' //当前查看的表
+
+        var tab = 'K3_Cloud_FieldDescription'
+        var vn = {
+          "K3_Cloud_FieldDescription@a": {
+            "fFiled*": '%' + pvs.searchCol + '%',
+
+          },
+          "K3_Cloud_FieldDescription@b": {
+
+            "fName*": '%' + pvs.searchCol + '%'
+          }
+        }
+        console.log(vn)
+        se.查询字段(vn, ['搜索字段表2show'])
+      }
+
+
+      查询代办() {
+        //查询数据
+        const ui = gd.reg.ui
+        const se = gd.reg.se
+        gd.storage.set('searchTab', pvs.searchTab)
+        if (!pvs.searchTab) { return }
+
+        //动画效果
+        ui.loginLoading(1)
+        ui.spto(1) //loading 
+        //查询用户
+        var vn = vn = {
+          "T_WF_ASSIGN": {
+            "@column": "FCREATETIME.日期,FSTATUS.节点状态,FASSIGNID.任务id,FPROCINSTID.流程实例id,FACTINSTID.节点id",
+            // 'FNUMBER*':'XSDD000048_20230718184628'
+            "FCREATETIME&": ">2023-08-6",
+            "@order":"-FCREATETIME"
+          },
+
+
+          "T_WF_RECEIVER": {
+            "@column": "FASSIGNID.任务id,FRECEIVERID.接收人id,FTITLE.标题,FCONTENT.内容",
+            "FASSIGNID|": "T_WF_ASSIGN.任务id"
+
+          },
+          "T_SEC_USER": {
+            "@column": "FUSERID.接收人id,FNAME.名字",
+            'FUSERID|': "T_WF_RECEIVER.接收人id"
+          },
+
+          "T_WF_PROCINST": {
+            "@column": "FPROCDEFID.流程id,FPROCINSTID.流程实例id,FSTATUS.流程状态,FBILLNO.单据编号",
+            'FPROCINSTID|': "T_WF_ASSIGN.流程实例id"
+          },
+          "T_WF_PROCDEF_L": {
+            "@column": "FPROCDEFID.流程id,FDISPLAYNAME.流程名",
+            "FLOCALEID": 2052,
+            'FPROCDEFID|': "T_WF_PROCINST.流程id"
+          },
+          "T_WF_ACTINST_L": {
+            "@column": "FACTINSTID.节点id,FACTNAME.节点名称",
+            'FACTINSTID|': "T_WF_ASSIGN.节点id", "FLOCALEID": 2052
+          }
+
+        }
+        //获取数据，发送请求
+
+        // //发送
+        se.se(vn, pvs.datUrl, 'ASSIGN', '查询代办', ['查询代办2show'])
+      }
+      查询代办2show() {
+        //跳转、翻页
+        const ui = gd.reg.ui
+        var dat = pvs.rawDat['T_WF_ASSIGN']//工作流任务
+        console.log('查询代办2show', pvs.rawDat)
+        var 工作流任务 = new dfd.DataFrame(pvs.rawDat['T_WF_ASSIGN'])
+        var 任务信息 = new dfd.DataFrame(pvs.rawDat['T_WF_RECEIVER'])
+        var 用户信息 = new dfd.DataFrame(pvs.rawDat['T_SEC_USER'])
+        var 工作流信息 = new dfd.DataFrame(pvs.rawDat['T_WF_PROCDEF_L'])
+        var 工作流实例 = new dfd.DataFrame(pvs.rawDat['T_WF_PROCINST'])
+        var 当前节点 = new dfd.DataFrame(pvs.rawDat['T_WF_ACTINST_L'])
+        //----
+        工作流任务.print()
+        任务信息.print()
+        用户信息.print()
+        工作流信息.print()
+        工作流实例.print()
+        当前节点.print()
+
+
+
+        let 工作流任务v2 = dfd.merge({ "left": 工作流任务, "right": 任务信息, "on": ["任务id"], how: "left" })
+        工作流任务v2 = dfd.merge({ "left": 工作流任务v2, "right": 用户信息, "on": ["接收人id"], how: "left" })
+        工作流任务v2 = dfd.merge({ "left": 工作流任务v2, "right": 工作流实例, "on": ["流程实例id"], how: "left" })
+        工作流任务v2 = dfd.merge({ "left": 工作流任务v2, "right": 工作流信息, "on": ["流程id"], how: "left" })
+        工作流任务v2 = dfd.merge({ "left": 工作流任务v2, "right": 当前节点, "on": ["节点id"], how: "left" })
+        工作流任务v2.sortValues("日期", { ascending: false,  inplace: true })
+        工作流任务v2.print()
+        const rows = dfd.toJSON(工作流任务v2)
+        
+        
+
+        _.forEach(rows, function (value, key) {
+          //整理数据
+         
+          value.标题 =   value.标题.split('\n')[0]
+
+          value.节点状态 =   value.节点状态 == 1  ? '完成' :  '进行中'
+         
+          var stat ={0: "准备", 1: "完成",2: "挂起",3: "错误",4: "终止",5: "暂停",}
+          value.流程状态 = stat[value.流程状态]
+          //value.fTableName = `<a onclick="er.emit('看数据字段',${value.fID},'${value.fFullName}') " href="#">查看</a>`
+        });
+         
+        /*
+        任务id: "64d32d10dc0596"
+内容: "您有待办任务需要处理销售订单2308-019  型号601B\n您有待办任务需要处理销售订单2308-019  型号601B\n您有待办任务需要处理销售订单2308-019  型号601B\n您有待办任务需要处理销售订单2308-019  型号601B"
+单据编号: "2308-019"
+名字: "戴可科"
+接收人id: 102214
+标题: "您有待办任务需要处理 销售订单2308-019  型号601B"
+流程id: "648174f39eeaa4"
+流程名: "销售订单审批流"
+流程实例id: "64d32d0fa0cc95fd31"
+节点id: "64d32d10b62c2daaab"
+节点名称: "终审节点"
+*/
+        var columns = [{
+          field: '单据编号',
+          title: '单据编号'
+        },{
+          field: '日期',
+          title: '日期'
+        }, {
+          field: '流程名',
+          title: '流程名'
+        }, {
+          field: '流程状态',
+          title: '流程状态'
+        },{
+          field: '名字',
+          title: '处理人'
+        }, {
+          sortable: true,
+          field: '标题',
+          title: '标题'
+
+
+        }, {
+          field: '节点名称',
+          title: '节点名称'
+        },{
+          field: '节点状态',
+          title: '节点状态'
+        }]
+
+        ui.showTab('#代办任务tab', columns, rows)
+      }
+
+
+
+      binding(dat, name, info, next = '') {
+        //数据收集挂在到dat
+        const ui = gd.reg.ui
+        const se = gd.reg.se
+        //数据挂在到dat
+        //console.log('binding==', name, info)
+        ui.loginLoading(0)
+        ui.spto(0)
+        if (dat.data['@code'] < 300) {
+          //数据让如rawDat中
+          ui.showInfo(dat.data['@msg'], info)
+          //读取数据到 pvs
+          var number = 0
+          _.forEach(dat.data, function (value, key) {
+            if (key.substr(0, 1) == '@') { return }
+            pvs.rawDat[key] = dat.data[key]
+            number = number + dat.data[key].length//行数
+            if (dat.data[key].length > 0) {
+              console.log(key + '==', dat.data[key].length, dat.data[key][0])
+            } else {
+              console.log(key, info, '无上数据')
+            }
+          });
+          console.log(name + '加载', number, '行')
+          ////下一步事件
+          if (_.isString(next)) { er.emit(next) }
+          //下一批事件
+          if (_.isArray(next)) { _.map(next, (n) => { er.emit(n) }) }
+        } else {
+          ui.showInfo('出现错误', info)
+          console.log('出现错误', info + '==', dat)
+        }
+      }
+      se(vn, url, name, info, next = '') {
+        //单发送请求
+        const se = gd.reg.se
+
+        axios.post(url + '?' + name, vn, se.hd)
+          .then(dat => {
+            se.binding(dat, name, info, next)
+          })
+          .catch(err => {
+            se.getErr(err, name, info)
+          })
+      }
+
+
+      getErr(error, naem, info) {
+        //请求错误处理
+        const ui = gd.reg.ui
+        const se = gd.reg.se
+        console.log('Error:', error, naem);
+        ui.loginLoading(0) //loading 
+        ui.spto(0) //loading  
+        ui.showInfo('无法加载到数据，刷新重试', info) //loading  
+      }
+    }
+
+    //----------开始
+    let appdat = {
+      setup() {
+        const oui = new pgui(); //界面更改"方法"
+        const se = new select(); //界面更改"方法"
+        //const ocls = new cls(12);//默认选择
+        //---放入全局解决this问题
+        //gd.ocls = ocls; //抽奖类
+        //gd.oin = oin; //通信逻辑
+        gd.oui = oui; //ui界面
+
+        //watch(gd.pd, oui.watchPg, { deep: true });
+        //pvs.opList = computed(() => oui.showOp('', '')); //二次计算pvs.opList
+        //------
+
+        //onMounted(() => ocls.bindEvt()); //窗口大小变动事件
+        //onMounted(() => oui.remount()); //已经登入刷新处理
+        onMounted(() => er.emit('查询代办')); //已经登入刷新处理
+        //--变量关联到html的映射 js访问要加.value
+        return { er, "pd": gd.pd, "ref_login_manage": gd.pd.refManageEmt, }
+      }
+    }
+    const app = createApp(appdat)
+    //app.use(Quasar) //vue的ui
+    app.mount('#q-app')
+  </script>
+
+
+
+</body>
+
+</html>
