@@ -62,8 +62,8 @@
 
   <!--功能选择--->
   <transition v-cloak enter-active-class="animated bounceIn" leave-active-class="animated bounceOut">
-    <div v-cloak class=" container-lg   justify-content-center    glassbga  mt-4  mb-4   pt-3  pb-3  ">
-    
+    <div v-cloak class=" container-fluid    justify-content-center    glassbga  mt-4  mb-4  px-4  pt-3  pb-3  ">
+
       <div class=" justify-content-center  ">
 
 
@@ -74,7 +74,7 @@
           </li>
           <li class="nav-item" id="prac">
             <a class="nav-link shadow   bg-secondary text-white  px-1 px-sm-3 px-lg-5 mx-1 mx-sm-2 mx-lg-2"
-              @click="pd.tabSele  = '字段' " :class="[{' active bg-info ': ('字段' == pd.tabSele )} ]">字段</a>
+              @click="pd.tabSele  = '系统单据' " :class="[{' active bg-info ': ('系统单据' == pd.tabSele )} ]">系统单据</a>
           </li>
 
         </ul>
@@ -86,11 +86,11 @@
 
         </div>
         <!-- 表2-->
-        <div :class="[{' d-none ': ! (  '字段' == pd.tabSele )} ]">
+        <div :class="[{' d-none ': ! (  '系统单据' == pd.tabSele )} ]">
           <div class="container-md    mt-2     pt-3  pb-3">
             <div class=" row  align-items-center   justify-content-around  ">
               <div class="col-4  p-0 d-flex col-1 col-md-1 col-sm-1  justify-content-end  ">
-                <label class="text-dark mt-1 ">字段</label>
+                <label class="text-dark mt-1 ">系统单据</label>
               </div>
               <div class="  p-0 col-6   col-md-4 col-sm-4   align-items-center  justify-content-start ">
                 <input type="text" v-model="pd.searchCol" class="  form-control" placeholder="请输入名字">
@@ -102,7 +102,7 @@
             </div>
           </div>
           <!--表数据--->
-          <table class="  bg-white" id="字段tab"></table>
+          <table class="  bg-white" id="系统单据tab"></table>
 
         </div>
       </div>
@@ -348,7 +348,7 @@
         //初始（设置）
         //绑定事件 
         er.on('查询代办', this.查询代办)
-        er.on('查看查询字段', this.查看查询字段)
+        er.on('查询系统单据', this.查询系统单据)
         er.on('查询代办2show', this.查询代办2show)
 
       }
@@ -372,7 +372,7 @@
         se.se(vn, url, 'FieldDescription', '查询字段', next)
 
       }
-      查看查询字段(tabId, tabName) {
+      查询系统单据(tabId, tabName) {
         //查询字段数据
         const ui = gd.reg.ui
         const se = gd.reg.se
@@ -432,14 +432,11 @@
             "@column": "FCREATETIME.日期,FSTATUS.节点状态,FASSIGNID.任务id,FPROCINSTID.流程实例id,FACTINSTID.节点id",
             // 'FNUMBER*':'XSDD000048_20230718184628'
             "FCREATETIME&": ">2023-08-6",
-            "@order":"-FCREATETIME"
+            "@order": "-FCREATETIME"
           },
-
-
           "T_WF_RECEIVER": {
             "@column": "FASSIGNID.任务id,FRECEIVERID.接收人id,FTITLE.标题,FCONTENT.内容",
             "FASSIGNID|": "T_WF_ASSIGN.任务id"
-
           },
           "T_SEC_USER": {
             "@column": "FUSERID.接收人id,FNAME.名字",
@@ -458,8 +455,30 @@
           "T_WF_ACTINST_L": {
             "@column": "FACTINSTID.节点id,FACTNAME.节点名称",
             'FACTINSTID|': "T_WF_ASSIGN.节点id", "FLOCALEID": 2052
+          },
+          "T_WF_APPROVALASSIGN": {//任务详情
+            "@column": "FASSIGNID.任务id,FKEYVALUE.单据id,FOBJECTTYPEID.单据类别",
+            "FASSIGNID|": "T_WF_ASSIGN.任务id"
+          },//标准编码规则
+          "T_BAS_BILLCODERULE": {
+            "@column": "FRULEID.规则id,FBILLFORMID.单据类别",
+            'FBILLFORMID|': "T_WF_APPROVALASSIGN.单据类别"
+          },
+          "T_BAS_BILLCODERULE_L": {
+            "@column": "FRULEID.规则id,FNAME.单据全称",
+            "FRULEID|": "T_BAS_BILLCODERULE.规则id", "FLOCALEID": 2052
           }
-
+          /*,
+          "T_SAL_ORDER": {//
+            "@column": "FID.单据id,FCREATORID.制单人,FBILLTYPEID.单据类型id",
+            "FID|": "T_WF_APPROVALASSIGN.单据id"
+          },
+          "T_BAS_BILLTYPE_L": {
+            "@column": "FBILLTYPEID.单据类型id,FNAME.单据类型",
+            "FBILLTYPEID|": "T_SAL_ORDER.单据类型id"
+            , 'FLOCALEID': 2052
+          }
+         */
         }
         //获取数据，发送请求
 
@@ -477,6 +496,12 @@
         var 工作流信息 = new dfd.DataFrame(pvs.rawDat['T_WF_PROCDEF_L'])
         var 工作流实例 = new dfd.DataFrame(pvs.rawDat['T_WF_PROCINST'])
         var 当前节点 = new dfd.DataFrame(pvs.rawDat['T_WF_ACTINST_L'])
+        var 任务详情 = new dfd.DataFrame(pvs.rawDat['T_WF_APPROVALASSIGN'])
+        var 单据编码 = new dfd.DataFrame(pvs.rawDat['T_BAS_BILLCODERULE'])
+        var 单据全称 = new dfd.DataFrame(pvs.rawDat['T_BAS_BILLCODERULE_L'])
+
+        //var 销售订单 = new dfd.DataFrame(pvs.rawDat['T_SAL_ORDER'])
+        //var 单据类型 = new dfd.DataFrame(pvs.rawDat['T_BAS_BILLTYPE_L'])
         //----
         工作流任务.print()
         任务信息.print()
@@ -484,6 +509,11 @@
         工作流信息.print()
         工作流实例.print()
         当前节点.print()
+        任务详情.print()
+        单据编码.print()
+        单据全称.print() //去掉 标准编码规
+        //销售订单.print()
+        //单据类型.print()
 
 
 
@@ -492,24 +522,31 @@
         工作流任务v2 = dfd.merge({ "left": 工作流任务v2, "right": 工作流实例, "on": ["流程实例id"], how: "left" })
         工作流任务v2 = dfd.merge({ "left": 工作流任务v2, "right": 工作流信息, "on": ["流程id"], how: "left" })
         工作流任务v2 = dfd.merge({ "left": 工作流任务v2, "right": 当前节点, "on": ["节点id"], how: "left" })
-        工作流任务v2.sortValues("日期", { ascending: false,  inplace: true })
+
+        工作流任务v2 = dfd.merge({ "left": 工作流任务v2, "right": 任务详情, "on": ["任务id"], how: "left" })
+        工作流任务v2 = dfd.merge({ "left": 工作流任务v2, "right": 单据编码, "on": ["单据类别"], how: "left" })
+        工作流任务v2 = dfd.merge({ "left": 工作流任务v2, "right": 单据全称, "on": ["规则id"], how: "left" })
+
+        
+        工作流任务v2.sortValues("流程实例id", { ascending: false, inplace: true })
         工作流任务v2.print()
         const rows = dfd.toJSON(工作流任务v2)
-        
-        
+
+
 
         _.forEach(rows, function (value, key) {
           //整理数据
-         
-          value.标题 =   value.标题.split('\n')[0]
 
-          value.节点状态 =   value.节点状态 == 1  ? '完成' :  '进行中'
-         
-          var stat ={0: "准备", 1: "完成",2: "挂起",3: "错误",4: "终止",5: "暂停",}
+          value.标题 = value.标题.split('\n')[0]
+
+          value.节点状态 = value.节点状态 == 1 ? '完成' : '进行中'
+
+          var stat = { 0: "准备", 1: "完成", 2: "挂起", 3: "错误", 4: "终止", 5: "暂停", }
           value.流程状态 = stat[value.流程状态]
+          value.单据全称 = value.单据全称.replace('标准编码规则', '') 
           //value.fTableName = `<a onclick="er.emit('看数据字段',${value.fID},'${value.fFullName}') " href="#">查看</a>`
         });
-         
+
         /*
         任务id: "64d32d10dc0596"
 内容: "您有待办任务需要处理销售订单2308-019  型号601B\n您有待办任务需要处理销售订单2308-019  型号601B\n您有待办任务需要处理销售订单2308-019  型号601B\n您有待办任务需要处理销售订单2308-019  型号601B"
@@ -524,32 +561,36 @@
 节点名称: "终审节点"
 */
         var columns = [{
+          field: '流程实例id',
+          sortable: true,
+          title: 'id'
+        }, {
           field: '单据编号',
+          sortable: true,
           title: '单据编号'
-        },{
+        }, {
           field: '日期',
+          sortable: true,
           title: '日期'
         }, {
           field: '流程名',
           title: '流程名'
         }, {
-          field: '流程状态',
-          title: '流程状态'
-        },{
+          field: '节点名称',
+          title: '节点名称'
+        }, {
           field: '名字',
           title: '处理人'
         }, {
-          sortable: true,
-          field: '标题',
-          title: '标题'
-
-
-        }, {
-          field: '节点名称',
-          title: '节点名称'
-        },{
           field: '节点状态',
           title: '节点状态'
+        }, {
+          sortable: true,
+          field: '单据全称',
+          title: '单据'
+        }, {
+          field: '流程状态',
+          title: '流程状态'
         }]
 
         ui.showTab('#代办任务tab', columns, rows)
