@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <title>灯塔导航 - 资源入口</title>
+  <link rel="stylesheet" crossorigin="anonymous"
+    href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.6.1/css/bootstrap.min.css">
+
+
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/semantic-ui/2.4.1/semantic.min.css" rel="stylesheet" />
+
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1" />
+  <meta name="description" content="导航页面 常用应用入口 常用的工具，推荐网站， " />
+  <meta name=" keywords" content="幸运转盘,有声背单词,倒计时定时器">
+
+  <style>
+    body {
+      display: flex;
+      flex-direction: column;
+    }
+    main {
+      flex-basis: auto;
+      flex-grow: 1;
+      padding: 2rem 0;
+      background-image: radial-gradient(73% 147%, #EADFDF 59%, #ECE2DF 100%), radial-gradient(91% 146%, rgba(255, 255, 255, 0.50) 47%, rgba(0, 0, 0, 0.50) 100%);
+      background-blend-mode: screen;
+    }
+
+    header {
+      /*背景*/
+      background: linear-gradient(to right bottom, #40a5a5, #054e4e);
+
+    }
+    [v-cloak] {
+      display: none;
+    }
+  </style>
+
+</head>
+
+<body>
+  <header class=" text-white     justify-content-center  ">
+    <div class=" container-fluid     justify-content-center    ">
+      <div class=" py-5  ui text container">
+        <h1 class="row pt-3 justify-content-center ui inverted header">
+          <div class="justify-content-center">灯塔<h6>愿资源不再孤单</h6>
+          </div>
+        </h1>
+        <div class=" row justify-content-center pt-3">
+          <a id="menubtn" class=" text-danger border border-danger p-1 rounded"> 喜欢收藏 </a>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <main class="  container-fluid  ">
+    <div class="  ">
+      <div class="ui basic segment">
+        <h4 class="my-4  ui horizontal divider header"><i class="code icon"></i>工具</h4>
+
+
+        <div class="  justify-content-center ui     cards">
+          {{#tools}}
+          <a class="card" href="{{url}}" target="_blank">
+            <div class="content">
+              <i class="left floated   code icon"></i>
+              <div class="header">{{title}}</div>
+              <div class="meta">{{content}}</div>
+            </div>
+          </a>
+          {{/tools}}
+        </div>
+      </div>
+      <div class="ui basic  ">
+        <h4 class="my-4   ui horizontal divider header"><i class="graduation cap icon"></i>参考</h4>
+        <div class=" justify-content-center ui  cards">
+          {{#reference}}
+          <a class="card" href="{{url}}"  target="_blank">
+            <div class="content">
+              <i class="left floated    smile icon"></i>
+              <div class="header">{{title}}</div>
+              <div class="meta">{{content}}</div>
+            </div>
+          </a>
+          {{/reference}}
+
+
+        </div>
+      </div>
+    </div>
+
+  </main>
+
+  <footer>
+    <div class=" row py-3 justify-content-center ">Powered by &nbsp; <a class="ui  "> empty </a> &nbsp; </div>
+  </footer>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/mustache.js/3.2.0/mustache.min.js"></script>
+  <!---Mustache-->
+
+  <script type="text/javascript">
+    var tpl = document.querySelector('main') //模板
+    //列表数据
+    var lsDat = {
+      "tools": [
+        { title: '考勤查询', content: '查询考勤，请假，公出，补卡',"url":"./oasearch.html" },
+        { title: '流程审批进度', content: '查看所有流程审批进度' ,"url":"./erpsearch.html"},
+        { title: '金蝶云星空', content: '进销存 生产管理' ,"url":"http://192.168.0.48/K3Cloud"},
+        { title: '公司OA系统', content: '行政人事相关 请假 报销 考勤' ,"url":"http://oa.ouqiyj.com:8081/ouqi/"},
+        
+      ],
+      reference: [
+        { title: '如何审配', content: '背单词玩游戏两不误，每天学几个日积月累',"url":"http://oa.ouqiyj.com:3000/erp/%E4%B8%9A%E5%8A%A1%E6%B5%81%E4%B8%8E%E8%A7%92%E8%89%B2.html" },
+        { title: '通过erp销售', content: '销售工作业务 指导参考' ,"url":"http://oa.ouqiyj.com:3000/erp/%E4%B8%9A%E5%8A%A1%E6%B5%81%E4%B8%8E%E8%A7%92%E8%89%B2.html"},
+        { title: '库存查询', content: '外挂式 库存查询 规格 成品 半成品' ,"url":"http://oa.ouqiyj.com:3000/erp/%E4%B8%9A%E5%8A%A1%E6%B5%81%E4%B8%8E%E8%A7%92%E8%89%B2.html"},
+      ],
+    }
+
+    var hs = Mustache.render(tpl.innerHTML, lsDat)//模板替换
+
+    //写入
+    tpl.innerHTML = hs 
+  </script>
+
+
+  <script>
+
+    /* 鼠标聚焦时，回车事件 */
+    //点击喜欢
+
+  </script>
+
+</body>
+
+</html>

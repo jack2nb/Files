@@ -33,13 +33,7 @@
       border-radius: 1rem;
     }
 
-    .center {
-      position: absolute;
-      left: 50%;
-      top: 10%;
-      transform: translate(-50%, -50%);
-    }
-
+   
     [v-cloak] {
       display: none;
     }
@@ -143,7 +137,7 @@
   <!---载入动画--->
   <transition v-cloak leave-active-class="animated fadeOut">
     <div v-if="pd.sp==0?false:true"
-      class="center w-100 mt-5   row d-flex     align-items-center  justify-content-center  " style="z-index: 1082  ;">
+      class="  w-100 mt-5   row d-flex     align-items-center  justify-content-center  " style="z-index: 1082  ;">
       <div class="spinner-border   "></div>
     </div>
   </transition>
@@ -217,7 +211,7 @@
         pvs.info_list = []//交互提示 {info:"2",type:"2"}
         pvs.rawDat = {} //原始数据
 
-        pvs.searchTab = gd.storage.get('searchTab') ? gd.storage.get('searchTab') : '';//'默认查询名
+        //pvs.searchTab = gd.storage.get('searchTab') ? gd.storage.get('searchTab') : '';//'默认查询名
         //--存储默认值
 
         pvs.tabSele = gd.storage.get('tabSele') ? gd.storage.get('tabSele') : '代办任务';//'默认路径'
@@ -235,22 +229,23 @@
 
 
         //er.on('获取音标', this.toGetPh) //获取音标
-        er.on('看数据字段', this.seeCol)
-        er.on('看数据表', this.seeTab)
+        er.on('看指定单据', this.seeCol)
+        er.on('看指定流程', this.seeTab)
       }
 
       seeCol(id, name) {
         //看数据字段
         console.log('看数据字段', id, name)
-        pvs.tabSele = '字段'
-        er.emit('查看查询字段', id, name)
+        
       }
       seeTab(text) {
-        var op = $('#数据表tab').bootstrapTable("getOptions")
-        console.log(op.searchText = 'test', op)
+        var op = $('#代办任务tab').bootstrapTable("getOptions")
+        console.log(op.searchText = text, op)
 
-        pvs.tabSele = '数据表'
-        $('#数据表tab').bootstrapTable('refreshOptions', { searchText: text });
+        pvs.tabSele = '代办任务'
+
+        $('#代办任务tab').bootstrapTable('refreshOptions', { searchText: text });
+        $('#代办任务tab').bootstrapTable('refresh');
       }
 
 
@@ -420,8 +415,9 @@
         //查询数据
         const ui = gd.reg.ui
         const se = gd.reg.se
-        gd.storage.set('searchTab', pvs.searchTab)
-        if (!pvs.searchTab) { return }
+        //gd.storage.set('searchTab', pvs.searchTab)
+        console.log('查询代办',pvs.searchTab)
+        //if (!pvs.searchTab) { return }
 
         //动画效果
         ui.loginLoading(1)
@@ -544,34 +540,25 @@
           var stat = { 0: "准备", 1: "完成", 2: "挂起", 3: "错误", 4: "终止", 5: "暂停", }
           value.流程状态 = stat[value.流程状态]
           value.单据全称 = value.单据全称.replace('标准编码规则', '') 
-          //value.fTableName = `<a onclick="er.emit('看数据字段',${value.fID},'${value.fFullName}') " href="#">查看</a>`
+          value.流程实例id = `<a onclick="er.emit('看指定流程','${value.流程实例id}') " href="#">${value.流程实例id}</a>`
+          value.单据全称 = `<a onclick="er.emit('看指定单据','${value.单据id}','${value.单据类别}') " href="#">${value.单据全称}</a>`
         });
 
-        /*
-        任务id: "64d32d10dc0596"
-内容: "您有待办任务需要处理销售订单2308-019  型号601B\n您有待办任务需要处理销售订单2308-019  型号601B\n您有待办任务需要处理销售订单2308-019  型号601B\n您有待办任务需要处理销售订单2308-019  型号601B"
-单据编号: "2308-019"
-名字: "戴可科"
-接收人id: 102214
-标题: "您有待办任务需要处理 销售订单2308-019  型号601B"
-流程id: "648174f39eeaa4"
-流程名: "销售订单审批流"
-流程实例id: "64d32d0fa0cc95fd31"
-节点id: "64d32d10b62c2daaab"
-节点名称: "终审节点"
-*/
+ 
         var columns = [{
           field: '流程实例id',
+          width:170,
           sortable: true,
-          title: 'id'
+          title: '流程id'
+        }, {
+          field: '日期',
+          sortable: true,
+          width:170,
+          title: '日期'
         }, {
           field: '单据编号',
           sortable: true,
           title: '单据编号'
-        }, {
-          field: '日期',
-          sortable: true,
-          title: '日期'
         }, {
           field: '流程名',
           title: '流程名'
