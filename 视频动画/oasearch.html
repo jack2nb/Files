@@ -204,7 +204,8 @@
   <script src="https://cdnjs.cloudflare.com/ajax/libs/URI.js/1.19.11/URI.min.js"></script>
 
 
-
+  <script src="./danfo1.1.2.js"></script>
+  <!---bootstraptable行合并  onLoadSuccess  mergeCells-->
 
   <script>
     const er = new EventEmitter //事件线
@@ -245,7 +246,7 @@
         gd.reg.ui = this//全局资源
         pvs.sp = 0; //遮罩路由 (0.无，1.名单，2.登入 ,3.管理)
         pvs.info_list = []//交互提示 {info:"2",type:"2"}
-        pvs.dat = {}
+        pvs.rawDat = {}
 
         pvs.searchName = dc['name'] ? dc['name'] : gd.storage.get('searchName') ? gd.storage.get('searchName') : '';//'默认查询名
         //--存储默认值
@@ -264,10 +265,8 @@
         er.on('遮罩', this.spto)
 
 
-        er.on('show.base', this.tabBase)
-
         er.on('查询', this.toSearch)
-        er.on('展示考勤', this.tab考勤)
+    
         er.on('展示补考勤', this.tab补考勤)
         er.on('展示请假', this.tab请假)
         er.on('展示公出', this.tab公出)
@@ -281,7 +280,7 @@
         gd.storage.set('searchName', pvs.searchName)
         if (!pvs.searchName) { return }
 
-        pvs.dat = {}
+        pvs.rawDat = {}
         //动画效果
         ui.loginLoading(1)
         ui.spto(1) //loading 
@@ -298,8 +297,8 @@ ITEM_APPLICANT: "蔡金凯"
 理由: "测试"
 结束事件: "2023-05-25 16:46:00"
 */
-        var rows = pvs.dat.TLK_APPLY_LEAVE//考勤表
-        if (pvs.dat.T_DEPARTMENT && pvs.dat.T_DEPARTMENT.length > 0) {
+        var rows = pvs.rawDat.TLK_APPLY_LEAVE//考勤表
+        if (pvs.rawDat.T_DEPARTMENT && pvs.rawDat.T_DEPARTMENT.length > 0) {
 
 
         }
@@ -329,8 +328,8 @@ ITEM_APPLICANT: "蔡金凯"
       tab公出() {
         const ui = gd.reg.ui
         //
-        var rows = pvs.dat.TLK_BUSINESS_PUBLIC_TRIP//考勤表
-        if (pvs.dat.T_DEPARTMENT && pvs.dat.T_DEPARTMENT.length > 0) {
+        var rows = pvs.rawDat.TLK_BUSINESS_PUBLIC_TRIP//考勤表
+        if (pvs.rawDat.T_DEPARTMENT && pvs.rawDat.T_DEPARTMENT.length > 0) {
 
 
         }
@@ -362,8 +361,8 @@ ITEM_APPLICANT: "蔡金凯"
         const ui = gd.reg.ui
 
         //
-        var rows = pvs.dat.TLK_ATTENDANCEDETAIL//考勤表
-        if (pvs.dat.T_DEPARTMENT && pvs.dat.T_DEPARTMENT.length > 0) {
+        var rows = pvs.rawDat.TLK_ATTENDANCEDETAIL//考勤表
+        if (pvs.rawDat.T_DEPARTMENT && pvs.rawDat.T_DEPARTMENT.length > 0) {
 
         }
         var columns = [{
@@ -379,65 +378,12 @@ ITEM_APPLICANT: "蔡金凯"
 
         ui.showTab('#补考勤', columns, rows)
       }
-      tab考勤() {
-        //跳转、翻页
-        const ui = gd.reg.ui
-
-        //
-        pvs.rowBase = pvs.dat.CHECKINOUT//考勤表
-        if (pvs.dat.T_DEPARTMENT && pvs.dat.T_DEPARTMENT.length > 0) {
-
-        }
-        var columns = [{
-          field: 'USERID',
-          title: '用户id'
-        }, {
-          sortable: true,
-          field: 'CHECKTIME',
-          title: '打卡时间'
 
 
-        }]
 
-        ui.showTab('#考勤', columns, pvs.rowBase)
-      }
-
-      tabBase() {
-        //跳转、翻页
-        const ui = gd.reg.ui
-
-        //
-        pvs.rowBase = pvs.dat.T_USER//用户表
-        if (pvs.dat.T_DEPARTMENT && pvs.dat.T_DEPARTMENT.length > 0) {
-          var dep = _.keyBy(pvs.dat.T_DEPARTMENT, 'ID')
-          var deprow = dep[pvs.rowBase[0]['DEFAULTDEPARTMENT']]
-          console.log('---------------', deprow['NAME'])
-          pvs.rowBase[0]['DEPARTMENT'] = deprow['NAME']
-          //ui.showTab('#table') //$('#table').bootstrapTable('destroy');
-        }
-        var columns = [{
-          field: 'ID',
-          title: '用户id'
-        }, {
-          sortable: true,
-          field: 'NAME',
-          title: '用户名'
-
-
-        }, {
-          field: 'DEFAULTDEPARTMENT',
-          title: '部门id'
-        }
-          , {
-          field: 'DEPARTMENT',
-          title: '部门'
-        }]
-
-        ui.showTab('#table', columns, pvs.rowBase)
-      }
       showTab(eid, col, dat) {
         // 生成和销毁表格
-        if (  $(eid).bootstrapTable("getOptions").cache == true )  {
+        if ($(eid).bootstrapTable("getOptions").cache == true) {
           $(eid).bootstrapTable('destroy');
           //return
         }
@@ -498,7 +444,7 @@ ITEM_APPLICANT: "蔡金凯"
         //--界面值
         gd.reg.se = this//全局资源
 
-        pvs.dat = {}
+        pvs.rawDat = {}
 
         //初始效果
         this.hd = { //请求头
@@ -526,164 +472,174 @@ ITEM_APPLICANT: "蔡金凯"
         //初始（设置）
         //绑定事件
         er.on('se.user', this.seUser)
-        er.on('se.dep', this.seDep)
+
         er.on('se.kq', this.seKq)
 
-        er.on('查考勤', this.查考勤)
-        er.on('se.补考勤', this.补考勤)
-        er.on('se.请假', this.请假)
+        er.on('展示考勤', this.tab考勤)
 
-        er.on('se.公出', this.公出)
-
-        er.on('bd', this.binding)
-        er.on('getErr', this.getErr)
-
-
-
-
-      }
-
-      公出() {
-        //moment().subtract(2, 'month').format('YYYY-MM')
-        const ui = gd.reg.ui
-        const se = gd.reg.se
-        //查询考勤
-        var userid = pvs.dat.T_USER[0]['ID']
-        var vn = {
-          "AUTHOR": userid
-          , "ITEM_TRAVEL_OT&": ">" + moment().subtract(2, 'month').format('YYYY-MM') + '-01'
-          , "@order": "-CREATED"
-          , "@column": "AUTHOR,ITEM_TRAVEL_ST,ITEM_TRAVEL_OT,ITEM_TRAVEL_R.理由, ITEM_TRAVEL_CITY.公出城市, FORMNAME.模块,STATELABELINFO"
-          , "#url": "http://127.0.0.1:2022/jsonapi/get"
-
-        }
-
-
-
-        var url = `//${pvs.url.hostname()}:2022/jsonapi/get`;
-
-        // //发送
-        se.se("TLK_BUSINESS_PUBLIC_TRIP", vn, url, 'TLK_BUSINESS_PUBLIC_TRIP', '公出', ['展示公出'])
+        er.on('展示用户', this.tabBase)
 
 
       }
 
 
-      请假() {
-        //moment().subtract(2, 'month').format('YYYY-MM')
-        const ui = gd.reg.ui
-        const se = gd.reg.se
-        //查询考勤
-        var userid = pvs.dat.T_USER[0]['ID']
-        var vn = {
-          "AUTHOR": userid
-          , "ITEM_LEAVE_T&": ">" + moment().subtract(2, 'month').format('YYYY-MM') + '-01'
-          , "@order": "-CREATED"
-          , "@column": "AUTHOR, ITEM_START_T.开始时间,ITEM_LEAVE_T.结束时间,ITEM_LEAVE_R.理由,   ITEM_TITLE.模块,ITEM_APPLICANT"
-        }
 
-
-
-        var url = `//${pvs.url.hostname()}:2022/jsonapi/get`;
-
-        // //发送
-        se.se("TLK_APPLY_LEAVE", vn, url, 'TLK_APPLY_LEAVE', '请假', ['展示请假'])
-
-
-      }
-      补考勤() {
-        //moment().subtract(2, 'month').format('YYYY-MM')
-        const ui = gd.reg.ui
-        const se = gd.reg.se
-        //查询考勤
-        var userid = pvs.dat.T_USER[0]['ID']
-        var vn = {
-          "AUTHOR": userid
-          , "ITEM_ATTDATE&": ">" + moment().subtract(2, 'month').format('YYYY-MM') + '-01'
-          , "@order": "-CREATED"
-          , "@column": "ITEM_ATTDATE, FORMNAME,AUTHOR"
-        }
-
-        var url = `//${pvs.url.hostname()}:2022/jsonapi/get`;
-
-        // //发送
-        se.se("TLK_ATTENDANCEDETAIL", vn, url, 'TLK_ATTENDANCEDETAIL', '补考勤', ['展示补考勤'])
-
-      }
-
-
-      查考勤() {
-        //moment().subtract(2, 'month').format('YYYY-MM')
-        const ui = gd.reg.ui
-        const se = gd.reg.se
-        //查询考勤
-        var kqid = pvs.dat.USERINFO[0]['考勤id']
-        var kq = {
-          "@column": "USERID,CHECKTIME",
-          "USERID": kqid
-          , 'CHECKTIME&': ">" + moment().subtract(2, 'month').format('YYYY-MM') + '-01'
-          , "@order": "-CHECKTIME"
-        }
-        var url = `//${pvs.url.hostname()}:2044/jsonapi/get`;
-
-        // //发送
-        se.se("CHECKINOUT", kq, url, 'CHECKINOUT', '考勤记录', ['展示考勤'])
-
-      }
+ 
 
       seKq() {
         const ui = gd.reg.ui
         const se = gd.reg.se
         //查询考勤
-        var kq = {
-          "@column": "BADGENUMBER.用户id,NAME,USERID.考勤id,DEFAULTDEPTID",
-          "NAME": pvs.searchName,
-          "@limit": 1
+        var vn = {
+          "USERINFO": {
+            "@column": "BADGENUMBER.用户id,NAME,USERID.考勤id,DEFAULTDEPTID",
+            "NAME": pvs.searchName,
+            "@limit": 1
+          },
+          "CHECKINOUT": {
+            "@column": "USERID.考勤id,CHECKTIME",
+            "USERID|": "USERINFO.考勤id"
+            , 'CHECKTIME&': ">" + moment().subtract(2, 'month').format('YYYY-MM') + '-01'
+            , "@order": "-CHECKTIME"
+          }
         }
+ 
         var url = `//${pvs.url.hostname()}:2044/jsonapi/get`;
         // //发送
-        se.se("USERINFO", kq, url, 'USERINFO', '考勤信息', '查考勤')
+        se.se2(vn, url, 'kq', '考勤信息', ['展示考勤'])
 
 
       }
-      seDep() {
-        const ui = gd.reg.ui
-        const se = gd.reg.se
-        //查询部门
 
-        //获取数据，发送请求
-        var url = `//${pvs.url.hostname()}:2022/jsonapi/get`;
-        // //发送
-        //return
-        var depid = pvs.dat.T_USER[0]['DEFAULTDEPARTMENT']
-        var oaUser = {
-          "@column": "ID,NAME",
-          "ID": depid,
-          "@limit": 1
-        }
-        se.se("T_DEPARTMENT", oaUser, url, 'T_DEPARTMENT', '用户部门', 'show.base')
-
-
-      }
       seUser() {
         const ui = gd.reg.ui
         const se = gd.reg.se
-        //查询用户
-        var oaUser = {
-          "@column": "ID,NAME,DEFAULTDEPARTMENT",
-          "NAME": pvs.searchName,
-          "@limit": 1
-        }
+
         //获取数据，发送请求
         var url = `//${pvs.url.hostname()}:2022/jsonapi/get`;
+
         // //发送
         //return
-        se.se("T_USER", oaUser, url, 'T_USER', '用户信息', ['se.dep', 'se.补考勤', 'se.请假', 'se.公出', 'show.base'])
 
+        var vn = {
+          "T_USER": {
+            "@column": "ID,NAME,DEFAULTDEPARTMENT.部门id",
+            "NAME": pvs.searchName,
+            "@limit": 1
+          },
+          "T_DEPARTMENT": {//部门
+            "@column": "ID.部门id,NAME.部门",
+            "ID|": "T_USER.部门id",
+            "@limit": 1
+          },
+          "TLK_ATTENDANCEDETAIL": {//补考勤
+            "AUTHOR|": "T_USER.ID"
+            , "ITEM_ATTDATE&": ">" + moment().subtract(2, 'month').format('YYYY-MM') + '-01'
+            , "@order": "-CREATED"
+            , "@column": "ITEM_ATTDATE, FORMNAME,AUTHOR"
+          },
 
+          "TLK_APPLY_LEAVE": {//请假
+            "AUTHOR|": "T_USER.ID"
+            , "ITEM_LEAVE_T&": ">" + moment().subtract(2, 'month').format('YYYY-MM') + '-01'
+            , "@order": "-CREATED"
+            , "@column": "AUTHOR, ITEM_START_T.开始时间,ITEM_LEAVE_T.结束时间,ITEM_LEAVE_R.理由,   ITEM_TITLE.模块,ITEM_APPLICANT"
+          }
+          ,
+          "TLK_BUSINESS_PUBLIC_TRIP": {//公出
+            "AUTHOR|": "T_USER.ID"
+            , "ITEM_TRAVEL_OT&": ">" + moment().subtract(2, 'month').format('YYYY-MM') + '-01'
+            , "@order": "-CREATED"
+            , "@column": "AUTHOR,ITEM_TRAVEL_ST,ITEM_TRAVEL_OT,ITEM_TRAVEL_R.理由, ITEM_TRAVEL_CITY.公出城市, FORMNAME.模块,STATELABELINFO"
+            , "#url": "http://127.0.0.1:2022/jsonapi/get"
 
+          }
+        }
+        //获取数据，发送请求
+        se.se2(vn, url, 'oa', '查询OA', ['展示用户', '展示请假', '展示公出', '展示补考勤'])
       }
-      binding(dat, name, info, next = '') {
+      tabBase() {
+        //跳转、翻页
+        const ui = gd.reg.ui
+        var 用户表 = new dfd.DataFrame(pvs.rawDat['T_USER'])
+        var 部门表 = new dfd.DataFrame(pvs.rawDat['T_DEPARTMENT'])
+        var 请假表 = new dfd.DataFrame(pvs.rawDat['TLK_APPLY_LEAVE'])
+        var 公出表 = new dfd.DataFrame(pvs.rawDat['TLK_BUSINESS_PUBLIC_TRIP'])
+        var 补考勤表 = new dfd.DataFrame(pvs.rawDat['TLK_ATTENDANCEDETAIL'])
+
+
+        //----
+        用户表.print()
+        部门表.print()
+        请假表.print()
+        公出表.print()
+        补考勤表.print()
+        //
+        var 用户表v2 = dfd.merge({ "left": 用户表, "right": 部门表, "on": ["部门id"], how: "left" })
+        用户表v2.print()
+
+        const rows = dfd.toJSON(用户表v2)
+        var columns = [{
+          field: 'ID',
+          title: '用户id'
+        }, {
+          sortable: true,
+          field: 'NAME',
+          title: '用户名'
+
+
+        }, {
+          field: '部门id',
+          title: '部门id'
+        }
+          , {
+          field: '部门',
+          title: '部门'
+        }]
+
+        ui.showTab('#table', columns, rows)
+      }
+      tab考勤() {
+        //跳转、翻页
+        const ui = gd.reg.ui
+        
+        var 考勤用户 = new dfd.DataFrame(pvs.rawDat['USERINFO'])
+        var 考勤记录 = new dfd.DataFrame(pvs.rawDat['CHECKINOUT'])
+   
+        //
+        var 考勤记录v2 = dfd.merge({ "left": 考勤记录, "right": 考勤用户, "on": ["考勤id"], how: "left" })
+        考勤记录v2.print()
+
+        const rows = dfd.toJSON(考勤记录v2)
+
+        var columns = [{
+          field: 'NAME',
+          title: '用户'
+        }, {
+          sortable: true,
+          field: 'CHECKTIME',
+          title: '打卡时间'
+
+
+        }]
+
+        ui.showTab('#考勤', columns, rows)
+      }
+
+      se2(vn, url, name, info, next = '') {
+        //单发送请求
+        const se = gd.reg.se
+
+        axios.post(url + '?' + name, vn, se.hd)
+          .then(dat => {
+            se.binding2(dat, name, info, next)
+          })
+          .catch(err => {
+            se.getErr(err, name, info)
+          })
+      }
+
+      binding2(dat, name, info, next = '') {
         //数据收集挂在到dat
         const ui = gd.reg.ui
         const se = gd.reg.se
@@ -692,14 +648,21 @@ ITEM_APPLICANT: "蔡金凯"
         ui.loginLoading(0)
         ui.spto(0)
         if (dat.data['@code'] < 300) {
+          //数据让如rawDat中
           ui.showInfo(dat.data['@msg'], info)
-          pvs.dat[name] = dat.data[name]
-          if (dat.data[name].length > 0) {
-            console.log(info + '==', dat.data[name][0])
-          } else {
-            console.log(name, info, '无上数据')
-          }
-
+          //读取数据到 pvs
+          var number = 0
+          _.forEach(dat.data, function (value, key) {
+            if (key.substr(0, 1) == '@') { return }
+            pvs.rawDat[key] = dat.data[key]
+            number = number + dat.data[key].length//行数
+            if (dat.data[key].length > 0) {
+              console.log(key + '==', dat.data[key].length, dat.data[key][0])
+            } else {
+              console.log(key, info, '无上数据')
+            }
+          });
+          console.log(name + '加载', number, '行')
           ////下一步事件
           if (_.isString(next)) { er.emit(next) }
           //下一批事件
@@ -709,19 +672,7 @@ ITEM_APPLICANT: "蔡金凯"
           console.log('出现错误', info + '==', dat)
         }
       }
-      se(tab, dt, url, name, info, next = '') {
-        //单发送请求
-        const se = gd.reg.se
-        var vn = {}
-        vn[tab] = dt
-        axios.post(url + '?' + tab, vn, se.hd)
-          .then(dat => {
-            er.emit('bd', dat, name, info, next)
-          })
-          .catch(err => {
-            er.emit(err, name, info)
-          })
-      }
+
       getErr(error, naem, info) {
         //请求错误处理
         const ui = gd.reg.ui
@@ -731,6 +682,8 @@ ITEM_APPLICANT: "蔡金凯"
         ui.spto(0) //loading  
         ui.showInfo('无法加载到数据，刷新重试', info) //loading  
       }
+
+
     }
 
     //----------开始

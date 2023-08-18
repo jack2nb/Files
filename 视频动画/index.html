@@ -20,6 +20,7 @@
       display: flex;
       flex-direction: column;
     }
+
     main {
       flex-basis: auto;
       flex-grow: 1;
@@ -33,6 +34,7 @@
       background: linear-gradient(to right bottom, #40a5a5, #054e4e);
 
     }
+
     [v-cloak] {
       display: none;
     }
@@ -59,9 +61,7 @@
     <div class="  ">
       <div class="ui basic segment">
         <h4 class="my-4  ui horizontal divider header"><i class="code icon"></i>工具</h4>
-
-
-        <div class="  justify-content-center ui     cards">
+        <div class=" container   ui     cards">
           {{#tools}}
           <a class="card" href="{{url}}" target="_blank">
             <div class="content">
@@ -73,11 +73,25 @@
           {{/tools}}
         </div>
       </div>
+      <div class="ui basic segment">
+        <h4 class="my-4  ui horizontal divider header"><i class="code icon"></i>第三方系统</h4>
+        <div class=" container   ui     cards">
+          {{#system}}
+          <a class="card" href="{{url}}" target="_blank">
+            <div class="content">
+              <i class="left floated   code icon"></i>
+              <div class="header">{{title}}</div>
+              <div class="meta">{{content}}</div>
+            </div>
+          </a>
+          {{/system}}
+        </div>
+      </div>
       <div class="ui basic  ">
         <h4 class="my-4   ui horizontal divider header"><i class="graduation cap icon"></i>参考</h4>
-        <div class=" justify-content-center ui  cards">
+        <div class=" container   ui  cards">
           {{#reference}}
-          <a class="card" href="{{url}}"  target="_blank">
+          <a class="card" href="{{url}}" target="_blank">
             <div class="content">
               <i class="left floated    smile icon"></i>
               <div class="header">{{title}}</div>
@@ -94,7 +108,7 @@
   </main>
 
   <footer>
-    <div class=" row py-3 justify-content-center ">Powered by &nbsp; <a class="ui  "> empty </a> &nbsp; </div>
+    <div class=" row py-3 justify-content-center ">Powered by &nbsp; <a class="ui  "> 企业CIO：蔡金凯 </a> &nbsp; </div>
   </footer>
 
   <script src="https://cdnjs.cloudflare.com/ajax/libs/mustache.js/3.2.0/mustache.min.js"></script>
@@ -105,16 +119,29 @@
     //列表数据
     var lsDat = {
       "tools": [
-        { title: '考勤查询', content: '查询考勤，请假，公出，补卡',"url":"./oasearch.html" },
-        { title: '流程审批进度', content: '查看所有流程审批进度' ,"url":"./erpsearch.html"},
-        { title: '金蝶云星空', content: '进销存 生产管理' ,"url":"http://192.168.0.48/K3Cloud"},
-        { title: '公司OA系统', content: '行政人事相关 请假 报销 考勤' ,"url":"http://oa.ouqiyj.com:8081/ouqi/"},
+        { title: '考勤查询', content: '查询考勤，请假，公出，补卡', "url": "./oasearch.html" },
+        { title: '流程审批进度', content: '查看所有流程审批进度', "url": "./erpsearch.html" },
+        { title: '企业级虚拟化', content: 'vm虚拟机管理 机器集群维护', "url": "https://192.168.11.122:9090/" },
+        { title: '内部DNS', content: '网络访问 dns解析 管理 监控', "url": "https://192.168.11.122:9090/" },
+        { title: '企业微服务docker', content: 'docker 监控 维护平台', "url": "http://192.168.0.121:9000/#!/auth" },
+        { title: '智能 软路由', content: '无线上网监控 管理', "url": "http://192.168.11.111/cgi-bin/luci/" },
+        { title: '数据字典', content: '金蝶云v7版 数据库结构 （部分）', "url": "http://192.168.20.199:2028/k3cloud.html" },
+        { title: 'notebook', content: '数据分析 小工具试验 ', "url": "http://192.168.20.199:8888/tree#running" },
+
         
+
+
+      ],
+      system: [
+        { title: '公司OA系统', content: '行政人事相关 请假 报销 考勤', "url": "http://oa.ouqiyj.com:8081/ouqi/" },
+        { title: '金蝶云星空', content: '进销存 生产管理', "url": "http://192.168.0.48/K3Cloud" },
       ],
       reference: [
-        { title: '如何审配', content: '背单词玩游戏两不误，每天学几个日积月累',"url":"http://oa.ouqiyj.com:3000/erp/%E4%B8%9A%E5%8A%A1%E6%B5%81%E4%B8%8E%E8%A7%92%E8%89%B2.html" },
-        { title: '通过erp销售', content: '销售工作业务 指导参考' ,"url":"http://oa.ouqiyj.com:3000/erp/%E4%B8%9A%E5%8A%A1%E6%B5%81%E4%B8%8E%E8%A7%92%E8%89%B2.html"},
-        { title: '库存查询', content: '外挂式 库存查询 规格 成品 半成品' ,"url":"http://oa.ouqiyj.com:3000/erp/%E4%B8%9A%E5%8A%A1%E6%B5%81%E4%B8%8E%E8%A7%92%E8%89%B2.html"},
+        { title: '如何审批', content: '流程审批 领导专用', "url": "http://oa.ouqiyj.com:3000/%E9%87%91%E8%9D%B6%E4%BA%91%E6%93%8D%E4%BD%9C/%E5%AE%A1%E6%89%B9%E4%B8%9A%E5%8A%A1.html" },
+        { title: '手机上审批', content: '出差在外 完成 领导专用', "url": "http://oa.ouqiyj.com:3000/%E9%92%89%E9%92%89/%E7%A7%BB%E5%8A%A8%E8%AE%BE%E5%A4%87-%E5%AE%A1%E6%89%B9%E4%B8%9A%E5%8A%A1.html" },
+        { title: '通过erp销售', content: '销售工作业务 指导参考', "url": "http://oa.ouqiyj.com:3000/erp/%E4%B8%9A%E5%8A%A1%E6%B5%81%E4%B8%8E%E8%A7%92%E8%89%B2.html" },
+        { title: '库存查询', content: '外挂式 库存查询 规格 成品 半成品', "url": "http://oa.ouqiyj.com:3000/erp/%E4%B8%9A%E5%8A%A1%E6%B5%81%E4%B8%8E%E8%A7%92%E8%89%B2.html" },
+        { title: '查监控', content: '公司内外 监控录像机', "url": "http://oa.ouqiyj.com:3000/%E7%BD%91%E7%BB%9C/%E7%9B%91%E6%8E%A7%E4%B8%BB%E6%8E%A7.html" },
       ],
     }
 

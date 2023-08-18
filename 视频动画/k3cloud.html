@@ -214,7 +214,7 @@
         pvs.info_list = []//交互提示 {info:"2",type:"2"}
         pvs.rawDat = {} //原始数据
 
-        pvs.searchTab = gd.storage.get('searchTab') ? gd.storage.get('searchTab') : '';//'默认查询名
+         
         //--存储默认值
 
         pvs.tabSele = gd.storage.get('tabSele') ? gd.storage.get('tabSele') : '数据表';//'默认路径'
@@ -534,9 +534,7 @@
         //查询数据
         const ui = gd.reg.ui
         const se = gd.reg.se
-        gd.storage.set('searchTab', pvs.searchTab)
-        if (!pvs.searchTab) { return }
-
+      
         //动画效果
         ui.loginLoading(1)
         ui.spto(1) //loading 

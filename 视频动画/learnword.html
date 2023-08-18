@@ -396,7 +396,7 @@
                 pvs.page = dc['page'] ? dc['page'] : gd.storage.get('page') ? gd.storage.get('page') : 1;//
                 pvs.type = dc['t'] ? dc['t'] : gd.storage.get('pageType') ? gd.storage.get('pageType') : 'camb_word';//业务类型，url优先
                 pvs.pid = dc['p'] ? dc['p'] : gd.storage.get('pid', pvs.type) ? gd.storage.get('pid', pvs.type) : 365;//对应id，url优先
-                pvs.pid = String(pvs.pid).padStart(3, '0'); //id定长  /5/5/5.json  /1/5/15.json  
+                pvs.pid = String(pvs.pid).padStart(3, '0'); //补全id定长  /5/5/5.json  /1/5/15.json  
                 gd.storage.set('pageType', pvs.type)
                 gd.storage.set(pvs.type + '_pid', pvs.pid)
 
