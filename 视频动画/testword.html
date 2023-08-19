@@ -178,7 +178,7 @@
 
     </div>
     <div class=" container-md">
-        <p>从下面的单词中选择认为正确的 </p>
+        <p>连接意思相同的词 </p>
     </div>
 
     <!---加载区xxxxxxxxxx--->
@@ -329,15 +329,15 @@
     * @return {String}           返回连线的dom
     */
         function drawLine(startObj, endObj) {
-
+		var scrollTop = document.documentElement.scrollTop
             //起点元素中心坐标
             var startXywh = startObj.getBoundingClientRect()
-            var y_start = startXywh.top + startXywh.height / 2;
+            var y_start = startXywh.top + startXywh.height / 2 + scrollTop;
             var x_start = startXywh.left + startXywh.width / 2;
 
             //终点元素中心坐标
             var endXywh = endObj.getBoundingClientRect()
-            var y_end = endXywh.top + endXywh.height / 2;
+            var y_end = endXywh.top + endXywh.height / 2 + scrollTop;
             var x_end = endXywh.left + endXywh.width / 2;
 
             console.log(y_start, x_start, y_end, x_end)
@@ -578,7 +578,7 @@
                 var dc = pvs.url.query(true);//参数
                 pvs.type = dc['t'] ? dc['t'] : gd.storage.get('pageType') ? gd.storage.get('pageType') : 'camb_word';//业务类型，url优先
                 pvs.pid = String(dc['p'] ? dc['p'] : gd.storage.get('pid', pvs.type) ? gd.storage.get('pid', pvs.type) : 365);//对应id，url优先
-                pvs.pid = pvs.pid.padStart(3, '0'); //id定长
+                pvs.rpid = String(pvs.pid).padStart(3, '0'); //补全id定长  /0/5/5.json  /1/5/15.json  
                 gd.storage.set('pageType', pvs.type)
                 gd.storage.set('pid', pvs.pid, pvs.type) //记录当前项目的学习课程号
 
@@ -589,7 +589,7 @@
 
                 var st = document.createElement("script");
                 st.id = 'dataFromJson';
-                st.src = `//${src}/${pvs.type}/${pvs.pid.substring(pvs.pid.length - 2, pvs.pid.length - 1)}/${pvs.pid.substring(pvs.pid.length - 1)}/cfg_${pvs.pid}.json`
+                st.src = `//${src}/${pvs.type}/${pvs.rpid.substring(pvs.rpid.length - 2, pvs.rpid.length - 1)}/${pvs.rpid.substring(pvs.rpid.length - 1)}/cfg_${pvs.pid}.json`
 
                 st.onerror = that.signErr;
                 st.onload = that.endJson;
