@@ -33,6 +33,10 @@
       border-radius: 1rem;
     }
 
+    .offbut{
+	transform:translateY(125%);/**上移元素**/
+
+}
    
     [v-cloak] {
       display: none;
@@ -74,7 +78,9 @@
         </ul>
         <!-- 表1-->
         <div :class="[{' d-none ': ! (  '代办任务' == pd.tabSele )} ]">
-
+            
+<button @click="er.emit('筛选处理中' ,'处理中') " type="button" class="btn mx-2 btn-primary offbut" >处理中</button>
+<button @click="er.emit('筛选已完成' ,'已完成') " type="button" class="btn mx-2 btn-primary offbut" >已完成</button>
           <!--表数据--->
           <table class="  bg-white" id="代办任务tab"></table>
 
@@ -267,6 +273,7 @@
           pagination: true,//是否分页
           sidePagination: 'client',//server:服务器端分页|client：前端分页
           pageSize: 10,//单页记录数
+          //showRefresh: true,//显示刷新按钮
           pageList: [10],
           //customSearch:fnSearch,//自定义搜索，比如只搜索ID字段
           //searchText:"text",
@@ -345,7 +352,9 @@
         er.on('查询代办', this.查询代办)
         er.on('查询系统单据', this.查询系统单据)
         er.on('查询代办2show', this.查询代办2show)
-
+        er.on('筛选已完成', this.查询代办)
+        er.on('筛选处理中', this.查询代办)
+        
       }
       查询字段(vn, next) {
         //查询字段数据
@@ -411,13 +420,24 @@
       }
 
 
-      查询代办() {
+      查询代办(流程状态) {
         //查询数据
         const ui = gd.reg.ui
         const se = gd.reg.se
         //gd.storage.set('searchTab', pvs.searchTab)
-        console.log('查询代办',pvs.searchTab)
+  
         //if (!pvs.searchTab) { return }
+
+        //---加入查询条件
+        console.log('查询代办','流程状态=',流程状态 )
+        var FSTATUS
+        if (! _.isEmpty(流程状态)){
+          FSTATUS = 流程状态=="处理中" ? 2 : 流程状态=="已完成" ? 1 : undefined  
+     
+        }
+        console.log('查询代办','流程状态=',流程状态,'FSTATUS=',FSTATUS )
+        
+
 
         //动画效果
         ui.loginLoading(1)
@@ -427,7 +447,8 @@
           "T_WF_ASSIGN": {
             "@column": "FCREATETIME.日期,FSTATUS.节点状态,FASSIGNID.任务id,FPROCINSTID.流程实例id,FACTINSTID.节点id",
             // 'FNUMBER*':'XSDD000048_20230718184628'
-            "FCREATETIME&": ">2023-08-6",
+            "FCREATETIME&": `>${moment().subtract(7, 'days').format('YYYY-MM-DD') }`,
+           
             "@order": "-FCREATETIME"
           },
           "T_WF_RECEIVER": {
@@ -441,6 +462,7 @@
 
           "T_WF_PROCINST": {
             "@column": "FPROCDEFID.流程id,FPROCINSTID.流程实例id,FSTATUS.流程状态,FBILLNO.单据编号",
+            "FSTATUS":FSTATUS,
             'FPROCINSTID|': "T_WF_ASSIGN.流程实例id"
           },
           "T_WF_PROCDEF_L": {
@@ -458,7 +480,8 @@
           },//标准编码规则
           "T_BAS_BILLCODERULE": {
             "@column": "FRULEID.规则id,FBILLFORMID.单据类别",
-            'FBILLFORMID|': "T_WF_APPROVALASSIGN.单据类别"
+            'FBILLFORMID|': "T_WF_APPROVALASSIGN.单据类别",
+            "FDOCUMENTSTATUS":"C"
           },
           "T_BAS_BILLCODERULE_L": {
             "@column": "FRULEID.规则id,FNAME.单据全称",
@@ -515,7 +538,7 @@
 
         let 工作流任务v2 = dfd.merge({ "left": 工作流任务, "right": 任务信息, "on": ["任务id"], how: "left" })
         工作流任务v2 = dfd.merge({ "left": 工作流任务v2, "right": 用户信息, "on": ["接收人id"], how: "left" })
-        工作流任务v2 = dfd.merge({ "left": 工作流任务v2, "right": 工作流实例, "on": ["流程实例id"], how: "left" })
+        工作流任务v2 = dfd.merge({ "left": 工作流任务v2, "right": 工作流实例, "on": ["流程实例id"], how: "inner" })
         工作流任务v2 = dfd.merge({ "left": 工作流任务v2, "right": 工作流信息, "on": ["流程id"], how: "left" })
         工作流任务v2 = dfd.merge({ "left": 工作流任务v2, "right": 当前节点, "on": ["节点id"], how: "left" })
 
@@ -535,7 +558,7 @@
 
           value.标题 = value.标题.split('\n')[0]
 
-          value.节点状态 = value.节点状态 == 1 ? '完成' : '进行中'
+          value.节点状态 = value.节点状态 == 1 ? '完成' : '进行中'//1 or 0
 
           var stat = { 0: "准备", 1: "完成", 2: "挂起", 3: "错误", 4: "终止", 5: "暂停", }
           value.流程状态 = stat[value.流程状态]
@@ -567,6 +590,7 @@
           title: '节点名称'
         }, {
           field: '名字',
+          sortable: true,
           title: '处理人'
         }, {
           field: '节点状态',

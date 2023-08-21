@@ -115,7 +115,7 @@
   <!---Mustache-->
 
   <script type="text/javascript">
-    var tpl = document.querySelector('main') //模板
+    var tpl = document.querySelector('main').innerHTML //模板
     //列表数据
     var lsDat = {
       "tools": [
@@ -145,10 +145,10 @@
       ],
     }
 
-    var hs = Mustache.render(tpl.innerHTML, lsDat)//模板替换
+    var hs = Mustache.render(tpl, lsDat)//模板替换
 
     //写入
-    tpl.innerHTML = hs 
+    document.querySelector('main').innerHTML = hs 
   </script>
 
 
