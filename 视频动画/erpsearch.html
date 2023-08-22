@@ -33,11 +33,12 @@
       border-radius: 1rem;
     }
 
-    .offbut{
-	transform:translateY(125%);/**上移元素**/
+    .offbut {
+      transform: translateY(125%);
+      /**上移元素**/
 
-}
-   
+    }
+
     [v-cloak] {
       display: none;
     }
@@ -78,16 +79,16 @@
         </ul>
         <!-- 表1-->
         <div :class="[{' d-none ': ! (  '代办任务' == pd.tabSele )} ]">
-            
-<button @click="er.emit('筛选处理中' ,'处理中') " type="button" class="btn mx-2 btn-primary offbut" >处理中</button>
-<button @click="er.emit('筛选已完成' ,'已完成') " type="button" class="btn mx-2 btn-primary offbut" >已完成</button>
+
+          <button @click="er.emit('筛选处理中' ,'处理中') " type="button" class="btn mx-2 btn-primary offbut">处理中</button>
+          <button @click="er.emit('筛选已完成' ,'已完成') " type="button" class="btn mx-2 btn-primary offbut">已完成</button>
           <!--表数据--->
           <table class="  bg-white" id="代办任务tab"></table>
 
         </div>
         <!-- 表2-->
         <div :class="[{' d-none ': ! (  '系统单据' == pd.tabSele )} ]">
-          <div class="container-md    mt-2     pt-3  pb-3">
+          <div v-if="1==0" class="container-md    mt-2     pt-3  pb-3">
             <div class=" row  align-items-center   justify-content-around  ">
               <div class="col-4  p-0 d-flex col-1 col-md-1 col-sm-1  justify-content-end  ">
                 <label class="text-dark mt-1 ">系统单据</label>
@@ -97,12 +98,12 @@
               </div>
 
               <div class="   d-flex col-auto   justify-content-start  ">
-                <button @click="er.emit('查询字段4搜索' ) " class="btn shadow-lg btn-danger">全局查询</button>
+                <button @click="er.emit('全局查询单据类型' ) " class="btn shadow-lg btn-danger">全局查询</button>
               </div>
             </div>
           </div>
           <!--表数据--->
-          <table class="  bg-white" id="系统单据tab"></table>
+          <table class="  bg-white" id="单据类型tab"></table>
 
         </div>
       </div>
@@ -142,8 +143,8 @@
   </div>
   <!---载入动画--->
   <transition v-cloak leave-active-class="animated fadeOut">
-    <div v-if="pd.sp==0?false:true"
-      class="  w-100 mt-5   row d-flex     align-items-center  justify-content-center  " style="z-index: 1082  ;">
+    <div v-if="pd.sp==0?false:true" class="  w-100 mt-5   row d-flex     align-items-center  justify-content-center  "
+      style="z-index: 1082  ;">
       <div class="spinner-border   "></div>
     </div>
   </transition>
@@ -242,7 +243,7 @@
       seeCol(id, name) {
         //看数据字段
         console.log('看数据字段', id, name)
-        
+
       }
       seeTab(text) {
         var op = $('#代办任务tab').bootstrapTable("getOptions")
@@ -350,73 +351,134 @@
         //初始（设置）
         //绑定事件 
         er.on('查询代办', this.查询代办)
-        er.on('查询系统单据', this.查询系统单据)
-        er.on('查询代办2show', this.查询代办2show)
         er.on('筛选已完成', this.查询代办)
         er.on('筛选处理中', this.查询代办)
+        er.on('查询代办2show', this.查询代办2show)
+        //--
+        er.on('查询单据类型', this.查询单据类型)
+        er.on('查询单据类型2show', this.查询单据类型2show)
+
+      }
+
+
+      查询单据类型2show() {
+        //跳转、翻页
+        const ui = gd.reg.ui
+
+        console.log('查询单据类型2show==', pvs.rawDat)
+        var 单据类型 = new dfd.DataFrame(pvs.rawDat['T_BAS_BILLTYPE'])
+        var 单据名称 = new dfd.DataFrame(pvs.rawDat['T_BAS_BILLTYPE_L'])
+        var 单据表 = new dfd.DataFrame(pvs.rawDat['T_BF_TABLEDEFINE'])
         
+        // var 单据类型 = new dfd.DataFrame(pvs.rawDat['T_BAS_BILLCODERULE'])
+        // var 单据名称 = new dfd.DataFrame(pvs.rawDat['T_BAS_BILLCODERULE_L'])
+
+        单据类型.print()
+        单据名称.print()
+        单据表.print()
+        let 单据类型v2 = dfd.merge({ "left": 单据类型, "right": 单据名称, "on": ["FBILLTYPEID"], how: "left" })
+        单据类型v2 = dfd.merge({ "left": 单据类型v2, "right": 单据表, "on": ["单据编码"], how: "left" })
+
+        //单据类型v2.sortValues("流程实例id", { ascending: false, inplace: true })
+        单据类型v2.print()
+        const rows = dfd.toJSON(单据类型v2)
+
+        _.forEach(rows, function (value, key) {
+          //整理数据
+          //value.名称 = value.名称.replace('标准编码规则', '')
+          //value.名称 = value.名称.replace('编码规则', '')
+
+
+        });
+
+        var columns = [
+        {
+          field: 'FBILLTYPEID',
+          sortable: true,
+          width: 170,
+          title: '单据id'
+        },{
+          field: '单据编码',
+          sortable: true,
+          width: 170,
+          title: '单据编码'
+        }, {
+          field: '名称',
+          width: 210,
+          sortable: true,
+          title: '名称'
+        }, {
+          field: '描述',
+          sortable: true,
+          title: '描述'
+        }, {
+          field: '表名',
+          sortable: true,
+          title: '单据明细表'
+        }]
+
+        ui.showTab('#单据类型tab', columns, rows)
       }
-      查询字段(vn, next) {
+
+      查询单据类型(name) {
         //查询字段数据
         const ui = gd.reg.ui
         const se = gd.reg.se
+  
+/*
+T_META_TRACKERBILLTABLE
+
+select * f T_META_OBJECTTYPE_L
+
+ select * from T_META_TOPCLASS_L
+
+T_BF_TABLEDEFINE
+
+//----表结构
+
+ SELECT lookups.fid, lookups.fformid, lookups.ftablename, lookups.fpkfieldname, lookups.fpkfieldtype,
+ lookups.FNameIsLocale, lookups.fnumberfieldname, lookups.fnamefieldname, lookups.forgfieldname, lookups.furl, 
+ formslang.fname, forms.fsubsysid, subsys.fname fsubsysname
+ FROM T_META_LOOKUPCLASS lookups INNER JOIN
+ T_META_OBJECTTYPE forms ON forms.fid = lookups.fformid LEFT OUTER JOIN 
+ T_META_OBJECTTYPE_L formslang ON (formslang.fid = forms.fid AND formslang.FLocaleId = 2052)
+  LEFT OUTER JOIN T_META_SUBSYSTEM_L subsys  ON (forms.fsubsysid = subsys.fid AND subsys.FLocaleId = 2052) 
+ 
+----
+select * from T_META_OBJECTTYPE
+where fid = 'SAL_SaleOrder'  --数据库表结构都在xml字段中  FieldName中
 
 
-        //动画效果
-        ui.loginLoading(1)
-        ui.spto(1) //loading 
-
-
-        //--条件
-
-        console.log(vn)
-        //获取数据，发送请求
-        var url = `//${pvs.url.hostname()}:2023/jsonapi/get`;
-        // //发送
-        se.se(vn, url, 'FieldDescription', '查询字段', next)
-
-      }
-      查询系统单据(tabId, tabName) {
-        //查询字段数据
-        const ui = gd.reg.ui
-        const se = gd.reg.se
-
-        if (tabName) {
-          pvs.tab4col = tabName //当前查看的表
-        }
-
-
-        var tab = 'K3_Cloud_FieldDescription'
+*/
         var vn = {
-          "K3_Cloud_FieldDescription": {
-            // "@limit": 4
-          }
-        }
-        //--条件
-        if (tabName) { vn[tab]['fID'] = tabId }
-
-        se.查询字段(vn, ['查看字段表2show'])
-      }
-
-      查询字段4搜索(key) {
-        //搜索字段
-        const ui = gd.reg.ui
-        const se = gd.reg.se
-        pvs.tab4col = '' //当前查看的表
-
-        var tab = 'K3_Cloud_FieldDescription'
-        var vn = {
-          "K3_Cloud_FieldDescription@a": {
-            "fFiled*": '%' + pvs.searchCol + '%',
-
+          "T_BAS_BILLTYPE": {
+            "@column": "FBILLTYPEID,FNUMBER.单据编号,FBILLFORMID.单据编码 ",
+            "FISDEFAULT":1
           },
-          "K3_Cloud_FieldDescription@b": {
-
-            "fName*": '%' + pvs.searchCol + '%'
-          }
+          "T_BAS_BILLTYPE_L": {
+            "@column": "FBILLTYPEID,FNAME.名称,FDESCRIPTION.描述",
+            "FLOCALEID": 2052,
+            "FBILLTYPEID|": "T_BAS_BILLTYPE.FBILLTYPEID"
+          },
+          "T_BF_TABLEDEFINE": {
+            "@column": "FTABLENUMBER.表名,FFORMID.单据编码,FENTITYKEY.表主键",
+         
+            "FFORMID|": "T_BAS_BILLTYPE.单据编码"
+          },
+           
         }
-        console.log(vn)
-        se.查询字段(vn, ['搜索字段表2show'])
+        // vn = {
+        //   "T_BAS_BILLCODERULE": {//T_BAS_BILLTYPE
+        //     "@column": "FRULEID.规则id,FBILLFORMID.单据编码",
+        //     "FDOCUMENTSTATUS": "C"
+        //   },
+        //   "T_BAS_BILLCODERULE_L": {//T_BAS_BILLTYPE_L
+        //     "@column": "FRULEID.规则id,FNAME.名称,FDESCRIPTION.描述",
+        //     "FRULEID|": "T_BAS_BILLCODERULE.规则id", "FLOCALEID": 2052
+        //   }
+        // }
+        // //发送
+        se.se(vn, pvs.datUrl, 'BILLTYPE', '查询单据类型', ['查询单据类型2show'])
       }
 
 
@@ -425,30 +487,33 @@
         const ui = gd.reg.ui
         const se = gd.reg.se
         //gd.storage.set('searchTab', pvs.searchTab)
-  
+
         //if (!pvs.searchTab) { return }
 
         //---加入查询条件
-        console.log('查询代办','流程状态=',流程状态 )
+        console.log('查询代办', '流程状态=', 流程状态)
         var FSTATUS
-        if (! _.isEmpty(流程状态)){
-          FSTATUS = 流程状态=="处理中" ? 2 : 流程状态=="已完成" ? 1 : undefined  
-     
+        var CREATETIME = `>${moment().subtract(7, 'days').format('YYYY-MM-DD')}`
+        if (!_.isEmpty(流程状态)) {
+          if (流程状态 == "处理中") { FSTATUS = 2; CREATETIME = undefined }
+          if (流程状态 == "已完成") { FSTATUS = 1 }
+
+
         }
-        console.log('查询代办','流程状态=',流程状态,'FSTATUS=',FSTATUS )
-        
+        console.log('查询代办', '流程状态=', 流程状态, 'FSTATUS=', FSTATUS)
+
 
 
         //动画效果
         ui.loginLoading(1)
         ui.spto(1) //loading 
         //查询用户
-        var   vn = {
+        var vn = {
           "T_WF_ASSIGN": {
             "@column": "FCREATETIME.日期,FSTATUS.节点状态,FASSIGNID.任务id,FPROCINSTID.流程实例id,FACTINSTID.节点id",
             // 'FNUMBER*':'XSDD000048_20230718184628'
-            "FCREATETIME&": `>${moment().subtract(7, 'days').format('YYYY-MM-DD') }`,
-           
+            "FCREATETIME&": CREATETIME,
+
             "@order": "-FCREATETIME"
           },
           "T_WF_RECEIVER": {
@@ -462,7 +527,7 @@
 
           "T_WF_PROCINST": {
             "@column": "FPROCDEFID.流程id,FPROCINSTID.流程实例id,FSTATUS.流程状态,FBILLNO.单据编号",
-            "FSTATUS":FSTATUS,
+            "FSTATUS": FSTATUS,
             'FPROCINSTID|': "T_WF_ASSIGN.流程实例id"
           },
           "T_WF_PROCDEF_L": {
@@ -478,12 +543,12 @@
             "@column": "FASSIGNID.任务id,FKEYVALUE.单据id,FOBJECTTYPEID.单据类别",
             "FASSIGNID|": "T_WF_ASSIGN.任务id"
           },//标准编码规则
-          "T_BAS_BILLCODERULE": {
+          "T_BAS_BILLCODERULE": {//T_BAS_BILLTYPE
             "@column": "FRULEID.规则id,FBILLFORMID.单据类别",
             'FBILLFORMID|': "T_WF_APPROVALASSIGN.单据类别",
-            "FDOCUMENTSTATUS":"C"
+            "FDOCUMENTSTATUS": "C"
           },
-          "T_BAS_BILLCODERULE_L": {
+          "T_BAS_BILLCODERULE_L": {//T_BAS_BILLTYPE_L
             "@column": "FRULEID.规则id,FNAME.单据全称",
             "FRULEID|": "T_BAS_BILLCODERULE.规则id", "FLOCALEID": 2052
           }
@@ -546,7 +611,7 @@
         工作流任务v2 = dfd.merge({ "left": 工作流任务v2, "right": 单据编码, "on": ["单据类别"], how: "left" })
         工作流任务v2 = dfd.merge({ "left": 工作流任务v2, "right": 单据全称, "on": ["规则id"], how: "left" })
 
-        
+
         工作流任务v2.sortValues("流程实例id", { ascending: false, inplace: true })
         工作流任务v2.print()
         const rows = dfd.toJSON(工作流任务v2)
@@ -562,21 +627,21 @@
 
           var stat = { 0: "准备", 1: "完成", 2: "挂起", 3: "错误", 4: "终止", 5: "暂停", }
           value.流程状态 = stat[value.流程状态]
-          value.单据全称 = value.单据全称.replace('标准编码规则', '') 
+          value.单据全称 = value.单据全称.replace('标准编码规则', '')
           value.流程实例id = `<a onclick="er.emit('看指定流程','${value.流程实例id}') " href="#">${value.流程实例id}</a>`
           value.单据全称 = `<a onclick="er.emit('看指定单据','${value.单据id}','${value.单据类别}') " href="#">${value.单据全称}</a>`
         });
 
- 
+
         var columns = [{
           field: '流程实例id',
-          width:170,
+          width: 170,
           sortable: true,
           title: '流程id'
         }, {
           field: '日期',
           sortable: true,
-          width:170,
+          width: 170,
           title: '日期'
         }, {
           field: '单据编号',
@@ -685,6 +750,7 @@
         //onMounted(() => ocls.bindEvt()); //窗口大小变动事件
         //onMounted(() => oui.remount()); //已经登入刷新处理
         onMounted(() => er.emit('查询代办')); //已经登入刷新处理
+        onMounted(() => er.emit('查询单据类型')); //已经登入刷新处理
         //--变量关联到html的映射 js访问要加.value
         return { er, "pd": gd.pd, "ref_login_manage": gd.pd.refManageEmt, }
       }
