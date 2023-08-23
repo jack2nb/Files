@@ -176,7 +176,7 @@ class JsonApiHandler(BaseHandler):
             if gm.cfg.get('db.ro'):     
                 result["@err"] = 'db readonly'
                 result["@code"] = 450            
-            print('metadata==',metadata)
+            print('收到==',args[0],metadata)
             
             if args and args[0][:3] == 'get':
                 result = self._get(metadata)
@@ -236,7 +236,7 @@ class JsonApiHandler(BaseHandler):
         return {"tables":list(ja.tables)}
 
 
-class ErrorHandler(BaseHandler):
+class engHandler(BaseHandler):
     """ 默认处理  
      
 
@@ -244,7 +244,7 @@ class ErrorHandler(BaseHandler):
 
     def get(self, *args, **kwargs):
         """ 尝试读取文件 如果不存在就404
-        var url = "http://127.0.0.1:2028/make";
+        var url = "http://127.0.0.1:2028/eng/make";
         """
         result = OrderedDict()
         result["@code"] = 200
@@ -271,11 +271,6 @@ class ErrorHandler(BaseHandler):
         self.finish(json.dumps(result, ensure_ascii=False,cls=DateEncoder))
 
 
-
-
-
-
-
     def post(self, *args, **kwargs):
         result = OrderedDict()
         result["@code"] = 200
@@ -283,20 +278,20 @@ class ErrorHandler(BaseHandler):
 
         try:
             body = self.request.body.decode('utf8')
-            logger.info("{},,,{}".format(args,body))
+            logger.info("args={},body={}".format(args,body))
             metadata = json.loads(body,  object_hook=datetime_parser)
             import make2row as mr
             print('收到==',args[0],metadata)
-            if args  and args[0]  == '/make':
+            if args  and args[0]  == 'make':
                 #生成音频
                 filename = mr.mkone(metadata,os.path.join(FILE_PATH,metadata['dir']))
                 result["@msg"] = "完成  '{}' ".format(filename)
-            if args  and args[0]  == '/mkimg':
+            if args  and args[0]  == 'mkimg':
                 #生成 音标图
                 mr.mkphimg(metadata,os.path.join(FILE_PATH,metadata['dir']))
                 result["@msg"] = '完成'
 
-            if args  and args[0]  == '/getph':
+            if args  and args[0]  == 'getph':
                 #获取音标
                 ls = mr.getPh(metadata['en'])
                 result["data"] = {metadata['en']:ls}
@@ -330,8 +325,10 @@ def run_main(cfg={}):
         (r"/jsonapi/(.*)", JsonApiHandler)  # //首页，入口
         ,(r"/camb_word/(.*)",StaticFileHandler,{"path":os.path.join(FILE_PATH, "camb_word"), "default_filename":"index.html"})
         ,(r"/en500word/(.*)",StaticFileHandler,{"path":os.path.join(FILE_PATH, "en500word") })
+        , (r"/eng/(.*)", engHandler)  
+         ,(r"/(.*)",StaticFileHandler,{"path":FILE_PATH , "default_filename":"index.html"})  
         # ----
-        , (r"(.*)", ErrorHandler)  # 404错误
+        
     ]
     # --服务器设置
     settings = {
@@ -373,12 +370,12 @@ if __name__ == "__main__":
     logger.setLevel(logging.DEBUG)
     ch = logging.StreamHandler()
     ch.setFormatter(formatter)
-    logger.addHandler(ch)
+    logger.addHandler(ch) 
 
     gm.cfg = gm.load_cfg(conf_file)
     logger.info(' %s ' % (gm.cfg))
     # //----- 长时间运行
-    ja = jsonapi.JosnApi(gm.cfg.get('db'))
+    ja = jsonapi.JosnApi(gm.cfg.get('db'),gm.cfg.get('debug'))
     logger.info(ja.tables)
     try:
         # --循环

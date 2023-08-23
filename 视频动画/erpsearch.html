@@ -75,6 +75,11 @@
             <a class="nav-link shadow   bg-secondary text-white  px-1 px-sm-3 px-lg-5 mx-1 mx-sm-2 mx-lg-2"
               @click="pd.tabSele  = '系统单据' " :class="[{' active bg-info ': ('系统单据' == pd.tabSele )} ]">系统单据</a>
           </li>
+          <li class="nav-item" id="prac">
+            <a class="nav-link shadow   bg-secondary text-white  px-1 px-sm-3 px-lg-5 mx-1 mx-sm-2 mx-lg-2"
+              @click="pd.tabSele  = '业务流程' " :class="[{' active bg-info ': ('业务流程' == pd.tabSele )} ]">业务流程</a>
+          </li>
+
 
         </ul>
         <!-- 表1-->
@@ -446,7 +451,11 @@ T_BF_TABLEDEFINE
  
 ----
 select * from T_META_OBJECTTYPE
-where fid = 'SAL_SaleOrder'  --数据库表结构都在xml字段中  FieldName中
+where fid = 'SAL_SaleOrder'  --数据库表结构都在xml字段中 TextField. FieldName中
+formMetadata.businessInfo.BusinessInfo.Elements.BaseDataFieId.FieIdname=》Name   TableName
+                                                orgfieId
+
+
 
 
 */
@@ -477,6 +486,7 @@ where fid = 'SAL_SaleOrder'  --数据库表结构都在xml字段中  FieldName�
         //     "FRULEID|": "T_BAS_BILLCODERULE.规则id", "FLOCALEID": 2052
         //   }
         // }
+        // -----T_META_OBJECTTYPE_L 也可以查单据
         // //发送
         se.se(vn, pvs.datUrl, 'BILLTYPE', '查询单据类型', ['查询单据类型2show'])
       }

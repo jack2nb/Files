@@ -682,7 +682,7 @@
 
                 const that = gd.oui
                 //获取数据，发送请求
-                var url = "http://127.0.0.1:2028/getph";
+                var url = "http://127.0.0.1:2028/eng/getph";
 
                 var data = {};
                 data['en'] = pvs.row.en
@@ -751,7 +751,7 @@
             toMakeImg() {
                 // 设置 修改选择框 男女、中英
                 const that = gd.oui
-                var url = "http://127.0.0.1:2028/mkimg";
+                var url = "http://127.0.0.1:2028/eng/mkimg";
                 var data = {};
                 data['zh'] = pvs.row.zh  //发音
                 data['en'] = pvs.row.en  //发音
@@ -811,7 +811,7 @@
                 // 设置 修改选择框 男女、中英
                 const that = gd.oui
                 //获取数据，发送请求
-                var url = "http://127.0.0.1:2028/make";
+                var url = "http://127.0.0.1:2028/eng/make";
                 var data = dc;
                 data['zh'] = pvs.row.zh
                 data['en'] = pvs.row.en
@@ -903,18 +903,18 @@
                 //词展示++++
                 that.loginLoading(0) //loading 
                 that.spto(0) //loading 
-                if (typeof (dat.data) == "undefined" || dat.data[pvs.defTable].length == 0) {
+                if (typeof (dat.data) == "undefined" || dat.data['@code'] > 200 ) {
                     that.showInfo(" 无数据 ", "读取单词"+pvs.page+"页")
                     return
                 } //没数据
 
                 //设置数据
                 console.log(dat.data[pvs.defTable][0])
+                var noCache = new Date().valueOf();//禁止缓存
                 pvs.row = dat.data[pvs.defTable][0]
                 //pvs.row.img = '/en500word/h/e/健康.png' //  /en500word/h/e/健康.png
-                pvs.row.img = `/${pvs.defPath}/${pvs.row.en.substring(0, 1)}/${pvs.row.en.substring(1, 2)}/${pvs.row.zh}.png` //  /en500word/h/e/健康.png
+                pvs.row.img = `/${pvs.defPath}/${pvs.row.en.substring(0, 1)}/${pvs.row.en.substring(1, 2)}/${pvs.row.zh}.png?q=${noCache}` //  /en500word/h/e/健康.png
                 //设置 mp3
-                var noCache = new Date().valueOf();//禁止缓存
                 pvs.row.zh4m = `/${pvs.defPath}/${pvs.row.en.substring(0, 1).toLowerCase()}/${pvs.row.en.substring(1, 2).toLowerCase()}/${pvs.row.zh}_zh4m.mp3?q=${noCache}` //   
                 pvs.row.en4m = `/${pvs.defPath}/${pvs.row.en.substring(0, 1).toLowerCase()}/${pvs.row.en.substring(1, 2).toLowerCase()}/${pvs.row.zh}_en4m.mp3?q=${noCache}` //  
                 pvs.row.zh4f = `/${pvs.defPath}/${pvs.row.en.substring(0, 1).toLowerCase()}/${pvs.row.en.substring(1, 2).toLowerCase()}/${pvs.row.zh}_zh4f.mp3?q=${noCache}` //  没下划线
