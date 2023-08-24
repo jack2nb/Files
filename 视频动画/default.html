@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <title>灯塔English导航 </title>
+  <link rel="stylesheet" crossorigin="anonymous"
+    href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.6.1/css/bootstrap.min.css">
+
+
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/semantic-ui/2.4.1/semantic.min.css" rel="stylesheet" />
+
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1" />
+  <meta name="description" content="导航页面 英语学习 培训机构 多邻国 " />
+  <meta name=" keywords" content="每天说英语 英语学习 5分钟学10个单词轻轻松松">
+
+  <style>
+    body {
+      display: flex;
+      flex-direction: column;
+    }
+
+    main {
+      flex-basis: auto;
+      flex-grow: 1;
+      padding: 2rem 0;
+      background-image: radial-gradient(73% 147%, #EADFDF 59%, #ECE2DF 100%), radial-gradient(91% 146%, rgba(255, 255, 255, 0.50) 47%, rgba(0, 0, 0, 0.50) 100%);
+      background-blend-mode: screen;
+    }
+
+    header {
+      /*背景*/
+      background: linear-gradient(to right bottom, #40a5a5, #054e4e);
+
+    }
+
+    [v-cloak] {
+      display: none;
+    }
+  </style>
+
+</head>
+
+<body>
+  <header class=" text-white      ">
+    <div class=" container-fluid        ">
+      <div class="py-3 row justify-content-around ">
+        <h1 class="pt-3 ">
+          <div >英语<h6>每天说，5分钟学10个。一年学3650个常用单词</h6>  </div>
+        </h1>
+        <div class="pt-3 d-flex align-items-end ">
+          <a   class=" text-danger border border-danger p-1 rounded"> 喜欢收藏 </a>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <main class="  container-fluid  ">
+    <div class="  ">
+      <div class="ui basic segment">
+        <h4 class="my-4  ui horizontal divider header"><i class="code icon"></i>工具</h4>
+        <div class=" d-flex justify-items-around  ui     cards">
+          {{#tools}}
+          <a class=" card" href="{{url}}" target="_blank">
+            <div class="content">
+              <i class="left floated   code icon"></i>
+              <div class="header">{{title}}</div>
+              <div class="meta">{{content}}</div>
+            </div>
+          </a>
+          {{/tools}}
+        </div>
+      </div>
+      <div class="ui basic segment">
+        <h4 class="my-4  ui horizontal divider header"><i class="code icon"></i>第三方系统</h4>
+        <div class=" container   ui     cards">
+          {{#system}}
+          <a class="card" href="{{url}}" target="_blank">
+            <div class="content">
+              <i class="left floated   code icon"></i>
+              <div class="header">{{title}}</div>
+              <div class="meta">{{content}}</div>
+            </div>
+          </a>
+          {{/system}}
+        </div>
+      </div>
+      <div class="ui basic  ">
+        <h4 class="my-4   ui horizontal divider header"><i class="graduation cap icon"></i>参考</h4>
+        <div class=" container   ui  cards">
+          {{#reference}}
+          <a class="card" href="{{url}}" target="_blank">
+            <div class="content">
+              <i class="left floated    smile icon"></i>
+              <div class="header">{{title}}</div>
+              <div class="meta">{{content}}</div>
+            </div>
+          </a>
+          {{/reference}}
+
+
+        </div>
+      </div>
+    </div>
+
+  </main>
+
+  <footer>
+    <div class=" row py-3 justify-content-center ">Powered by &nbsp; <a class="ui  "> 每天说英语 </a> &nbsp; </div>
+  </footer>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/mustache.js/3.2.0/mustache.min.js"></script>
+  <script src="./en500word/word_list.json"></script>
+  <script  > var en500word = wordList; </script>
+  <script src="./camb_word/word_list.json"></script>
+  <script  > var camb_word = wordList; </script>
+  <!---Mustache-->
+
+  <script type="text/javascript">
+    var tpl = document.querySelector('main').innerHTML //模板
+    //列表数据
+    var lsDat = {
+      "tools": [
+        { title: '考勤查询', content: '查询考勤，请假，公出，补卡', "url": "./oasearch.html" },
+        { title: '流程审批进度', content: '查看所有流程审批进度', "url": "./erpsearch.html" },
+        { title: '企业级虚拟化', content: 'vm虚拟机管理 机器集群维护', "url": "https://192.168.11.122:9090/" },
+        { title: '内部DNS', content: '网络访问 dns解析 管理 监控', "url": "https://192.168.11.122:9090/" },
+        { title: '企业微服务docker', content: 'docker 监控 维护平台', "url": "http://192.168.0.121:9000/#!/auth" },
+        { title: '智能 软路由', content: '无线上网监控 管理', "url": "http://192.168.11.111/cgi-bin/luci/" },
+        { title: '数据字典', content: '金蝶云v7版 数据库结构 （部分）', "url": "http://192.168.20.199:2028/k3cloud.html" },
+        { title: 'notebook', content: '数据分析 小工具试验 ', "url": "http://192.168.20.199:8888/tree#running" },
+
+
+
+
+      ],
+      system: [
+        { title: '公司OA系统', content: '行政人事相关 请假 报销 考勤', "url": "http://oa.ouqiyj.com:8081/ouqi/" },
+        { title: '金蝶云星空', content: '进销存 生产管理', "url": "http://192.168.0.48/K3Cloud" },
+      ],
+      reference: [
+        { title: '如何审批', content: '流程审批 领导专用', "url": "http://oa.ouqiyj.com:3000/%E9%87%91%E8%9D%B6%E4%BA%91%E6%93%8D%E4%BD%9C/%E5%AE%A1%E6%89%B9%E4%B8%9A%E5%8A%A1.html" },
+        { title: '手机上审批', content: '出差在外 完成 领导专用', "url": "http://oa.ouqiyj.com:3000/%E9%92%89%E9%92%89/%E7%A7%BB%E5%8A%A8%E8%AE%BE%E5%A4%87-%E5%AE%A1%E6%89%B9%E4%B8%9A%E5%8A%A1.html" },
+        { title: '通过erp销售', content: '销售工作业务 指导参考', "url": "http://oa.ouqiyj.com:3000/erp/%E4%B8%9A%E5%8A%A1%E6%B5%81%E4%B8%8E%E8%A7%92%E8%89%B2.html" },
+        { title: '库存查询', content: '外挂式 库存查询 规格 成品 半成品', "url": "http://oa.ouqiyj.com:3000/erp/%E4%B8%9A%E5%8A%A1%E6%B5%81%E4%B8%8E%E8%A7%92%E8%89%B2.html" },
+        { title: '查监控', content: '公司内外 监控录像机', "url": "http://oa.ouqiyj.com:3000/%E7%BD%91%E7%BB%9C/%E7%9B%91%E6%8E%A7%E4%B8%BB%E6%8E%A7.html" },
+      ],
+    }
+
+    var hs = Mustache.render(tpl, lsDat)//模板替换
+
+    //写入
+    document.querySelector('main').innerHTML = hs 
+  </script>
+
+
+  <script>
+
+    /* 鼠标聚焦时，回车事件 */
+    //点击喜欢
+
+  </script>
+
+</body>
+
+</html>
