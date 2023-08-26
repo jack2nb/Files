@@ -69,15 +69,15 @@
         <ul class="nav nav-tabs   ">
           <li class="nav-item">
             <a class="nav-link shadow  bg-secondary  text-white  px-1 px-sm-3 px-lg-5 mx-1 mx-sm-2 mx-lg-1   "
-              @click="pd.tabSele  = '代办任务' " :class="[{' active bg-info ': ('代办任务' == pd.tabSele )} ]">代办任务</a>
+              @click="er.emit('swtab' ,'代办任务')  " :class="[{' active bg-info ': ('代办任务' == pd.tabSele )} ]">代办任务</a>
           </li>
           <li class="nav-item" id="prac">
             <a class="nav-link shadow   bg-secondary text-white  px-1 px-sm-3 px-lg-5 mx-1 mx-sm-2 mx-lg-2"
-              @click="pd.tabSele  = '系统单据' " :class="[{' active bg-info ': ('系统单据' == pd.tabSele )} ]">系统单据</a>
+              @click="er.emit('swtab' ,'系统单据')    " :class="[{' active bg-info ': ('系统单据' == pd.tabSele )} ]">系统单据</a>
           </li>
           <li class="nav-item" id="prac">
             <a class="nav-link shadow   bg-secondary text-white  px-1 px-sm-3 px-lg-5 mx-1 mx-sm-2 mx-lg-2"
-              @click="pd.tabSele  = '业务流程' " :class="[{' active bg-info ': ('业务流程' == pd.tabSele )} ]">业务流程</a>
+              @click="er.emit('swtab' ,'业务流程')    " :class="[{' active bg-info ': ('业务流程' == pd.tabSele )} ]">业务流程</a>
           </li>
 
 
@@ -236,13 +236,22 @@
       init() {
         //初始（设置）
         //绑定事件
-
+        er.on('swtab', this.swtab)
         er.on('遮罩', this.spto)
 
-
+        
         //er.on('获取音标', this.toGetPh) //获取音标
         er.on('看指定单据', this.seeCol)
         er.on('看指定流程', this.seeTab)
+      }
+
+      swtab( name) {
+        //切换标签，请求加载数据
+        console.log('切换标签到',name)
+        pvs.tabSele  = name
+
+        er.emit('查询'+ name ); //已经登入刷新处理
+
       }
 
       seeCol(id, name) {
@@ -355,22 +364,22 @@
       init() {
         //初始（设置）
         //绑定事件 
-        er.on('查询代办', this.查询代办)
-        er.on('筛选已完成', this.查询代办)
-        er.on('筛选处理中', this.查询代办)
-        er.on('查询代办2show', this.查询代办2show)
+        er.on('查询代办任务', this.查询代办任务)
+        er.on('筛选已完成', this.查询代办任务)
+        er.on('筛选处理中', this.查询代办任务)
+        er.on('查询代办任务2show', this.查询代办任务2show)
         //--
-        er.on('查询单据类型', this.查询单据类型)
-        er.on('查询单据类型2show', this.查询单据类型2show)
+        er.on('查询系统单据', this.查询系统单据)
+        er.on('查询系统单据2show', this.查询系统单据2show)
 
       }
 
 
-      查询单据类型2show() {
+      查询系统单据2show() {
         //跳转、翻页
         const ui = gd.reg.ui
 
-        console.log('查询单据类型2show==', pvs.rawDat)
+        console.log('查询系统单据2show==', pvs.rawDat)
         var 单据类型 = new dfd.DataFrame(pvs.rawDat['T_BAS_BILLTYPE'])
         var 单据名称 = new dfd.DataFrame(pvs.rawDat['T_BAS_BILLTYPE_L'])
         var 单据表 = new dfd.DataFrame(pvs.rawDat['T_BF_TABLEDEFINE'])
@@ -425,7 +434,7 @@
         ui.showTab('#单据类型tab', columns, rows)
       }
 
-      查询单据类型(name) {
+      查询系统单据(name) {
         //查询字段数据
         const ui = gd.reg.ui
         const se = gd.reg.se
@@ -488,11 +497,11 @@ formMetadata.businessInfo.BusinessInfo.Elements.BaseDataFieId.FieIdname=》Name 
         // }
         // -----T_META_OBJECTTYPE_L 也可以查单据
         // //发送
-        se.se(vn, pvs.datUrl, 'BILLTYPE', '查询单据类型', ['查询单据类型2show'])
+        se.se(vn, pvs.datUrl, 'BILLTYPE', '查询系统单据', ['查询系统单据2show'])
       }
 
 
-      查询代办(流程状态) {
+      查询代办任务(流程状态) {
         //查询数据
         const ui = gd.reg.ui
         const se = gd.reg.se
@@ -501,16 +510,16 @@ formMetadata.businessInfo.BusinessInfo.Elements.BaseDataFieId.FieIdname=》Name 
         //if (!pvs.searchTab) { return }
 
         //---加入查询条件
-        console.log('查询代办', '流程状态=', 流程状态)
+        console.log('查询代办任务', '流程状态=', 流程状态)
         var FSTATUS
-        var CREATETIME = `>${moment().subtract(7, 'days').format('YYYY-MM-DD')}`
+        var CREATETIME = `>${moment().subtract(5, 'days').format('YYYY-MM-DD')}`
         if (!_.isEmpty(流程状态)) {
           if (流程状态 == "处理中") { FSTATUS = 2; CREATETIME = undefined }
           if (流程状态 == "已完成") { FSTATUS = 1 }
 
 
         }
-        console.log('查询代办', '流程状态=', 流程状态, 'FSTATUS=', FSTATUS)
+        console.log('查询代办任务', '流程状态=', 流程状态, 'FSTATUS=', FSTATUS)
 
 
 
@@ -549,6 +558,11 @@ formMetadata.businessInfo.BusinessInfo.Elements.BaseDataFieId.FieIdname=》Name 
             "@column": "FACTINSTID.节点id,FACTNAME.节点名称",
             'FACTINSTID|': "T_WF_ASSIGN.节点id", "FLOCALEID": 2052
           },
+          "T_WF_ACTINST": {
+            "@column": "FACTINSTID.节点id,FCREATETIME.节点开始,FCOMPLETEDTIME.节点完成",
+            'FACTINSTID|': "T_WF_ASSIGN.节点id" 
+          },
+          
           "T_WF_APPROVALASSIGN": {//任务详情
             "@column": "FASSIGNID.任务id,FKEYVALUE.单据id,FOBJECTTYPEID.单据类别",
             "FASSIGNID|": "T_WF_ASSIGN.任务id"
@@ -577,19 +591,20 @@ formMetadata.businessInfo.BusinessInfo.Elements.BaseDataFieId.FieIdname=》Name 
         //获取数据，发送请求
 
         // //发送
-        se.se(vn, pvs.datUrl, 'ASSIGN', '查询代办', ['查询代办2show'])
+        se.se(vn, pvs.datUrl, 'ASSIGN', '查询代办任务', ['查询代办任务2show'])
       }
-      查询代办2show() {
+      查询代办任务2show() {
         //跳转、翻页
         const ui = gd.reg.ui
         var dat = pvs.rawDat['T_WF_ASSIGN']//工作流任务
-        console.log('查询代办2show', pvs.rawDat)
+        console.log('查询代办任务2show', pvs.rawDat)
         var 工作流任务 = new dfd.DataFrame(pvs.rawDat['T_WF_ASSIGN'])
         var 任务信息 = new dfd.DataFrame(pvs.rawDat['T_WF_RECEIVER'])
         var 用户信息 = new dfd.DataFrame(pvs.rawDat['T_SEC_USER'])
         var 工作流信息 = new dfd.DataFrame(pvs.rawDat['T_WF_PROCDEF_L'])
         var 工作流实例 = new dfd.DataFrame(pvs.rawDat['T_WF_PROCINST'])
-        var 当前节点 = new dfd.DataFrame(pvs.rawDat['T_WF_ACTINST_L'])
+        var 当前节点名 = new dfd.DataFrame(pvs.rawDat['T_WF_ACTINST_L'])
+        var 当前节点 = new dfd.DataFrame(pvs.rawDat['T_WF_ACTINST'])
         var 任务详情 = new dfd.DataFrame(pvs.rawDat['T_WF_APPROVALASSIGN'])
         var 单据编码 = new dfd.DataFrame(pvs.rawDat['T_BAS_BILLCODERULE'])
         var 单据全称 = new dfd.DataFrame(pvs.rawDat['T_BAS_BILLCODERULE_L'])
@@ -597,15 +612,15 @@ formMetadata.businessInfo.BusinessInfo.Elements.BaseDataFieId.FieIdname=》Name 
         //var 销售订单 = new dfd.DataFrame(pvs.rawDat['T_SAL_ORDER'])
         //var 单据类型 = new dfd.DataFrame(pvs.rawDat['T_BAS_BILLTYPE_L'])
         //----
-        工作流任务.print()
-        任务信息.print()
-        用户信息.print()
-        工作流信息.print()
-        工作流实例.print()
-        当前节点.print()
-        任务详情.print()
-        单据编码.print()
-        单据全称.print() //去掉 标准编码规
+        // 工作流任务.print()
+        // 任务信息.print()
+        // 用户信息.print()
+        // 工作流信息.print()
+        // 工作流实例.print()
+        // 当前节点.print()
+        // 任务详情.print()
+        // 单据编码.print()
+        // 单据全称.print() //去掉 标准编码规
         //销售订单.print()
         //单据类型.print()
 
@@ -615,8 +630,8 @@ formMetadata.businessInfo.BusinessInfo.Elements.BaseDataFieId.FieIdname=》Name 
         工作流任务v2 = dfd.merge({ "left": 工作流任务v2, "right": 用户信息, "on": ["接收人id"], how: "left" })
         工作流任务v2 = dfd.merge({ "left": 工作流任务v2, "right": 工作流实例, "on": ["流程实例id"], how: "inner" })
         工作流任务v2 = dfd.merge({ "left": 工作流任务v2, "right": 工作流信息, "on": ["流程id"], how: "left" })
+        工作流任务v2 = dfd.merge({ "left": 工作流任务v2, "right": 当前节点名, "on": ["节点id"], how: "left" })
         工作流任务v2 = dfd.merge({ "left": 工作流任务v2, "right": 当前节点, "on": ["节点id"], how: "left" })
-
         工作流任务v2 = dfd.merge({ "left": 工作流任务v2, "right": 任务详情, "on": ["任务id"], how: "left" })
         工作流任务v2 = dfd.merge({ "left": 工作流任务v2, "right": 单据编码, "on": ["单据类别"], how: "left" })
         工作流任务v2 = dfd.merge({ "left": 工作流任务v2, "right": 单据全称, "on": ["规则id"], how: "left" })
@@ -640,6 +655,17 @@ formMetadata.businessInfo.BusinessInfo.Elements.BaseDataFieId.FieIdname=》Name 
           value.单据全称 = value.单据全称.replace('标准编码规则', '')
           value.流程实例id = `<a onclick="er.emit('看指定流程','${value.流程实例id}') " href="#">${value.流程实例id}</a>`
           value.单据全称 = `<a onclick="er.emit('看指定单据','${value.单据id}','${value.单据类别}') " href="#">${value.单据全称}</a>`
+
+          console.log(value.节点开始)
+
+          const date1=moment(value.节点开始);
+          const date2=moment(value.节点完成);
+          const date3=date2.diff(date1,'minute');//计算相差的分钟数
+          const h=Math.floor(date3/60);//相差的小时数
+          console.log(value.节点开始,value.节点完成,h)
+          value.处理时长 = _.isNaN (h)?'无':h
+
+
         });
 
 
@@ -677,6 +703,9 @@ formMetadata.businessInfo.BusinessInfo.Elements.BaseDataFieId.FieIdname=》Name 
         }, {
           field: '流程状态',
           title: '流程状态'
+        }, {
+          field: '处理时长',
+          title: '处理时长(小时)'
         }]
 
         ui.showTab('#代办任务tab', columns, rows)
@@ -759,8 +788,8 @@ formMetadata.businessInfo.BusinessInfo.Elements.BaseDataFieId.FieIdname=》Name 
 
         //onMounted(() => ocls.bindEvt()); //窗口大小变动事件
         //onMounted(() => oui.remount()); //已经登入刷新处理
-        onMounted(() => er.emit('查询代办')); //已经登入刷新处理
-        onMounted(() => er.emit('查询单据类型')); //已经登入刷新处理
+        onMounted(() => er.emit('查询代办任务')); //已经登入刷新处理
+    
         //--变量关联到html的映射 js访问要加.value
         return { er, "pd": gd.pd, "ref_login_manage": gd.pd.refManageEmt, }
       }
