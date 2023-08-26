@@ -239,18 +239,18 @@
         er.on('swtab', this.swtab)
         er.on('遮罩', this.spto)
 
-        
+
         //er.on('获取音标', this.toGetPh) //获取音标
         er.on('看指定单据', this.seeCol)
         er.on('看指定流程', this.seeTab)
       }
 
-      swtab( name) {
+      swtab(name) {
         //切换标签，请求加载数据
-        console.log('切换标签到',name)
-        pvs.tabSele  = name
+        console.log('切换标签到', name)
+        pvs.tabSele = name
 
-        er.emit('查询'+ name ); //已经登入刷新处理
+        er.emit('查询' + name); //已经登入刷新处理
 
       }
 
@@ -383,7 +383,7 @@
         var 单据类型 = new dfd.DataFrame(pvs.rawDat['T_BAS_BILLTYPE'])
         var 单据名称 = new dfd.DataFrame(pvs.rawDat['T_BAS_BILLTYPE_L'])
         var 单据表 = new dfd.DataFrame(pvs.rawDat['T_BF_TABLEDEFINE'])
-        
+
         // var 单据类型 = new dfd.DataFrame(pvs.rawDat['T_BAS_BILLCODERULE'])
         // var 单据名称 = new dfd.DataFrame(pvs.rawDat['T_BAS_BILLCODERULE_L'])
 
@@ -406,30 +406,30 @@
         });
 
         var columns = [
-        {
-          field: 'FBILLTYPEID',
-          sortable: true,
-          width: 170,
-          title: '单据id'
-        },{
-          field: '单据编码',
-          sortable: true,
-          width: 170,
-          title: '单据编码'
-        }, {
-          field: '名称',
-          width: 210,
-          sortable: true,
-          title: '名称'
-        }, {
-          field: '描述',
-          sortable: true,
-          title: '描述'
-        }, {
-          field: '表名',
-          sortable: true,
-          title: '单据明细表'
-        }]
+          {
+            field: 'FBILLTYPEID',
+            sortable: true,
+            width: 170,
+            title: '单据id'
+          }, {
+            field: '单据编码',
+            sortable: true,
+            width: 170,
+            title: '单据编码'
+          }, {
+            field: '名称',
+            width: 210,
+            sortable: true,
+            title: '名称'
+          }, {
+            field: '描述',
+            sortable: true,
+            title: '描述'
+          }, {
+            field: '表名',
+            sortable: true,
+            title: '单据明细表'
+          }]
 
         ui.showTab('#单据类型tab', columns, rows)
       }
@@ -438,40 +438,40 @@
         //查询字段数据
         const ui = gd.reg.ui
         const se = gd.reg.se
-  
-/*
-T_META_TRACKERBILLTABLE
 
-select * f T_META_OBJECTTYPE_L
-
- select * from T_META_TOPCLASS_L
-
-T_BF_TABLEDEFINE
-
-//----表结构
-
- SELECT lookups.fid, lookups.fformid, lookups.ftablename, lookups.fpkfieldname, lookups.fpkfieldtype,
- lookups.FNameIsLocale, lookups.fnumberfieldname, lookups.fnamefieldname, lookups.forgfieldname, lookups.furl, 
- formslang.fname, forms.fsubsysid, subsys.fname fsubsysname
- FROM T_META_LOOKUPCLASS lookups INNER JOIN
- T_META_OBJECTTYPE forms ON forms.fid = lookups.fformid LEFT OUTER JOIN 
- T_META_OBJECTTYPE_L formslang ON (formslang.fid = forms.fid AND formslang.FLocaleId = 2052)
-  LEFT OUTER JOIN T_META_SUBSYSTEM_L subsys  ON (forms.fsubsysid = subsys.fid AND subsys.FLocaleId = 2052) 
- 
-----
-select * from T_META_OBJECTTYPE
-where fid = 'SAL_SaleOrder'  --数据库表结构都在xml字段中 TextField. FieldName中
-formMetadata.businessInfo.BusinessInfo.Elements.BaseDataFieId.FieIdname=》Name   TableName
-                                                orgfieId
-
-
-
-
-*/
+        /*
+        T_META_TRACKERBILLTABLE
+        
+        select * f T_META_OBJECTTYPE_L
+        
+         select * from T_META_TOPCLASS_L
+        
+        T_BF_TABLEDEFINE
+        
+        //----表结构
+        
+         SELECT lookups.fid, lookups.fformid, lookups.ftablename, lookups.fpkfieldname, lookups.fpkfieldtype,
+         lookups.FNameIsLocale, lookups.fnumberfieldname, lookups.fnamefieldname, lookups.forgfieldname, lookups.furl, 
+         formslang.fname, forms.fsubsysid, subsys.fname fsubsysname
+         FROM T_META_LOOKUPCLASS lookups INNER JOIN
+         T_META_OBJECTTYPE forms ON forms.fid = lookups.fformid LEFT OUTER JOIN 
+         T_META_OBJECTTYPE_L formslang ON (formslang.fid = forms.fid AND formslang.FLocaleId = 2052)
+          LEFT OUTER JOIN T_META_SUBSYSTEM_L subsys  ON (forms.fsubsysid = subsys.fid AND subsys.FLocaleId = 2052) 
+         
+        ----
+        select * from T_META_OBJECTTYPE
+        where fid = 'SAL_SaleOrder'  --数据库表结构都在xml字段中 TextField. FieldName中
+        formMetadata.businessInfo.BusinessInfo.Elements.BaseDataFieId.FieIdname=》Name   TableName
+                                                        orgfieId
+        
+        
+        
+        
+        */
         var vn = {
           "T_BAS_BILLTYPE": {
             "@column": "FBILLTYPEID,FNUMBER.单据编号,FBILLFORMID.单据编码 ",
-            "FISDEFAULT":1
+            "FISDEFAULT": 1
           },
           "T_BAS_BILLTYPE_L": {
             "@column": "FBILLTYPEID,FNAME.名称,FDESCRIPTION.描述",
@@ -480,10 +480,10 @@ formMetadata.businessInfo.BusinessInfo.Elements.BaseDataFieId.FieIdname=》Name 
           },
           "T_BF_TABLEDEFINE": {
             "@column": "FTABLENUMBER.表名,FFORMID.单据编码,FENTITYKEY.表主键",
-         
+
             "FFORMID|": "T_BAS_BILLTYPE.单据编码"
           },
-           
+
         }
         // vn = {
         //   "T_BAS_BILLCODERULE": {//T_BAS_BILLTYPE
@@ -528,11 +528,16 @@ formMetadata.businessInfo.BusinessInfo.Elements.BaseDataFieId.FieIdname=》Name 
         ui.spto(1) //loading 
         //查询用户
         var vn = {
+          "T_WF_PROCINST": {
+            "@column": "FPROCDEFID.流程id,FPROCINSTID.流程实例id,FSTATUS.流程状态,FBILLNO.单据编号",
+            "FSTATUS": FSTATUS,
+            "FCREATETIME&": CREATETIME,
+           //'FPROCINSTID|': "T_WF_ASSIGN.流程实例id"
+          },
           "T_WF_ASSIGN": {
             "@column": "FCREATETIME.日期,FSTATUS.节点状态,FASSIGNID.任务id,FPROCINSTID.流程实例id,FACTINSTID.节点id",
             // 'FNUMBER*':'XSDD000048_20230718184628'
-            "FCREATETIME&": CREATETIME,
-
+            "FPROCINSTID|":"T_WF_PROCINST.流程实例id",
             "@order": "-FCREATETIME"
           },
           "T_WF_RECEIVER": {
@@ -544,11 +549,7 @@ formMetadata.businessInfo.BusinessInfo.Elements.BaseDataFieId.FieIdname=》Name 
             'FUSERID|': "T_WF_RECEIVER.接收人id"
           },
 
-          "T_WF_PROCINST": {
-            "@column": "FPROCDEFID.流程id,FPROCINSTID.流程实例id,FSTATUS.流程状态,FBILLNO.单据编号",
-            "FSTATUS": FSTATUS,
-            'FPROCINSTID|': "T_WF_ASSIGN.流程实例id"
-          },
+
           "T_WF_PROCDEF_L": {
             "@column": "FPROCDEFID.流程id,FDISPLAYNAME.流程名",
             "FLOCALEID": 2052,
@@ -560,9 +561,9 @@ formMetadata.businessInfo.BusinessInfo.Elements.BaseDataFieId.FieIdname=》Name 
           },
           "T_WF_ACTINST": {
             "@column": "FACTINSTID.节点id,FCREATETIME.节点开始,FCOMPLETEDTIME.节点完成",
-            'FACTINSTID|': "T_WF_ASSIGN.节点id" 
+            'FACTINSTID|': "T_WF_ASSIGN.节点id"
           },
-          
+
           "T_WF_APPROVALASSIGN": {//任务详情
             "@column": "FASSIGNID.任务id,FKEYVALUE.单据id,FOBJECTTYPEID.单据类别",
             "FASSIGNID|": "T_WF_ASSIGN.任务id"
@@ -623,51 +624,55 @@ formMetadata.businessInfo.BusinessInfo.Elements.BaseDataFieId.FieIdname=》Name 
         // 单据全称.print() //去掉 标准编码规
         //销售订单.print()
         //单据类型.print()
+        let rows = []
+        try {
+
+          let 工作流任务v2 = dfd.merge({ "left": 工作流实例, "right": 工作流任务, "on": ["流程实例id"], how: "inner" })
+          工作流任务v2 = dfd.merge({ "left": 工作流任务v2, "right": 任务信息, "on": ["任务id"], how: "left" })
+          工作流任务v2 = dfd.merge({ "left": 工作流任务v2, "right": 用户信息, "on": ["接收人id"], how: "left" })
+          工作流任务v2 = dfd.merge({ "left": 工作流任务v2, "right": 工作流信息, "on": ["流程id"], how: "left" })
+          工作流任务v2 = dfd.merge({ "left": 工作流任务v2, "right": 当前节点名, "on": ["节点id"], how: "left" })
+          工作流任务v2 = dfd.merge({ "left": 工作流任务v2, "right": 当前节点, "on": ["节点id"], how: "left" })
+          工作流任务v2 = dfd.merge({ "left": 工作流任务v2, "right": 任务详情, "on": ["任务id"], how: "left" })
+          工作流任务v2 = dfd.merge({ "left": 工作流任务v2, "right": 单据编码, "on": ["单据类别"], how: "left" })
+          工作流任务v2 = dfd.merge({ "left": 工作流任务v2, "right": 单据全称, "on": ["规则id"], how: "left" })
 
 
+          工作流任务v2.sortValues("流程实例id", { ascending: false, inplace: true })
+          工作流任务v2.print()
+          rows = dfd.toJSON(工作流任务v2)
 
-        let 工作流任务v2 = dfd.merge({ "left": 工作流任务, "right": 任务信息, "on": ["任务id"], how: "left" })
-        工作流任务v2 = dfd.merge({ "left": 工作流任务v2, "right": 用户信息, "on": ["接收人id"], how: "left" })
-        工作流任务v2 = dfd.merge({ "left": 工作流任务v2, "right": 工作流实例, "on": ["流程实例id"], how: "inner" })
-        工作流任务v2 = dfd.merge({ "left": 工作流任务v2, "right": 工作流信息, "on": ["流程id"], how: "left" })
-        工作流任务v2 = dfd.merge({ "left": 工作流任务v2, "right": 当前节点名, "on": ["节点id"], how: "left" })
-        工作流任务v2 = dfd.merge({ "left": 工作流任务v2, "right": 当前节点, "on": ["节点id"], how: "left" })
-        工作流任务v2 = dfd.merge({ "left": 工作流任务v2, "right": 任务详情, "on": ["任务id"], how: "left" })
-        工作流任务v2 = dfd.merge({ "left": 工作流任务v2, "right": 单据编码, "on": ["单据类别"], how: "left" })
-        工作流任务v2 = dfd.merge({ "left": 工作流任务v2, "right": 单据全称, "on": ["规则id"], how: "left" })
+          工作流实例.print()
 
+          _.forEach(rows, function (value, key) {
+            //整理数据
 
-        工作流任务v2.sortValues("流程实例id", { ascending: false, inplace: true })
-        工作流任务v2.print()
-        const rows = dfd.toJSON(工作流任务v2)
+            value.标题 = value.标题.split('\n')[0]
 
+            value.节点状态 = value.节点状态 == 1 ? '完成' : '进行中'//1 or 0
 
+            var stat = { 0: "准备", 1: "完成", 2: "挂起", 3: "错误", 4: "终止", 5: "暂停", }
+            value.流程状态 = stat[value.流程状态]
+            value.单据全称 = value.单据全称.replace('标准编码规则', '')
+            value.流程实例id = `<a onclick="er.emit('看指定流程','${value.流程实例id}') " href="#">${value.流程实例id}</a>`
+            value.单据全称 = `<a onclick="er.emit('看指定单据','${value.单据id}','${value.单据类别}') " href="#">${value.单据全称}</a>`
 
-        _.forEach(rows, function (value, key) {
-          //整理数据
+            //console.log(value.节点开始)
 
-          value.标题 = value.标题.split('\n')[0]
-
-          value.节点状态 = value.节点状态 == 1 ? '完成' : '进行中'//1 or 0
-
-          var stat = { 0: "准备", 1: "完成", 2: "挂起", 3: "错误", 4: "终止", 5: "暂停", }
-          value.流程状态 = stat[value.流程状态]
-          value.单据全称 = value.单据全称.replace('标准编码规则', '')
-          value.流程实例id = `<a onclick="er.emit('看指定流程','${value.流程实例id}') " href="#">${value.流程实例id}</a>`
-          value.单据全称 = `<a onclick="er.emit('看指定单据','${value.单据id}','${value.单据类别}') " href="#">${value.单据全称}</a>`
-
-          console.log(value.节点开始)
-
-          const date1=moment(value.节点开始);
-          const date2=moment(value.节点完成);
-          const date3=date2.diff(date1,'minute');//计算相差的分钟数
-          const h=Math.floor(date3/60);//相差的小时数
-          console.log(value.节点开始,value.节点完成,h)
-          value.处理时长 = _.isNaN (h)?'无':h
+            const date1 = moment(value.节点开始);
+            const date2 = moment(value.节点完成);
+            const date3 = date2.diff(date1, 'minute');//计算相差的分钟数
+            const h = Math.floor(date3 / 60);//相差的小时数
+            //console.log(value.节点开始,value.节点完成,h)
+            value.处理时长 = _.isNaN(h) ? '无' : h
 
 
-        });
+          });
 
+        } catch (err) {
+          console.log(err)
+
+        }
 
         var columns = [{
           field: '流程实例id',
@@ -733,10 +738,10 @@ formMetadata.businessInfo.BusinessInfo.Elements.BaseDataFieId.FieIdname=》Name 
             if (dat.data[key].length > 0) {
               console.log(key + '==', dat.data[key].length, dat.data[key][0])
             } else {
-              console.log(key, info, '无上数据')
+              console.log(key, info, '上无数据')
             }
           });
-          console.log(name + '加载', number, '行')
+          console.log(info + '加载', number, '行')
           ////下一步事件
           if (_.isString(next)) { er.emit(next) }
           //下一批事件
@@ -789,7 +794,7 @@ formMetadata.businessInfo.BusinessInfo.Elements.BaseDataFieId.FieIdname=》Name 
         //onMounted(() => ocls.bindEvt()); //窗口大小变动事件
         //onMounted(() => oui.remount()); //已经登入刷新处理
         onMounted(() => er.emit('查询代办任务')); //已经登入刷新处理
-    
+
         //--变量关联到html的映射 js访问要加.value
         return { er, "pd": gd.pd, "ref_login_manage": gd.pd.refManageEmt, }
       }
