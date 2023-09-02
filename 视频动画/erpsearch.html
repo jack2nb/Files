@@ -77,6 +77,15 @@
           </li>
           <li class="nav-item" id="prac">
             <a class="nav-link shadow   bg-secondary text-white  px-1 px-sm-3 px-lg-5 mx-1 mx-sm-2 mx-lg-2"
+              @click="er.emit('swtab' ,'用户账号')    " :class="[{' active bg-info ': ('用户账号' == pd.tabSele )} ]">用户账号</a>
+          </li>
+          <li class="nav-item" id="prac">
+            <a class="nav-link shadow   bg-secondary text-white  px-1 px-sm-3 px-lg-5 mx-1 mx-sm-2 mx-lg-2"
+              @click="er.emit('swtab' ,'物料价格')    " :class="[{' active bg-info ': ('物料价格' == pd.tabSele )} ]">物料价格</a>
+          </li>
+
+          <li class="nav-item" id="prac">
+            <a class="nav-link shadow   bg-secondary text-white  px-1 px-sm-3 px-lg-5 mx-1 mx-sm-2 mx-lg-2"
               @click="er.emit('swtab' ,'业务流程')    " :class="[{' active bg-info ': ('业务流程' == pd.tabSele )} ]">业务流程</a>
           </li>
 
@@ -85,12 +94,28 @@
         <!-- 表1-->
         <div :class="[{' d-none ': ! (  '代办任务' == pd.tabSele )} ]">
 
-          <button @click="er.emit('筛选处理中' ,'处理中') " type="button" class="btn mx-2 btn-primary offbut">处理中</button>
-          <button @click="er.emit('筛选已完成' ,'已完成') " type="button" class="btn mx-2 btn-primary offbut">已完成</button>
+          <button @click="er.emit('筛选代办任务' ,'处理中') " type="button" class="btn mx-2 btn-primary offbut">处理中</button>
+          <button @click="er.emit('筛选代办任务' ,'已完成') " type="button" class="btn mx-2 btn-primary offbut">已完成</button>
+          <button @click="er.emit('筛选代办任务' ,'错误') " type="button" class="btn mx-2 btn-primary offbut">错误</button>
           <!--表数据--->
           <table class="  bg-white" id="代办任务tab"></table>
 
         </div>
+
+        <!-- 表1-->
+        <div :class="[{' d-none ': ! (  '用户账号' == pd.tabSele )} ]">
+          <!--表数据--->
+          <table class="  bg-white" id="用户账号tab"></table>
+        </div>
+
+
+        <!-- 表-物料价格-->
+        <div :class="[{' d-none ': ! (  '物料价格' == pd.tabSele )} ]">
+          <!--表数据--->
+          <table class="  bg-white" id="物料价格tab"></table>
+        </div>
+
+
         <!-- 表2-->
         <div :class="[{' d-none ': ! (  '系统单据' == pd.tabSele )} ]">
           <div v-if="1==0" class="container-md    mt-2     pt-3  pb-3">
@@ -362,16 +387,240 @@
       }
 
       init() {
+
         //初始（设置）
+        er.on('查询物料价格', this.查询物料价格)
+        er.on('查询物料价格2show', this.查询物料价格2show)
         //绑定事件 
+        er.on('查询用户账号', this.查询用户账号)
+        er.on('查询用户账号2show', this.查询用户账号2show)
+
         er.on('查询代办任务', this.查询代办任务)
-        er.on('筛选已完成', this.查询代办任务)
-        er.on('筛选处理中', this.查询代办任务)
+        er.on('筛选代办任务', this.查询代办任务)
+        //er.on('筛选处理中', this.查询代办任务)
         er.on('查询代办任务2show', this.查询代办任务2show)
         //--
         er.on('查询系统单据', this.查询系统单据)
         er.on('查询系统单据2show', this.查询系统单据2show)
 
+      }
+      查询物料价格(name) {
+        //查询字段数据
+        const ui = gd.reg.ui
+        const se = gd.reg.se
+
+        var vn = vn = {
+          "T_PUR_POORDERENTRY@采购过的物料": {
+            "@column": "FENTRYID.max.明细id ",
+            "@group": 'FMATERIALID'
+          },
+          "T_PUR_POORDERENTRY": {
+            "@column": "FENTRYID.明细id,FID.单据id,FMATERIALID.物料id,F_QINL_WGBZ.委外备注,F_QINL_WWBZ.外购备注",
+            'FENTRYID|': 'T_PUR_POORDERENTRY@采购过的物料.明细id',
+          },
+          "T_PUR_POORDERENTRY_F": {
+            "@column": "FENTRYID.明细id,FID.单据id,FPRICE.价格",
+            'FENTRYID|': 'T_PUR_POORDERENTRY@采购过的物料.明细id',
+          },
+          "T_PUR_POORDER": {
+            "@column": "FID.单据id,FBILLNO.单据编号",
+            'FID|': 'T_PUR_POORDERENTRY.单据id',
+            'FDOCUMENTSTATUS': "C",
+          },
+          "T_BD_MATERIAL_L@采购物料名": {
+            "@column": "FMATERIALID.物料id,FNAME,FSPECIFICATIONGG.规格,F_QINL_SPECIFICATION.型号",
+            'FMATERIALID|': "T_PUR_POORDERENTRY.物料id",
+            'FLOCALEID': 2052,
+          },
+          "T_BD_MATERIAL@采购物料": {
+            "@column": "FMATERIALID.物料id,FNUMBER.物料代码",
+            'FMATERIALID|': "T_PUR_POORDERENTRY.物料id",
+          },
+
+          "T_SAL_ORDERENTRY@销售过的物料": {
+            "@column": "FENTRYID.max.明细id ",
+            "@group": 'FMATERIALID'
+          },
+          "T_SAL_ORDERENTRY": {
+            "@column": "FENTRYID.明细id,FID.单据id,FMATERIALID.物料id,F_QINL_WGBZ.委外备注,F_QINL_WWBZ.外购备注",
+            'FENTRYID|': 'T_SAL_ORDERENTRY@销售过的物料.明细id',
+          },
+          "T_SAL_ORDERENTRY_F": {
+            "@column": "FENTRYID.明细id,FID.单据id,FPRICE.价格",
+            'FENTRYID|': 'T_SAL_ORDERENTRY@销售过的物料.明细id',
+            'FISFREE': 0,
+          },
+          "T_SAL_ORDER": {
+            "@column": "FID.单据id,FBILLNO.单据编号",
+            'FID|': 'T_SAL_ORDERENTRY.单据id',
+            'FDOCUMENTSTATUS': "C",
+          },
+          "T_SAL_ORDERFIN": {
+            "@column": "FID.单据id,FEXCHANGERATE.汇率,FBILLAMOUNT_LC.本币金额,FBILLAMOUNT.金额 ",
+            'FID|': 'T_SAL_ORDER.单据id',
+          },
+          "T_BD_MATERIAL_L@销售物料名": {
+            "@column": "FMATERIALID.物料id,FNAME,FSPECIFICATIONGG.规格,F_QINL_SPECIFICATION.型号",
+            'FMATERIALID|': "T_SAL_ORDERENTRY.物料id",
+            'FLOCALEID': 2052,
+
+          },
+          "T_BD_MATERIAL@销售物料": {
+            "@column": "FMATERIALID.物料id,FNUMBER.物料代码",
+            'FMATERIALID|': "T_SAL_ORDERENTRY.物料id",
+          },
+        }
+        // //发送
+        se.se(vn, pvs.datUrl, 'MATERIAL', '查询物料价格', ['查询物料价格2show'])
+      }
+
+      查询物料价格2show() {
+        //跳转、翻页
+        const ui = gd.reg.ui
+
+        console.log('查询物料价格2show==', pvs.rawDat)
+        var 采购明细 = new dfd.DataFrame(pvs.rawDat['T_PUR_POORDERENTRY'])
+        var 采购价格 = new dfd.DataFrame(pvs.rawDat['T_PUR_POORDERENTRY_F'])
+        var 采购单据 = new dfd.DataFrame(pvs.rawDat['T_PUR_POORDER'])
+        var 采购物料名 = new dfd.DataFrame(pvs.rawDat['T_BD_MATERIAL_L@采购物料名'])
+        var 采购物料 = new dfd.DataFrame(pvs.rawDat['T_BD_MATERIAL@采购物料'])
+
+
+        var 销售明细 = new dfd.DataFrame(pvs.rawDat['T_SAL_ORDERENTRY'])
+        var 销售价格 = new dfd.DataFrame(pvs.rawDat['T_SAL_ORDERENTRY_F'])
+        var 销售单据 = new dfd.DataFrame(pvs.rawDat['T_SAL_ORDER'])
+        var 销售物料名 = new dfd.DataFrame(pvs.rawDat['T_BD_MATERIAL_L@销售物料名'])
+        var 销售物料 = new dfd.DataFrame(pvs.rawDat['T_BD_MATERIAL@销售物料'])
+        var 销售币别 = new dfd.DataFrame(pvs.rawDat['T_SAL_ORDERFIN'])
+
+        let 采购v2 = dfd.merge({ "left": 采购明细, "right": 采购价格, "on": ["明细id"], how: "left" })
+        采购v2 = dfd.merge({ "left": 采购v2, "right": 采购单据, "on": ["单据id"], how: "left" })
+        采购v2 = dfd.merge({ "left": 采购v2, "right": 采购物料名, "on": ["物料id"], how: "left" })
+        采购v2 = dfd.merge({ "left": 采购v2, "right": 采购物料, "on": ["物料id"], how: "left" })
+        // var 单据类型 = new dfd.DataFrame(pvs.rawDat['T_BAS_BILLCODERULE'])
+        // var 单据名称 = new dfd.DataFrame(pvs.rawDat['T_BAS_BILLCODERULE_L'])
+        let 销售v2 = dfd.merge({ "left": 销售明细, "right": 销售价格, "on": ["明细id"], how: "inner" })
+        销售v2 = dfd.merge({ "left": 销售v2, "right": 销售单据, "on": ["单据id"], how: "left" })
+        销售v2 = dfd.merge({ "left": 销售v2, "right": 销售物料名, "on": ["物料id"], how: "left" })
+        销售v2 = dfd.merge({ "left": 销售v2, "right": 销售物料, "on": ["物料id"], how: "left" })
+        销售v2 = dfd.merge({ "left": 销售v2, "right": 销售币别, "on": ["单据id"], how: "left" })
+
+        销售币别
+        //采购物料.print()
+        let 销售rows = dfd.toJSON(销售v2)
+        let 采购rows = dfd.toJSON(采购v2)
+        _.forEach(销售rows, function (value, key) {
+          //整理数据
+          //value.名称 = value.名称.replace('标准编码规则', '')
+          //value.名称 = value.名称.replace('编码规则', '')
+          value.来源 = '销售';
+          value.价格 = value.价格*value.汇率;
+
+        });
+        _.forEach(采购rows, function (value, key) {
+          //整理数据
+          value.来源 = '采购';
+          //value.名称 = value.名称.replace('编码规则', '')
+
+
+        });
+
+
+
+        const rows = 销售rows.concat(采购rows);
+        console.log('row==', rows[0])
+        var columns = [
+          {
+            field: '单据编号',
+            sortable: true,
+            width: 40,
+            title: '单据编号'
+          }, {
+            field: '物料代码',
+            width: 50,
+            sortable: true,
+            title: '物料代码'
+          }, {
+            field: '规格',
+            width: 50,
+            sortable: true,
+            title: '规格'
+          }, {
+            field: '型号',
+            width: 50,
+            sortable: true,
+            title: '型号'
+          }, {
+            field: 'FNAME',
+            width: 50,
+            sortable: true,
+            title: '名称'
+          }, {
+            field: '价格',
+            width: 50,
+            sortable: true,
+            title: '价格'
+          }, {
+            field: '来源',
+            width: 50,
+            sortable: true,
+            title: '来源'
+          }, {
+            field: '委外备注',
+            width: 50,
+            sortable: true,
+            title: '委外备注'
+          }, {
+            field: '外购备注',
+            width: 50,
+            sortable: true,
+            title: '外购备注'
+          },]
+
+        ui.showTab('#物料价格tab', columns, rows)
+      }
+
+      查询用户账号2show() {
+        //跳转、翻页
+        const ui = gd.reg.ui
+
+        console.log('查询用户账号2show==', pvs.rawDat)
+        var 用户账号 = new dfd.DataFrame(pvs.rawDat['T_SEC_USER'])
+
+
+        // var 单据类型 = new dfd.DataFrame(pvs.rawDat['T_BAS_BILLCODERULE'])
+        // var 单据名称 = new dfd.DataFrame(pvs.rawDat['T_BAS_BILLCODERULE_L'])
+
+        用户账号.print()
+        const rows = dfd.toJSON(用户账号)
+
+        _.forEach(rows, function (value, key) {
+          //整理数据
+          //value.名称 = value.名称.replace('标准编码规则', '')
+          //value.名称 = value.名称.replace('编码规则', '')
+
+
+        });
+
+        var columns = [
+          {
+            field: 'FUSERID',
+            sortable: true,
+            width: 70,
+            title: 'id'
+          }, {
+            field: 'FNAME',
+            sortable: true,
+            width: 170,
+            title: '名字'
+          }, {
+            field: 'FDESCRIPTION',
+            width: 210,
+            sortable: true,
+            title: '描述'
+          }]
+
+        ui.showTab('#用户账号tab', columns, rows)
       }
 
 
@@ -433,6 +682,23 @@
 
         ui.showTab('#单据类型tab', columns, rows)
       }
+
+      查询用户账号(name) {
+        //查询字段数据
+        const ui = gd.reg.ui
+        const se = gd.reg.se
+
+        var vn = {
+          "T_SEC_USER": {
+            // "@column": "FBILLTYPEID,FNUMBER.单据编号,FBILLFORMID.单据编码 ",
+            //"FISDEFAULT": 1
+          }
+
+        }
+        // //发送
+        se.se(vn, pvs.datUrl, 'USER', '查询用户账号', ['查询用户账号2show'])
+      }
+
 
       查询系统单据(name) {
         //查询字段数据
@@ -516,6 +782,7 @@
         if (!_.isEmpty(流程状态)) {
           if (流程状态 == "处理中") { FSTATUS = 2; CREATETIME = undefined }
           if (流程状态 == "已完成") { FSTATUS = 1 }
+          if (流程状态 == "错误") { FSTATUS = 3; CREATETIME = undefined }
 
 
         }
@@ -532,12 +799,12 @@
             "@column": "FPROCDEFID.流程id,FPROCINSTID.流程实例id,FSTATUS.流程状态,FBILLNO.单据编号",
             "FSTATUS": FSTATUS,
             "FCREATETIME&": CREATETIME,
-           //'FPROCINSTID|': "T_WF_ASSIGN.流程实例id"
+            //'FPROCINSTID|': "T_WF_ASSIGN.流程实例id"
           },
           "T_WF_ASSIGN": {
             "@column": "FCREATETIME.日期,FSTATUS.节点状态,FASSIGNID.任务id,FPROCINSTID.流程实例id,FACTINSTID.节点id",
             // 'FNUMBER*':'XSDD000048_20230718184628'
-            "FPROCINSTID|":"T_WF_PROCINST.流程实例id",
+            "FPROCINSTID|": "T_WF_PROCINST.流程实例id",
             "@order": "-FCREATETIME"
           },
           "T_WF_RECEIVER": {
@@ -657,10 +924,11 @@
             value.流程实例id = `<a onclick="er.emit('看指定流程','${value.流程实例id}') " href="#">${value.流程实例id}</a>`
             value.单据全称 = `<a onclick="er.emit('看指定单据','${value.单据id}','${value.单据类别}') " href="#">${value.单据全称}</a>`
 
-            //console.log(value.节点开始)
 
             const date1 = moment(value.节点开始);
-            const date2 = moment(value.节点完成);
+            let date2 = _.isNull(value.节点完成) ? moment() : moment(value.节点完成);
+            //console.log('时间==',value.节点开始, value.节点完成 ,moment()  )
+
             const date3 = date2.diff(date1, 'minute');//计算相差的分钟数
             const h = Math.floor(date3 / 60);//相差的小时数
             //console.log(value.节点开始,value.节点完成,h)
@@ -710,7 +978,7 @@
           title: '流程状态'
         }, {
           field: '处理时长',
-          title: '处理时长(小时)'
+          title: '经过时长(小时)'
         }]
 
         ui.showTab('#代办任务tab', columns, rows)
