@@ -312,13 +312,11 @@ wordGroup.moveTo
 
 ## 高级共功能
 
+### 安装json-loader
+
 #### 添加json支持
 
-movy\package.json;jsdemo/package.json 文件加入   
 
-```
-"dependencies": { "json-loader": "^0.5.5",}
-```
 
 ```
 npm install --dependencies
@@ -326,23 +324,15 @@ npm install --dependencies
 
 
 
-
-
-movy\webpack.config.js ; jsdemo/package-lock.json
-
 ```
 npm install --save-dev json-loader
 ```
-
-#### 貌似无效
-
-```json
-rules:{
-      test: /\.json$/,
-      loader: "json-loader",
-      type: "javascript/auto", // 需要指定 type
-    },
+需要用到那些包 movy\package.json  文件加入   
 ```
+"dependencies": { "json-loader": "^0.5.5",}
+```
+
+
 
 
 
@@ -350,10 +340,33 @@ rules:{
 
 package.json/package-lock.json 配置后 自动识别
 
+代码中添加
+
 ```js
 const srcCfg = require('./src.json');
 console.log(11111 ,srcCfg)
 ```
 
+### 加载polyfill
 
+错误
+
+```
+webpack ＜ 5 used to include polyfills for node.js core modules by default.
+```
+webpack.config.js 添加
+```js
+const NodePolyfillPlugin = require('node-polyfill-webpack-plugin')
+
+
+plugins.push(  new NodePolyfillPlugin());
+
+
+```
+
+### 安装 file-loader
+
+```
+npm install --save-dev file-loader
+```
 
