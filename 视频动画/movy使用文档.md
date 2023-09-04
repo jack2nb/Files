@@ -338,7 +338,9 @@ npm install --save-dev json-loader
 
 ### 使用js代码 加载json内容
 
-package.json/package-lock.json 配置后 自动识别
+C:\Users\Administrator\AppData\Roaming\npm\node_modules\movy
+
+ package.json/package-lock.json 配置后 自动识别
 
 代码中添加
 

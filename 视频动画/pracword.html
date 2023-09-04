@@ -227,7 +227,7 @@
     <transition v-cloak enter-active-class="animated fadeInLeft" leave-active-class="animated fadeOutLeft">
         <nav v-if="pd.showNav " class="    d-flex   bg-light"
             style="z-index:1082; top:0;left:0;width: 220px; height: 100vh; position: fixed;  ">
-            <ul>
+            <ul style="overflow-y: scroll;  width: 100vh; " >
                 <li class="nav-item ">
                     <a class="nav-link" href="#">目录 </a>
                 </li>
@@ -526,7 +526,7 @@
 
                 var st = document.createElement("script");
                 st.id = 'dataFromJson';
-                st.src = `//${src}/${pvs.type}/${pvs.rpid.substring(pvs.rpid.length - 2, pvs.rpid.length - 1)}/${pvs.rpid.substring(pvs.rpid.length - 1)}/cfg_${pvs.pid}.json`
+                st.src = `//${src}/${pvs.type}/${pvs.rpid.substring(pvs.rpid.length - 2, pvs.rpid.length - 1)}/${pvs.rpid.substring(pvs.rpid.length - 1)}/cfg_${pvs.pid}.jsonp`
                 //'https://disk.17121.top/camb_word/6/5/365/cfg_365.json';
                 // 'https://p_disk.17121.top/camb_word/6/5/365/cfg_365.json'; //经过代理
                 st.onerror = that.signErr;
@@ -539,7 +539,7 @@
                 that.spto(1) //loading 
                 //leftList  加载左侧菜单
                 var wl = document.createElement("script");
-                wl.src = `//${src}/${pvs.type}/word_list.json`
+                wl.src = `//${src}/${pvs.type}/word_list.jsonp`
                 wl.onload = that.leftListLoad;
                 document.body.appendChild(wl);
 

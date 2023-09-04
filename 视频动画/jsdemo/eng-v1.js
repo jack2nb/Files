@@ -2,17 +2,19 @@ import * as mo from "movy";
 //webpack
 var fs = require("fs");
 
+var path = require("path");
 //载入配置文件
 const srcCfg = require('./src.json');
-const wordCfg = require('./src.json');
-console.log('cfg==' ,srcCfg)
+const wordCfg = require('D:/jack/eng-amt/en500word/1/1/cfg_11p.json');
+
+console.log('cfg==' ,srcCfg,wordCfg,wordCfg.toString())
+ 
+
+ 
+
+ 
 
 
-
-var path = require("path");
-
-
-console.log(fs.readFileSync());
 /* seed */
 mo.cameraMoveTo({ zoom:1.5,  duration: 0 }); //横向移动摄像机
 //-----背景
