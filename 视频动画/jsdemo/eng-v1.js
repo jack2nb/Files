@@ -33,22 +33,26 @@ bgImg = bgGroup.addImage(imgBg, {z:-99,y:0,x:0,scale:6.0}) //缩放7.5
 mo.addText('每天说英语',{ position:[-5.2,-2.6], opacity:0.5,scale:0.15,  color:"#2a2a2a" })
 mo.addText('Speak English Every Day',{ position:[-4.70,-2.8], opacity:0.5,scale:0.13,  color:"#2a2a2a" })
  
-mo.addText('生活常用词500个',{ position:[0.0,2.4], opacity:0.9,scale:0.38,  color:"#2a2a2a" })
+mo.addText('生活常用词500个',{ position:[0.0,2.4], opacity:0.9,scale:0.38,  color:"#2a2a2a" }).wipeIn( { duration:1})
 
 //------老师
  let teacher = {}
 
 //------女老师
 let teacherF =  mo.addGroup( );
-teacher.f = teacherF.addImage( srcDt['教师04'], {z:-98,y:-0.4,x:-4.9,scale:3.5, opacity:0.9})//.changeOpacity(0.9,{  duration:0})
+teacher.f = teacherF.addImage( srcDt['教师04'], {z:-98,y:-0.4,x:-4.9,scale:3.5, opacity:1})//.changeOpacity(0.9,{  duration:0})
 //------男老师
 let teacherM =  mo.addGroup( );
-teacher.m = teacherM.addImage( srcDt['教师07'], {z:-98,y:-0.4,x:-4.9,scale:3.5, opacity:0.9})//.changeOpacity(0.9,{  duration:0})
+teacher.m = teacherM.addImage( srcDt['教师07'], {z:-98,y:-0.4,x:-4.9,scale:3.5, opacity:1})//.changeOpacity(0.9,{  duration:0})
 
-
+//---老师进入/离开
 mo.pause(3); 
-teacher.m.changeOpacity(0.3,{ duration:1, ease: "expo.in"})
-teacher.m.moveTo({y:0,x:0 ,t: "<",duration:5, ease: "expo.inOut"})
+teacher.m.changeOpacity(0.2,{ duration:1, ease: "expo.in"})
+teacher.m.moveTo({y:-0.4,x:-7.9 ,t: "<",duration:1, ease: "expo.in"})
+
+
+teacher.f.changeOpacity(0.2,{ duration:1, ease: "expo.in"})
+teacher.f.moveTo({y:-0.4,x:-7.9 ,t: "<",duration:1, ease: "expo.in"})
 
 
 
