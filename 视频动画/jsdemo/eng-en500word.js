@@ -11,7 +11,8 @@ console.log('cfg==' ,srcCfg,wordCfg,wordCfg.toString())
  
 
  
-
+let srcDt={"背景01":"./src/黑白白板.png","教师04":"./src/教师4.png"
+}
  
 
 
@@ -21,22 +22,32 @@ mo.cameraMoveTo({ zoom:1.5,  duration: 0 }); //横向移动摄像机
 let bgImg  
 let bgGroup =  mo.addGroup( );
 let bg = bgGroup.addRect({z:-100,scale:20,color: "#ffffff" });
-let imgBg  = './src/bg-palnt3.png';//雨雾草 v1
+let imgBg  = srcDt['背景01']//'./src/bg-palnt3.png';//雨雾草 v1
 //bgImg = bgGroup.addImage(imgBg, {z:-99,y:-2.1,x:0,scale:3.6})
 
-imgBg =  './src/grass.jpg';//草原 v2
-bgImg = bgGroup.addImage(imgBg, {z:-99,y:0,x:0,scale:7.5})
+//imgBg =  './src/grass.jpg';//草原 v2
+bgImg = bgGroup.addImage(imgBg, {z:-99,y:0,x:0,scale:6.0}) //缩放7.5
 
 mo.addText('每天说英语',{ position:[-5.2,-2.6], opacity:0.5,scale:0.15,  color:"#2a2a2a" })
 mo.addText('Speak English Every Day',{ position:[-4.70,-2.8], opacity:0.5,scale:0.13,  color:"#2a2a2a" })
-//imgBg =  './src/grass2.png';//草原  v3
-//bgImg = bgGroup.addImage(imgBg, {z:-99,y:-2.10,x:0,scale:3.1})
-
+ 
+mo.addText('生活常用词500个',{ position:[0.0,2.4], opacity:0.9,scale:0.38,  color:"#2a2a2a" })
 
 //------背景卡片
-let imgCard  = './src/bg-card.png'; //卡片
-bgGroup.addImage(imgCard, {z:-98,y:0,x:0,scale:5.3})//.changeOpacity(0.9,{  duration:0})
+//let imgCard  = './src/bg-card.png'; //卡片
+//bgGroup.addImage(imgCard, {z:-98,y:0,x:0,scale:5.3})//.changeOpacity(0.9,{  duration:0})
 
+//------女老师
+let imgCard  = srcDt['教师04']; //卡片
+bgGroup.addImage(imgCard, {z:-98,y:-0.4,x:-4.9,scale:3.5})//.changeOpacity(0.9,{  duration:0})
+
+
+
+
+for (let key in wordCfg.data) {
+    // code block to be executed
+    console.log('word', wordCfg.data[key])
+}
 
 
 //---单词开始
