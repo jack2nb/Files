@@ -27,7 +27,7 @@ let srcDt = {
 
 }
 
-var fast = 0
+var fast = 1
 
 /* seed */
 mo.cameraMoveTo({ zoom: 1.5, duration: 0 }); //横向移动摄像机
@@ -58,16 +58,7 @@ teacher.f = teacherF.addImage(srcDt['教师04'], { z: 98, y: -0.4, x: -10, scale
 let teacherM = mo.addGroup();
 teacher.m = teacherM.addImage(srcDt['教师07'], { z: 98, y: -0.4, x: -10, scale: 2.8 })//.changeOpacity(0.9,{  duration:0})
 //teacher.m .fadeOut( {  duration:0 })
-
-//---老师进入/离开
-//mo.pause(3); 
-// teacher.m.changeOpacity(0.2,{ duration:1, ease: "expo.in"})
-// teacher.m.moveTo({y:-0.4,x:-7.9 ,t: "<",duration:1, ease: "expo.in"})
-
-
-// teacher.f.changeOpacity(0.2,{ duration:1, ease: "expo.in"})
-// teacher.f.moveTo({y:-0.4,x:-7.9 ,t: "<",duration:1, ease: "expo.in"})
-
+ 
 
 function 闪一下(obj) {
     obj.changeOpacity(0.5, { t: ">", duration: 0.3 * fast, ease: "power2.in" })
@@ -97,15 +88,15 @@ for (let key in wordCfg.data) {
     obj.enWord = wordCfg.data[key].en
     //----创建单词
     obj.zh = obj.g.addText(obj.zhWord, { position: [0.2, 1], opacity: 0.9, scale: 0.59, color: "#0a0a0a" })
-    obj.en = obj.g.addText(obj.enWord, { position: [0.2, -0.8], opacity: 0.9, scale: 0.59, color: "#0a0a0a" })
+    obj.en = obj.g.addText(obj.enWord, { position: [0.2, -0.6], opacity: 0.9, scale: 0.59, color: "#0a0a0a" })
     //---英标图片
-    obj.ph = obj.g.addImage(srcDt['音标'], { x: 0.2, y: -0.1, scale: 0.38 })
+    obj.ph = obj.g.addImage(srcDt['音标'], { x: 0.2, y: 0, scale: 0.38 })
 
 
     //---女老师in
-    teacher.f.moveTo({ y: -0.4, x: -4, duration: 1.8 * fast, ease: "expo.out" })
+    teacher.f.moveTo({ y: -0.4, x: -4, duration: 1.4 * fast, ease: "expo.out" })
     //----单词朗读
-    obj.zh.flyIn({ duration: 1.1 * fast });
+    obj.zh.flyIn({ duration:0.9 * fast });
     闪一下(obj.zh)
     进度线(1 * fast, 0.2, 0.4)//中文线
     obj.ph.wipeIn({ duration: 1.1 * fast, ease: "power4.out" })
@@ -113,9 +104,9 @@ for (let key in wordCfg.data) {
     闪一下(obj.en) //异步才能获取坐标 object3D
     进度线(1 * fast, 0.2, -1.5)
     //----老师out
-    teacher.f.moveTo({ y: -0.4, x: -10, duration: 1.8 * fast, ease: "expo.in" })
+    teacher.f.moveTo({ y: -0.4, x: -10, duration: 1.4 * fast, ease: "expo.in" })
     //----男老师in
-    teacher.m.moveTo({ y: -0.4, x: -4, duration: 1.8 * fast, ease: "expo.out" })
+    teacher.m.moveTo({ y: -0.4, x: -4, duration: 1.4 * fast, ease: "expo.out" })
     //----单词朗读
     //obj.zh.flyIn({ duration: 1.1 });
     闪一下(obj.zh)
@@ -123,12 +114,12 @@ for (let key in wordCfg.data) {
     //obj.en.wipeIn({ duration: 1.1 });
     闪一下(obj.en) //异步才能获取坐标 object3D
     进度线(1 * fast, 0.2, -1.5)
-    teacher.m.moveTo({ y: -0.4, x: -10, duration: 1.8 * fast, ease: "expo.in" })
+    teacher.m.moveTo({ y: -0.4, x: -10, duration: 1.4 * fast, ease: "expo.in" })
 
     // code block to be executed
     console.log('word', wordCfg.data[key])
     mo.pause(1 * fast);
-    //----移动位置
+    //----移到旁边
     obj.ph.changeOpacity(0, { t: "<", duration: 0.1 * fast, ease: "expo.in" })//隐藏音标
     if (key % 2) {
         console.log('左边')
@@ -143,7 +134,7 @@ for (let key in wordCfg.data) {
 }
 
 //---排列组合
-fast = 0
+//fast = 0
 var defy = 1.5 //默认y
 var defx = -4.2//默认x
 var starty = defy
@@ -194,20 +185,22 @@ for (let key in objLs) {
     objLs[tmpInt].zh.scaleTo(0.19, { t: "<", duration: 0.5 * fast, ease: "expo.in" })
 
 }
-fast = 0.1
+fast = 1
 //---最后选择
-var lineLong = mo.addRect({ x: 0, y: 0, width: 7, height: 0.03, color: "#63B14B" })
+var lineLong = mo.addRect({ x: 0, y: -1.55, width: 7, height: 0.03, color: "#63B14B" })
 offa = 0
 offb = 0
 defy = 1.1 //默认y
 for (let key in objLs) {
     //---朗读一次
+    objLs[key].en.changeOpacity(1, {   duration: 0.8, ease: "none" })
     objLs[key].enLine.fadeIn({ duration: 0 })
-    objLs[key].enLine.scaleXTo(0, { t: ">", duration: 1.5 * fast, ease: "none" })
+    objLs[key].enLine.scaleXTo(0, {  duration: 1.5 * fast, ease: "none" })
+    
     //等待线
     lineLong.changeOpacity(1, { duration: 0.001 * fast, ease: "expo.in" })
     lineLong.changeColor("#63B14B", { duration: 0.001 })
-    lineLong.wipeIn({ duration: 2.5 * fast, ease: "none" });
+    lineLong.wipeIn({ duration: 2.5 * fast, ease: "slow" });
     lineLong.changeColor("#EF8485", { t: "<", duration: 2 * fast, ease: "none" })
     lineLong.changeOpacity(0, { duration: 0.001 * fast, ease: "expo.in" })
     //lineLong.spinning({   duration:0.001});
@@ -222,16 +215,21 @@ for (let key in objLs) {
         offb = offb + 1
         startx = offb * wsize + defx
     }
+    objLs[key].zh.changeOpacity(1, {   duration: 0.8, ease: "none" })//取消文字半透明
     objLs[key].zh.moveTo({ y: starty, x: startx, duration: 1.5 * fast, ease: "expo.inOut" })
+    
     //朗读中文
     objLs[key].zhLine.fadeIn({ duration: 0 })
     objLs[key].zhLine.scaleXTo(0, { t: ">", duration: 1.5 * fast, ease: "none" })
     
+    
 }
 
 
-wordGp.moveTo({ y: -1, x: 0, duration: 1.5 * fast, ease: "expo.inOut" })
-
+wordGp.moveTo({ y: -1, x: 0, duration: 1 * fast, ease: "expo.inOut" })
+mo.pause(1.5*fast); 
+wordGp.implode2D({duration: 1.5 * fast, ease: "back.in" })
+//-----附带推广
 
 
  
