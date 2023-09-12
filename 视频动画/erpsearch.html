@@ -234,7 +234,7 @@
     gd.pd = ref({});//page data 页面元素引用"数据"
     //const pd = ref({ "load": [] }); //特殊变量，页面数据
     const pvs = gd.pd.value; //变量代理访问
-    pvs.datUrl = `//${new URI().hostname()}:2048/jsonapi/get`;
+    pvs.datUrl = `//${new URI().hostname()}:2028/jsonapi/get`;
     class pgui {
       /* 界面控制类 初始化界面默认值 */
       constructor(arg) {
@@ -410,64 +410,64 @@
         const se = gd.reg.se
 
         var vn = vn = {
-          "T_PUR_POORDERENTRY@采购过的物料": {
+          "erp/T_PUR_POORDERENTRY%采购过的物料": {
             "@column": "FENTRYID.max.明细id ",
             "@group": 'FMATERIALID'
           },
-          "T_PUR_POORDERENTRY": {
+          "erp/T_PUR_POORDERENTRY": {
             "@column": "FENTRYID.明细id,FID.单据id,FMATERIALID.物料id,F_QINL_WGBZ.委外备注,F_QINL_WWBZ.外购备注",
-            'FENTRYID|': 'T_PUR_POORDERENTRY@采购过的物料.明细id',
+            'FENTRYID|': 'erp/T_PUR_POORDERENTRY%采购过的物料.明细id',
           },
-          "T_PUR_POORDERENTRY_F": {
+          "erp/T_PUR_POORDERENTRY_F": {
             "@column": "FENTRYID.明细id,FID.单据id,FPRICE.价格",
-            'FENTRYID|': 'T_PUR_POORDERENTRY@采购过的物料.明细id',
+            'FENTRYID|': 'erp/T_PUR_POORDERENTRY%采购过的物料.明细id',
           },
-          "T_PUR_POORDER": {
+          "erp/T_PUR_POORDER": {
             "@column": "FID.单据id,FBILLNO.单据编号",
-            'FID|': 'T_PUR_POORDERENTRY.单据id',
+            'FID|': 'erp/T_PUR_POORDERENTRY.单据id',
             'FDOCUMENTSTATUS': "C",
           },
-          "T_BD_MATERIAL_L@采购物料名": {
+          "erp/T_BD_MATERIAL_L%采购物料名": {
             "@column": "FMATERIALID.物料id,FNAME,FSPECIFICATIONGG.规格,F_QINL_SPECIFICATION.型号",
-            'FMATERIALID|': "T_PUR_POORDERENTRY.物料id",
+            'FMATERIALID|': "erp/T_PUR_POORDERENTRY.物料id",
             'FLOCALEID': 2052,
           },
-          "T_BD_MATERIAL@采购物料": {
+          "erp/T_BD_MATERIAL%采购物料": {
             "@column": "FMATERIALID.物料id,FNUMBER.物料代码",
-            'FMATERIALID|': "T_PUR_POORDERENTRY.物料id",
+            'FMATERIALID|': "erp/T_PUR_POORDERENTRY.物料id",
           },
 
-          "T_SAL_ORDERENTRY@销售过的物料": {
+          "erp/T_SAL_ORDERENTRY%销售过的物料": {
             "@column": "FENTRYID.max.明细id ",
             "@group": 'FMATERIALID'
           },
-          "T_SAL_ORDERENTRY": {
+          "erp/T_SAL_ORDERENTRY": {
             "@column": "FENTRYID.明细id,FID.单据id,FMATERIALID.物料id,F_QINL_WGBZ.委外备注,F_QINL_WWBZ.外购备注",
-            'FENTRYID|': 'T_SAL_ORDERENTRY@销售过的物料.明细id',
+            'FENTRYID|': 'erp/T_SAL_ORDERENTRY%销售过的物料.明细id',
           },
-          "T_SAL_ORDERENTRY_F": {
+          "erp/T_SAL_ORDERENTRY_F": {
             "@column": "FENTRYID.明细id,FID.单据id,FPRICE.价格",
-            'FENTRYID|': 'T_SAL_ORDERENTRY@销售过的物料.明细id',
+            'FENTRYID|': 'erp/T_SAL_ORDERENTRY%销售过的物料.明细id',
             'FISFREE': 0,
           },
-          "T_SAL_ORDER": {
+          "erp/T_SAL_ORDER": {
             "@column": "FID.单据id,FBILLNO.单据编号",
-            'FID|': 'T_SAL_ORDERENTRY.单据id',
+            'FID|': 'erp/T_SAL_ORDERENTRY.单据id',
             'FDOCUMENTSTATUS': "C",
           },
-          "T_SAL_ORDERFIN": {
+          "erp/T_SAL_ORDERFIN": {
             "@column": "FID.单据id,FEXCHANGERATE.汇率,FBILLAMOUNT_LC.本币金额,FBILLAMOUNT.金额 ",
-            'FID|': 'T_SAL_ORDER.单据id',
+            'FID|': 'erp/T_SAL_ORDER.单据id',
           },
-          "T_BD_MATERIAL_L@销售物料名": {
+          "erp/T_BD_MATERIAL_L%销售物料名": {
             "@column": "FMATERIALID.物料id,FNAME,FSPECIFICATIONGG.规格,F_QINL_SPECIFICATION.型号",
-            'FMATERIALID|': "T_SAL_ORDERENTRY.物料id",
+            'FMATERIALID|': "erp/T_SAL_ORDERENTRY.物料id",
             'FLOCALEID': 2052,
 
           },
-          "T_BD_MATERIAL@销售物料": {
+          "erp/T_BD_MATERIAL%销售物料": {
             "@column": "FMATERIALID.物料id,FNUMBER.物料代码",
-            'FMATERIALID|': "T_SAL_ORDERENTRY.物料id",
+            'FMATERIALID|': "erp/T_SAL_ORDERENTRY.物料id",
           },
         }
         // //发送
@@ -479,26 +479,26 @@
         const ui = gd.reg.ui
 
         console.log('查询物料价格2show==', pvs.rawDat)
-        var 采购明细 = new dfd.DataFrame(pvs.rawDat['T_PUR_POORDERENTRY'])
-        var 采购价格 = new dfd.DataFrame(pvs.rawDat['T_PUR_POORDERENTRY_F'])
-        var 采购单据 = new dfd.DataFrame(pvs.rawDat['T_PUR_POORDER'])
-        var 采购物料名 = new dfd.DataFrame(pvs.rawDat['T_BD_MATERIAL_L@采购物料名'])
-        var 采购物料 = new dfd.DataFrame(pvs.rawDat['T_BD_MATERIAL@采购物料'])
+        var 采购明细 = new dfd.DataFrame(pvs.rawDat['erp/T_PUR_POORDERENTRY'])
+        var 采购价格 = new dfd.DataFrame(pvs.rawDat['erp/T_PUR_POORDERENTRY_F'])
+        var 采购单据 = new dfd.DataFrame(pvs.rawDat['erp/T_PUR_POORDER'])
+        var 采购物料名 = new dfd.DataFrame(pvs.rawDat['erp/T_BD_MATERIAL_L%采购物料名'])
+        var 采购物料 = new dfd.DataFrame(pvs.rawDat['erp/T_BD_MATERIAL%采购物料'])
 
 
-        var 销售明细 = new dfd.DataFrame(pvs.rawDat['T_SAL_ORDERENTRY'])
-        var 销售价格 = new dfd.DataFrame(pvs.rawDat['T_SAL_ORDERENTRY_F'])
-        var 销售单据 = new dfd.DataFrame(pvs.rawDat['T_SAL_ORDER'])
-        var 销售物料名 = new dfd.DataFrame(pvs.rawDat['T_BD_MATERIAL_L@销售物料名'])
-        var 销售物料 = new dfd.DataFrame(pvs.rawDat['T_BD_MATERIAL@销售物料'])
-        var 销售币别 = new dfd.DataFrame(pvs.rawDat['T_SAL_ORDERFIN'])
+        var 销售明细 = new dfd.DataFrame(pvs.rawDat['erp/T_SAL_ORDERENTRY'])
+        var 销售价格 = new dfd.DataFrame(pvs.rawDat['erp/T_SAL_ORDERENTRY_F'])
+        var 销售单据 = new dfd.DataFrame(pvs.rawDat['erp/T_SAL_ORDER'])
+        var 销售物料名 = new dfd.DataFrame(pvs.rawDat['erp/T_BD_MATERIAL_L%销售物料名'])
+        var 销售物料 = new dfd.DataFrame(pvs.rawDat['erp/T_BD_MATERIAL%销售物料'])
+        var 销售币别 = new dfd.DataFrame(pvs.rawDat['erp/T_SAL_ORDERFIN'])
 
         let 采购v2 = dfd.merge({ "left": 采购明细, "right": 采购价格, "on": ["明细id"], how: "left" })
         采购v2 = dfd.merge({ "left": 采购v2, "right": 采购单据, "on": ["单据id"], how: "left" })
         采购v2 = dfd.merge({ "left": 采购v2, "right": 采购物料名, "on": ["物料id"], how: "left" })
         采购v2 = dfd.merge({ "left": 采购v2, "right": 采购物料, "on": ["物料id"], how: "left" })
-        // var 单据类型 = new dfd.DataFrame(pvs.rawDat['T_BAS_BILLCODERULE'])
-        // var 单据名称 = new dfd.DataFrame(pvs.rawDat['T_BAS_BILLCODERULE_L'])
+        // var 单据类型 = new dfd.DataFrame(pvs.rawDat['erp/T_BAS_BILLCODERULE'])
+        // var 单据名称 = new dfd.DataFrame(pvs.rawDat['erp/T_BAS_BILLCODERULE_L'])
         let 销售v2 = dfd.merge({ "left": 销售明细, "right": 销售价格, "on": ["明细id"], how: "inner" })
         销售v2 = dfd.merge({ "left": 销售v2, "right": 销售单据, "on": ["单据id"], how: "left" })
         销售v2 = dfd.merge({ "left": 销售v2, "right": 销售物料名, "on": ["物料id"], how: "left" })
@@ -585,11 +585,11 @@
         const ui = gd.reg.ui
 
         console.log('查询用户账号2show==', pvs.rawDat)
-        var 用户账号 = new dfd.DataFrame(pvs.rawDat['T_SEC_USER'])
+        var 用户账号 = new dfd.DataFrame(pvs.rawDat['erp/T_SEC_USER'])
 
 
-        // var 单据类型 = new dfd.DataFrame(pvs.rawDat['T_BAS_BILLCODERULE'])
-        // var 单据名称 = new dfd.DataFrame(pvs.rawDat['T_BAS_BILLCODERULE_L'])
+        // var 单据类型 = new dfd.DataFrame(pvs.rawDat['erp/T_BAS_BILLCODERULE'])
+        // var 单据名称 = new dfd.DataFrame(pvs.rawDat['erp/T_BAS_BILLCODERULE_L'])
 
         用户账号.print()
         const rows = dfd.toJSON(用户账号)
@@ -629,12 +629,12 @@
         const ui = gd.reg.ui
 
         console.log('查询系统单据2show==', pvs.rawDat)
-        var 单据类型 = new dfd.DataFrame(pvs.rawDat['T_BAS_BILLTYPE'])
-        var 单据名称 = new dfd.DataFrame(pvs.rawDat['T_BAS_BILLTYPE_L'])
-        var 单据表 = new dfd.DataFrame(pvs.rawDat['T_BF_TABLEDEFINE'])
+        var 单据类型 = new dfd.DataFrame(pvs.rawDat['erp/T_BAS_BILLTYPE'])
+        var 单据名称 = new dfd.DataFrame(pvs.rawDat['erp/T_BAS_BILLTYPE_L'])
+        var 单据表 = new dfd.DataFrame(pvs.rawDat['erp/T_BF_TABLEDEFINE'])
 
-        // var 单据类型 = new dfd.DataFrame(pvs.rawDat['T_BAS_BILLCODERULE'])
-        // var 单据名称 = new dfd.DataFrame(pvs.rawDat['T_BAS_BILLCODERULE_L'])
+        // var 单据类型 = new dfd.DataFrame(pvs.rawDat['erp/T_BAS_BILLCODERULE'])
+        // var 单据名称 = new dfd.DataFrame(pvs.rawDat['erp/T_BAS_BILLCODERULE_L'])
 
         单据类型.print()
         单据名称.print()
@@ -689,7 +689,7 @@
         const se = gd.reg.se
 
         var vn = {
-          "T_SEC_USER": {
+          "erp/T_SEC_USER": {
             // "@column": "FBILLTYPEID,FNUMBER.单据编号,FBILLFORMID.单据编码 ",
             //"FISDEFAULT": 1
           }
@@ -795,54 +795,54 @@
         ui.spto(1) //loading 
         //查询用户
         var vn = {
-          "T_WF_PROCINST": {
+          "erp/T_WF_PROCINST": {
             "@column": "FPROCDEFID.流程id,FPROCINSTID.流程实例id,FSTATUS.流程状态,FBILLNO.单据编号",
             "FSTATUS": FSTATUS,
             "FCREATETIME&": CREATETIME,
-            //'FPROCINSTID|': "T_WF_ASSIGN.流程实例id"
+            //'FPROCINSTID|': "erp/T_WF_ASSIGN.流程实例id"
           },
-          "T_WF_ASSIGN": {
+          "erp/T_WF_ASSIGN": {
             "@column": "FCREATETIME.日期,FSTATUS.节点状态,FASSIGNID.任务id,FPROCINSTID.流程实例id,FACTINSTID.节点id",
             // 'FNUMBER*':'XSDD000048_20230718184628'
-            "FPROCINSTID|": "T_WF_PROCINST.流程实例id",
+            "FPROCINSTID|": "erp/T_WF_PROCINST.流程实例id",
             "@order": "-FCREATETIME"
           },
-          "T_WF_RECEIVER": {
+          "erp/T_WF_RECEIVER": {
             "@column": "FASSIGNID.任务id,FRECEIVERID.接收人id,FTITLE.标题,FCONTENT.内容",
-            "FASSIGNID|": "T_WF_ASSIGN.任务id"
+            "FASSIGNID|": "erp/T_WF_ASSIGN.任务id"
           },
-          "T_SEC_USER": {
+          "erp/T_SEC_USER": {
             "@column": "FUSERID.接收人id,FNAME.名字",
-            'FUSERID|': "T_WF_RECEIVER.接收人id"
+            'FUSERID|': "erp/T_WF_RECEIVER.接收人id"
           },
 
 
-          "T_WF_PROCDEF_L": {
+          "erp/T_WF_PROCDEF_L": {
             "@column": "FPROCDEFID.流程id,FDISPLAYNAME.流程名",
             "FLOCALEID": 2052,
-            'FPROCDEFID|': "T_WF_PROCINST.流程id"
+            'FPROCDEFID|': "erp/T_WF_PROCINST.流程id"
           },
-          "T_WF_ACTINST_L": {
+          "erp/T_WF_ACTINST_L": {
             "@column": "FACTINSTID.节点id,FACTNAME.节点名称",
-            'FACTINSTID|': "T_WF_ASSIGN.节点id", "FLOCALEID": 2052
+            'FACTINSTID|': "erp/T_WF_ASSIGN.节点id", "FLOCALEID": 2052
           },
-          "T_WF_ACTINST": {
+          "erp/T_WF_ACTINST": {
             "@column": "FACTINSTID.节点id,FCREATETIME.节点开始,FCOMPLETEDTIME.节点完成",
-            'FACTINSTID|': "T_WF_ASSIGN.节点id"
+            'FACTINSTID|': "erp/T_WF_ASSIGN.节点id"
           },
 
-          "T_WF_APPROVALASSIGN": {//任务详情
+          "erp/T_WF_APPROVALASSIGN": {//任务详情
             "@column": "FASSIGNID.任务id,FKEYVALUE.单据id,FOBJECTTYPEID.单据类别",
-            "FASSIGNID|": "T_WF_ASSIGN.任务id"
+            "FASSIGNID|": "erp/T_WF_ASSIGN.任务id"
           },//标准编码规则
-          "T_BAS_BILLCODERULE": {//T_BAS_BILLTYPE
+          "erp/T_BAS_BILLCODERULE": {//T_BAS_BILLTYPE
             "@column": "FRULEID.规则id,FBILLFORMID.单据类别",
-            'FBILLFORMID|': "T_WF_APPROVALASSIGN.单据类别",
+            'FBILLFORMID|': "erp/T_WF_APPROVALASSIGN.单据类别",
             "FDOCUMENTSTATUS": "C"
           },
-          "T_BAS_BILLCODERULE_L": {//T_BAS_BILLTYPE_L
+          "erp/T_BAS_BILLCODERULE_L": {//T_BAS_BILLTYPE_L
             "@column": "FRULEID.规则id,FNAME.单据全称",
-            "FRULEID|": "T_BAS_BILLCODERULE.规则id", "FLOCALEID": 2052
+            "FRULEID|": "erp/T_BAS_BILLCODERULE.规则id", "FLOCALEID": 2052
           }
           /*,
           "T_SAL_ORDER": {//
@@ -866,19 +866,19 @@
         const ui = gd.reg.ui
         var dat = pvs.rawDat['T_WF_ASSIGN']//工作流任务
         console.log('查询代办任务2show', pvs.rawDat)
-        var 工作流任务 = new dfd.DataFrame(pvs.rawDat['T_WF_ASSIGN'])
-        var 任务信息 = new dfd.DataFrame(pvs.rawDat['T_WF_RECEIVER'])
-        var 用户信息 = new dfd.DataFrame(pvs.rawDat['T_SEC_USER'])
-        var 工作流信息 = new dfd.DataFrame(pvs.rawDat['T_WF_PROCDEF_L'])
-        var 工作流实例 = new dfd.DataFrame(pvs.rawDat['T_WF_PROCINST'])
-        var 当前节点名 = new dfd.DataFrame(pvs.rawDat['T_WF_ACTINST_L'])
-        var 当前节点 = new dfd.DataFrame(pvs.rawDat['T_WF_ACTINST'])
-        var 任务详情 = new dfd.DataFrame(pvs.rawDat['T_WF_APPROVALASSIGN'])
-        var 单据编码 = new dfd.DataFrame(pvs.rawDat['T_BAS_BILLCODERULE'])
-        var 单据全称 = new dfd.DataFrame(pvs.rawDat['T_BAS_BILLCODERULE_L'])
+        var 工作流任务 = new dfd.DataFrame(pvs.rawDat['erp/T_WF_ASSIGN'])
+        var 任务信息 = new dfd.DataFrame(pvs.rawDat['erp/T_WF_RECEIVER'])
+        var 用户信息 = new dfd.DataFrame(pvs.rawDat['erp/T_SEC_USER'])
+        var 工作流信息 = new dfd.DataFrame(pvs.rawDat['erp/T_WF_PROCDEF_L'])
+        var 工作流实例 = new dfd.DataFrame(pvs.rawDat['erp/T_WF_PROCINST'])
+        var 当前节点名 = new dfd.DataFrame(pvs.rawDat['erp/T_WF_ACTINST_L'])
+        var 当前节点 = new dfd.DataFrame(pvs.rawDat['erp/T_WF_ACTINST'])
+        var 任务详情 = new dfd.DataFrame(pvs.rawDat['erp/T_WF_APPROVALASSIGN'])
+        var 单据编码 = new dfd.DataFrame(pvs.rawDat['erp/T_BAS_BILLCODERULE'])
+        var 单据全称 = new dfd.DataFrame(pvs.rawDat['erp/T_BAS_BILLCODERULE_L'])
 
-        //var 销售订单 = new dfd.DataFrame(pvs.rawDat['T_SAL_ORDER'])
-        //var 单据类型 = new dfd.DataFrame(pvs.rawDat['T_BAS_BILLTYPE_L'])
+        //var 销售订单 = new dfd.DataFrame(pvs.rawDat['erp/T_SAL_ORDER'])
+        //var 单据类型 = new dfd.DataFrame(pvs.rawDat['erp/T_BAS_BILLTYPE_L'])
         //----
         // 工作流任务.print()
         // 任务信息.print()
@@ -974,9 +974,11 @@
           field: '单据全称',
           title: '单据'
         }, {
+          sortable: true,
           field: '流程状态',
           title: '流程状态'
         }, {
+          sortable: true,
           field: '处理时长',
           title: '经过时长(小时)'
         }]

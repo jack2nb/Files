@@ -263,10 +263,7 @@
         //绑定事件
 
         er.on('遮罩', this.spto)
-
-
         er.on('查询', this.toSearch)
-    
         er.on('展示补考勤', this.tab补考勤)
         er.on('展示请假', this.tab请假)
         er.on('展示公出', this.tab公出)
@@ -457,7 +454,7 @@ ITEM_APPLICANT: "蔡金凯"
         this.keys = [] //完成清单
         //数据配置
         this.dcfg = {
-          "T_USER": {
+          "oa/T_USER": {
             "@column": "ID,NAME,DEFAULTDEPARTMENT",
             "NAME": '蔡金凯',
             "@limit": 1
@@ -491,20 +488,20 @@ ITEM_APPLICANT: "蔡金凯"
         const se = gd.reg.se
         //查询考勤
         var vn = {
-          "USERINFO": {
+          "kq/USERINFO": {
             "@column": "BADGENUMBER.用户id,NAME,USERID.考勤id,DEFAULTDEPTID",
             "NAME": pvs.searchName,
             "@limit": 1
           },
-          "CHECKINOUT": {
+          "kq/CHECKINOUT": {
             "@column": "USERID.考勤id,CHECKTIME",
-            "USERID|": "USERINFO.考勤id"
+            "USERID|": "kq/USERINFO.考勤id"
             , 'CHECKTIME&': ">" + moment().subtract(2, 'month').format('YYYY-MM') + '-01'
             , "@order": "-CHECKTIME"
           }
         }
  
-        var url = `//${pvs.url.hostname()}:2044/jsonapi/get`;
+        var url = `//${pvs.url.hostname()}:2028/jsonapi/get`;
         // //发送
         se.se2(vn, url, 'kq', '考勤信息', ['展示考勤'])
 
@@ -516,42 +513,42 @@ ITEM_APPLICANT: "蔡金凯"
         const se = gd.reg.se
 
         //获取数据，发送请求
-        var url = `//${pvs.url.hostname()}:2022/jsonapi/get`;
+        var url = `//${pvs.url.hostname()}:2028/jsonapi/get`;
 
         // //发送
         //return
 
         var vn = {
-          "T_USER": {
+          "oa/T_USER": {
             "@column": "ID,NAME,DEFAULTDEPARTMENT.部门id",
             "NAME": pvs.searchName,
             "@limit": 1
           },
-          "T_DEPARTMENT": {//部门
+          "oa/T_DEPARTMENT": {//部门
             "@column": "ID.部门id,NAME.部门",
-            "ID|": "T_USER.部门id",
+            "ID|": "oa/T_USER.部门id",
             "@limit": 1
           },
-          "TLK_ATTENDANCEDETAIL": {//补考勤
-            "AUTHOR|": "T_USER.ID"
+          "oa/TLK_ATTENDANCEDETAIL": {//补考勤
+            "AUTHOR|": "oa/T_USER.ID"
             , "ITEM_ATTDATE&": ">" + moment().subtract(2, 'month').format('YYYY-MM') + '-01'
             , "@order": "-CREATED"
             , "@column": "ITEM_ATTDATE, FORMNAME,AUTHOR"
           },
 
-          "TLK_APPLY_LEAVE": {//请假
-            "AUTHOR|": "T_USER.ID"
+          "oa/TLK_APPLY_LEAVE": {//请假
+            "AUTHOR|": "oa/T_USER.ID"
             , "ITEM_LEAVE_T&": ">" + moment().subtract(2, 'month').format('YYYY-MM') + '-01'
             , "@order": "-CREATED"
             , "@column": "AUTHOR, ITEM_START_T.开始时间,ITEM_LEAVE_T.结束时间,ITEM_LEAVE_R.理由,   ITEM_TITLE.模块,ITEM_APPLICANT"
           }
           ,
-          "TLK_BUSINESS_PUBLIC_TRIP": {//公出
-            "AUTHOR|": "T_USER.ID"
+          "oa/TLK_BUSINESS_PUBLIC_TRIP": {//公出
+            "AUTHOR|": "oa/T_USER.ID"
             , "ITEM_TRAVEL_OT&": ">" + moment().subtract(2, 'month').format('YYYY-MM') + '-01'
             , "@order": "-CREATED"
             , "@column": "AUTHOR,ITEM_TRAVEL_ST,ITEM_TRAVEL_OT,ITEM_TRAVEL_R.理由, ITEM_TRAVEL_CITY.公出城市, FORMNAME.模块,STATELABELINFO"
-            , "#url": "http://127.0.0.1:2022/jsonapi/get"
+            , "#url": "http://127.0.0.1:2028/jsonapi/get"
 
           }
         }
@@ -561,11 +558,11 @@ ITEM_APPLICANT: "蔡金凯"
       tabBase() {
         //跳转、翻页
         const ui = gd.reg.ui
-        var 用户表 = new dfd.DataFrame(pvs.rawDat['T_USER'])
-        var 部门表 = new dfd.DataFrame(pvs.rawDat['T_DEPARTMENT'])
-        var 请假表 = new dfd.DataFrame(pvs.rawDat['TLK_APPLY_LEAVE'])
-        var 公出表 = new dfd.DataFrame(pvs.rawDat['TLK_BUSINESS_PUBLIC_TRIP'])
-        var 补考勤表 = new dfd.DataFrame(pvs.rawDat['TLK_ATTENDANCEDETAIL'])
+        var 用户表 = new dfd.DataFrame(pvs.rawDat['oa/T_USER'])
+        var 部门表 = new dfd.DataFrame(pvs.rawDat['oa/T_DEPARTMENT'])
+        var 请假表 = new dfd.DataFrame(pvs.rawDat['oa/TLK_APPLY_LEAVE'])
+        var 公出表 = new dfd.DataFrame(pvs.rawDat['oa/TLK_BUSINESS_PUBLIC_TRIP'])
+        var 补考勤表 = new dfd.DataFrame(pvs.rawDat['oa/TLK_ATTENDANCEDETAIL'])
 
 
         //----
@@ -603,8 +600,8 @@ ITEM_APPLICANT: "蔡金凯"
         //跳转、翻页
         const ui = gd.reg.ui
         
-        var 考勤用户 = new dfd.DataFrame(pvs.rawDat['USERINFO'])
-        var 考勤记录 = new dfd.DataFrame(pvs.rawDat['CHECKINOUT'])
+        var 考勤用户 = new dfd.DataFrame(pvs.rawDat['kq/USERINFO'])
+        var 考勤记录 = new dfd.DataFrame(pvs.rawDat['kq/CHECKINOUT'])
    
         //
         var 考勤记录v2 = dfd.merge({ "left": 考勤记录, "right": 考勤用户, "on": ["考勤id"], how: "left" })
