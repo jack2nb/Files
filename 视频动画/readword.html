@@ -793,10 +793,11 @@
 
                 setdat['ph'] = pvs.row.ph //音标
 
-                console.log(url, setdat)
+               
                 var data = {}; //请求数据
                 data[pvs.defTable] = query //表
-                data['update'] = setdat //设置值
+                query['@update'] = setdat //设置值
+                console.log(url, data)
                 //发送
                 //return
                 axios.post(url, data, that.hd)

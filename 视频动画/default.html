@@ -51,7 +51,7 @@
           </div>
         </h1>
         <div class="pt-3 d-flex align-items-end ">
-          <a class=" text-danger border border-danger p-1 rounded"> 喜欢收藏 </a>
+          <a id="am" onclick="am()" class=" text-danger border border-danger p-1 rounded"> 喜欢收藏 </a>
         </div>
       </div>
     </div>
@@ -71,7 +71,7 @@
             </div>
           </a>
           {{/en500word}}
-          {{^en500wordShowAll}} 
+          {{^en500wordShowAll}}
           <a class=" card" onclick="oui.showAll('en500wordShowAll')" target="_blank">
             <div class="content">
               <div class="header">查看更多</div>
@@ -86,7 +86,7 @@
         <h4 class="my-4   ui horizontal divider header"><i class="  cap icon"></i>单词A-Z</h4>
         <div class="pl-5  container-fluid    ui  cards">
           {{#whithAZ}}
-          <a class="card" href="{{url}}" target="_blank">
+          <a class="card" href="http://eng.17121.top/learnword.html?t=camb_word&p={{f}}" target="_blank">
             <div class="content">
               <i class="left floated    smile icon"></i>
               <div class="header">第{{f}}课</div>
@@ -94,7 +94,7 @@
             </div>
           </a>
           {{/whithAZ}}
-          {{^camb_wordShowAll}} 
+          {{^camb_wordShowAll}}
           <a class=" card" onclick="oui.showAll('camb_wordShowAll')" target="_blank">
             <div class="content">
               <div class="header">查看更多</div>
@@ -114,9 +114,12 @@
   </footer>
 
   <script src="https://cdnjs.cloudflare.com/ajax/libs/mustache.js/3.2.0/mustache.min.js"></script>
-  <script src="./en500word/word_list.json"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/loadjs/4.2.0/loadjs.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js"></script>
+
+  <script src="./en500word/word_list.jsonp"></script>
   <script> var en500word = wordList; </script>
-  <script src="./camb_word/word_list.json"></script>
+  <script src="./camb_word/word_list.jsonp"></script>
   <script> var camb_word = wordList; </script>
   <!---Mustache-->
 
@@ -132,7 +135,7 @@
         gd.reg.ui = this//全局资源
         this.en500wordShowAll = 0 //显示全部
         this.camb_wordShowAll = 0 //显示全部
-        
+
         this.emt = document.querySelector('main')  //元素
         this.tpl = this.emt.innerHTML //模板
       }
@@ -142,20 +145,20 @@
         //列表数据
         var lsDat = {
           "en500word": ui.en500wordShowAll == 1 ? en500word['data'] : en500word['data'].slice(0, 10),
-          "en500wordShowAll":ui.en500wordShowAll ,
-     
-          'whithAZ': ui.camb_wordShowAll == 1 ? camb_word['data'] : camb_word['data'].slice(0, 4), 
-          "camb_wordShowAll":ui.camb_wordShowAll
+          "en500wordShowAll": ui.en500wordShowAll,
+
+          'whithAZ': ui.camb_wordShowAll == 1 ? camb_word['data'] : camb_word['data'].slice(0, 4),
+          "camb_wordShowAll": ui.camb_wordShowAll
         }
 
-        var hs = Mustache.render(ui.tpl , lsDat)//模板替换
+        var hs = Mustache.render(ui.tpl, lsDat)//模板替换
 
         //写入
         ui.emt.innerHTML = hs
       }
-      showAll(show){
+      showAll(show) {
         const ui = gd.reg.ui
-        ui[show]  = 1
+        ui[show] = 1
         ui.showTpl()
       }
     }
@@ -168,7 +171,59 @@
 
     /* 鼠标聚焦时，回车事件 */
     //点击喜欢
+    var amplay = null;
+    function am() {
+      var amdc =
+      {
+        //targets: '#am', document.querySelector('div[data-widgetname-cy="load_img"]');
+        targets: document.querySelector('#am'),
+        loop: true,
+        autoplay: false,
+        begin: function (animation) { console.log('开始动画', animation) },//动画开始的回调,执行一次
+        rotate: {
+          value: 360,
+          duration: 1800,
+          easing: 'easeInOutSine',
+        },
+      }
+      //可停止
+      if (!amplay) {
+        amplay = anime(amdc);
+        amplay.play()
+      } else {
+        amplay.pause();
+      }
 
+    }
+
+
+    loadjs([
+      "https://cdnjs.cloudflare.com/ajax/libs/intro.js/7.2.0/intro.min.js"
+      , "https://cdnjs.cloudflare.com/ajax/libs/intro.js/7.2.0/introjs.min.css"
+    ], "myTest")
+    loadjs.ready("myTest", () => {
+      //你想要做的事情
+      console.log('加载外部js')
+      var setpList = [
+                    {
+                        title: '来',
+                        element: document.querySelector('#am'),
+                        intro: '点击这个试试',
+                    },
+
+                ];
+                var helpOpt = {
+                    nextLabel: '下一个  &rarr;',    // 下一个按钮文字
+                    prevLabel: '&larr; 上一个',     // 上一个按钮文字
+                    doneLabel: '好',           // 完成按钮文字
+                    exitOnOverlayClick: false,  // 点击叠加层时是否退出介绍
+                    showStepNumbers: false,     // 是否显示红色圆圈的步骤编号
+                    disableInteraction: true,   // 是否禁用与突出显示的框内的元素的交互，就是禁止点击
+                    showBullets: false          // 是否显示面板指示点
+                }
+                helpOpt['steps'] = setpList
+                //introJs().setOptions(helpOpt).start();
+    })
   </script>
 
 </body>

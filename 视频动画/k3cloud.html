@@ -5,7 +5,7 @@
   <meta charset="utf-8">
 
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
-  <title>金蝶云星空字典</title>
+  <title>云星空字典</title>
   <link rel="stylesheet" crossorigin="anonymous"
     href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.6.1/css/bootstrap.min.css">
   <link rel="stylesheet" crossorigin="anonymous"
@@ -255,8 +255,8 @@
       搜索字段表2show() {
         //显示字段表
         const ui = gd.reg.ui
-        var tab = 'K3_Cloud_FieldDescription'
-        let dat = [...pvs.rawDat[tab + '@a'], ...pvs.rawDat[tab + '@b']]
+        var tab = 'k3c/K3_Cloud_FieldDescription'
+        let dat = [...pvs.rawDat[tab + '%a'], ...pvs.rawDat[tab + '%b']]
         dat = _.uniqWith(dat, _.isEqual) //去重
 
         //字段整理
@@ -292,9 +292,9 @@
       查看字段表2show() {
         //显示字段表
         const ui = gd.reg.ui
-        console.log('K3_Cloud_FieldDescription')
+        console.log('k3c/K3_Cloud_FieldDescription')
   
-        var dat = pvs.rawDat['K3_Cloud_FieldDescription']
+        var dat = pvs.rawDat['k3c/K3_Cloud_FieldDescription']
 
         _.forEach(dat, function (value, key) {
           //整理数据
@@ -332,7 +332,7 @@
       查询数据表2show() {
         //跳转、翻页
         const ui = gd.reg.ui
-        var dat = pvs.rawDat['K3_Cloud_TableDescription']
+        var dat = pvs.rawDat['k3c/K3_Cloud_TableDescription']
         //console.log('K3_Cloud_TableDescription', dat)
 
 
@@ -481,7 +481,7 @@
 
         console.log(vn)
         //获取数据，发送请求
-        var url = `//${pvs.url.hostname()}:2023/jsonapi/get`;
+        var url = `//${pvs.url.hostname()}:2028/jsonapi/get`;
         // //发送
         se.se(vn, url, 'FieldDescription', '查询字段', next)
 
@@ -496,9 +496,10 @@
         }
 
 
-        var tab = 'K3_Cloud_FieldDescription'
+        var tab = 'k3c/K3_Cloud_FieldDescription'
         var vn = {
-          "K3_Cloud_FieldDescription": {
+          "k3c/K3_Cloud_FieldDescription": {
+            
             // "@limit": 4
           }
         }
@@ -514,13 +515,13 @@
         const se = gd.reg.se
         pvs.tab4col = '' //当前查看的表
 
-        var tab = 'K3_Cloud_FieldDescription'
+        var tab = 'k3c/K3_Cloud_FieldDescription'
         var vn = {
-          "K3_Cloud_FieldDescription@a": {
+          "k3c/K3_Cloud_FieldDescription%a": {
             "fFiled*": '%' + pvs.searchCol + '%',
 
           },
-          "K3_Cloud_FieldDescription@b": {
+          "k3c/K3_Cloud_FieldDescription%b": {
 
             "fName*": '%' + pvs.searchCol + '%'
           }
@@ -540,12 +541,12 @@
         ui.spto(1) //loading 
         //查询用户
         var vn = {
-          "K3_Cloud_TableDescription": {
+          "k3c/K3_Cloud_TableDescription": {
             //"@limit": 4
           }
         }
         //获取数据，发送请求
-        var url = `//${pvs.url.hostname()}:2023/jsonapi/get`;
+        var url = `//${pvs.url.hostname()}:2028/jsonapi/get`;
         // //发送
         se.se(vn, url, 'selectTables', '查询表名', ['查询数据表2show'])
       }

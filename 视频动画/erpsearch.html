@@ -586,13 +586,17 @@
 
         console.log('查询用户账号2show==', pvs.rawDat)
         var 用户账号 = new dfd.DataFrame(pvs.rawDat['erp/T_SEC_USER'])
+        var 最后登入时间 = new dfd.DataFrame(pvs.rawDat['erp/T_BAS_USERLOGINRECORD'])
+
+        let 用户账号v2 = dfd.merge({ "left": 用户账号, "right": 最后登入时间, "on": ["FUSERID"], how: "left" })
+        
 
 
         // var 单据类型 = new dfd.DataFrame(pvs.rawDat['erp/T_BAS_BILLCODERULE'])
         // var 单据名称 = new dfd.DataFrame(pvs.rawDat['erp/T_BAS_BILLCODERULE_L'])
 
-        用户账号.print()
-        const rows = dfd.toJSON(用户账号)
+        用户账号v2.print()
+        const rows = dfd.toJSON(用户账号v2)
 
         _.forEach(rows, function (value, key) {
           //整理数据
@@ -613,11 +617,22 @@
             sortable: true,
             width: 170,
             title: '名字'
+          },
+          {
+            field: 'FAPPGROUP',
+            sortable: true,
+            width: 170,
+            title: '功能'
           }, {
             field: 'FDESCRIPTION',
             width: 210,
             sortable: true,
             title: '描述'
+          }, {
+            field: 'm',
+            width: 210,
+            sortable: true,
+            title: '最后登入时间'
           }]
 
         ui.showTab('#用户账号tab', columns, rows)
@@ -692,8 +707,12 @@
           "erp/T_SEC_USER": {
             // "@column": "FBILLTYPEID,FNUMBER.单据编号,FBILLFORMID.单据编码 ",
             //"FISDEFAULT": 1
-          }
-
+          },
+          "erp/T_BAS_USERLOGINRECORD": {
+             "@column": "FUSERID,FDATETIME.max.m",
+             "@group":"FUSERID"
+            //"FISDEFAULT": 1
+          },
         }
         // //发送
         se.se(vn, pvs.datUrl, 'USER', '查询用户账号', ['查询用户账号2show'])
@@ -805,7 +824,7 @@
             "@column": "FCREATETIME.日期,FSTATUS.节点状态,FASSIGNID.任务id,FPROCINSTID.流程实例id,FACTINSTID.节点id",
             // 'FNUMBER*':'XSDD000048_20230718184628'
             "FPROCINSTID|": "erp/T_WF_PROCINST.流程实例id",
-            "@order": "-FCREATETIME"
+            "@order": "-日期"
           },
           "erp/T_WF_RECEIVER": {
             "@column": "FASSIGNID.任务id,FRECEIVERID.接收人id,FTITLE.标题,FCONTENT.内容",
