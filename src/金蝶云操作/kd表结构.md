@@ -40,7 +40,15 @@ select top 10 *  from T_SEC_USERPASSPORT
 select top 10 *  from T_BAS_USERLOGINRECORD
 
 ```
+### 用户最后登入时间
+```sql
+select * from 
+(select FUSERID,max(FDATETIME)  m
+from T_BAS_USERLOGINRECORD group by FUSERID ) vt 
+inner join T_SEC_USER ta  on vt.FUSERID=ta.FUSERID
 
+
+```
 ### 用户设置参数表
 
 ```sql

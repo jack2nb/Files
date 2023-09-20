@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <meta charset="UTF-8">
+  <title>React Router self.React</title>
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/antd/5.5.1/reset.min.css" rel="stylesheet" />
+
+ 
+</head>
+
+<body>
+  <div id="root"></div>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/loadjs/4.2.0/loadjs.min.js"></script>
+  
+
+  
+  
+  <script>
+
+    loadjs([
+      "https://cdnjs.cloudflare.com/ajax/libs/react/17.0.2/umd/react.production.min.js"
+      , "https://cdnjs.cloudflare.com/ajax/libs/react-dom/17.0.2/umd/react-dom.production.min.js"
+      , "https://cdnjs.cloudflare.com/ajax/libs/react-router-dom/5.3.4/react-router-dom.js"
+    ], "myTest")
+
+  
+
+    loadjs.ready("myTest", initpage)
+    function App() {
+      const { BrowserRouter, Route, Link } = ReactRouterDOM;
+      const { createElement } = React;
+      
+ 
+      // 创建一些示例组件
+      const Home = () => createElement('div', null, '首页');
+      const About = () => createElement('div', null, '关于我们');
+      const Contact = () => createElement('div', null, '联系我们');
+     
+      console.log(Home.innerHTML)
+      let tmp = createElement('div', null,
+        createElement('nav', null,
+          createElement('ul', null,
+            createElement('li', null,
+              createElement(Link, { to: '/' }, '首页')),
+            createElement('li', null,
+              createElement(Link, { to: '/about' }, '关于我们')),
+            createElement('li', null,
+              createElement(Link, { to: '/contact' }, '联系我们'))
+          )
+        ),
+        createElement(Route, { path: '/', exact: true, component: Home }),
+        createElement(Route, { path: '/about', component: About }),
+        createElement(Route, { path: '/contact', component: Contact })
+      )
+      return createElement(BrowserRouter, null, tmp);
+    }
+
+
+    function initpage() {
+      
+      // 渲染React应用
+      ReactDOM.render(React.createElement(App), document.getElementById('root'));
+      loadjs([
+      "https://cdnjs.cloudflare.com/ajax/libs/intro.js/7.2.0/intro.min.js"
+      , "https://cdnjs.cloudflare.com/ajax/libs/intro.js/7.2.0/introjs.min.css"
+    ], "into")
+
+    }
+    //const { Button, Radio, Icon }  = antd;
+
+
+
+    loadjs.ready("into", () => {
+      //你想要做的事情
+      console.log('加载外部js into', document.querySelector('#root'))
+      var setpList = [
+                    {
+                        title: '来',
+                        element: document.querySelector('#root'),
+                        intro: '点击这个试试',
+                    },
+
+                ];
+                var helpOpt = {
+                    nextLabel: '下一个  &rarr;',    // 下一个按钮文字
+                    prevLabel: '&larr; 上一个',     // 上一个按钮文字
+                    doneLabel: '好',           // 完成按钮文字
+                    exitOnOverlayClick: false,  // 点击叠加层时是否退出介绍
+                    showStepNumbers: false,     // 是否显示红色圆圈的步骤编号
+                    disableInteraction: true,   // 是否禁用与突出显示的框内的元素的交互，就是禁止点击
+                    showBullets: false          // 是否显示面板指示点
+                }
+                helpOpt['steps'] = setpList
+                introJs().setOptions(helpOpt).start();
+    })
+
+
+  </script>
+</body>
+
+</html>
