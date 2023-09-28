@@ -2,6 +2,16 @@
 
 ## BOS平台
 
+单据字段和信息配置文件
+
+```
+D:\WorkSpace\XJPT\ttt\DataModel_20\XSYFX_35466510\cf2e0498-125f-4346-bbf8-0d68ce30c8a3.dym
+
+
+```
+
+ 
+
 表id大多数来自同一个seq
 
 ## 销售出库例子

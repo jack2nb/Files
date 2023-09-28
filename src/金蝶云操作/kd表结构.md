@@ -25,7 +25,13 @@ select top 10 *  from t_sec_user
 T_BD_STAFF_L
 ```
 
+### 物料代码
+```sql
+select * from t_bd_material  a
+left join T_BD_MATERIAL_L b on a.FMASTERID = b.FMATERIALID
 
+where a.FNUMBER ='5.06.52.0006'
+```
 
 ### 用户密码表
 
