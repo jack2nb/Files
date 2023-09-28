@@ -34,3 +34,16 @@ NMMKJ-6RK4F-KMJVX-8D9MJ-6MWKP
 
 
 
+
+
+##  虚拟机
+
+
+
+```shell
+virt-install --virt-type kvm --name uefi  --noautoconsole --ram 1024    --boot loader=/usr/share/ovmf/OVMF.fd --disk none --graphics none --network none 
+
+```
+
+
+

@@ -2,6 +2,22 @@
 
 ## BOS平台
 
+
+
+## 概念
+
+`签入` 相当于修改到系统文件。通过签入签出加锁,保存实时生效
+
+update 数据库客户端需要清理缓存
+
+
+
+## 修改该单据
+
+
+
+![查找单据](./bos-img/查找单据.png)
+
 单据字段和信息配置文件
 
 ```
@@ -10,13 +26,45 @@ D:\WorkSpace\XJPT\ttt\DataModel_20\XSYFX_35466510\cf2e0498-125f-4346-bbf8-0d68ce
 
 ```
 
+## 修改菜单功能
+
+
+
+ ![保存操纵调用](./bos-img/保存操纵调用.png)
+
+
+
+
+
+## 论坛参考
+
+[bos整体精度和小数精度的用法](https://vip.kingdee.com/article/474380911010893568?productLineId=1&isKnowledge=2)
+
  
 
-表id大多数来自同一个seq
+[单据里的合计怎么加，不是列表的](https://vip.kingdee.com/questions/241594233944330240?productLineId=1)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 ## 销售出库例子
 
 ### 修改单据
+
+表id大多数来自同一个seq
+
+
 
 修改单据同时也会自动修改数据库表
 
