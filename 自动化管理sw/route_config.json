@@ -1,0 +1,9 @@
+{"主路由器":{
+    "host": "oq-route.17121.top",
+    "user": "root",
+    "port": 22,
+    "connect_kwargs": {"password": "wsf119900"}
+},
+"输出路径":"./"
+}
+

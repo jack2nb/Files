@@ -1,0 +1,9 @@
+Value num (\d+)
+Value target ([A-Z]+)
+Value prot (\w+)
+Value opt (\-\-)
+Value source ([0-9a-z/\.]+)
+Value destination ([0-9a-z/\.]+)
+
+Start
+ ^${num}\s+${target}\s+${prot}\s+${opt}\s+${source}\s+${destination}\s+.*? -> Record
