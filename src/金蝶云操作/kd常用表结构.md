@@ -14,7 +14,7 @@ select top 10 *  from t_sec_user
 ```sql
 ---- 密码改为6个8
 update t_sec_user 
-set fpassword='9EF0664B011C3DC6305C8B213378BACC2451FAEA',fmemo='8d2fea58-cda1-4035-9024-56cc6df8957c' 
+set fpassword='9EF0664B011C3DC6305C8B213378BACC2451FAEA',   fmemo='8d2fea58-cda1-4035-9024-56cc6df8957c' 
 where fuserid=119087
  
 -- 525b1cda73e400e5e6b64d09fb3d417438ffd9c286d4124901b521feca7ffb6d	000352540018e2798ad311edf608d84de510

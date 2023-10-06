@@ -2,7 +2,7 @@
 
 ## BOS平台
 
-
+[参考](![image-20231004160543716](C:\Users\Administrator\AppData\Roaming\Typora\typora-user-images\image-20231004160543716.png))
 
 ## 概念
 
