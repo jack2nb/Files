@@ -1,7 +1,13 @@
 """
 用python 获取环境路由器，管理上网
+先限制(localDef)后放开(localManage)
+
+1 检查两条链是不是存在  localDef/localManage
+2 这两条连是不是加入到  PREROUTING
 
 
+3 通过配置设置localDef链，先清空后设置
+4 用户登入放行localManage链，每日清空
 
 
 
@@ -27,20 +33,27 @@ def readCfg(filename):
 class wrtRoute:
     """ wrt路由器
     管理
+    自定义链 ： localDef/localManage
+
     """
     def __init__(self,cfg):
         """ """
-        self.macJson = None
-        self.arpJson = None
-        self.cfgStr = None
-        #print(cfg)
-        #self.todo()
-        #self.tn.close()
+        self.__cfg = cfg.pop('主路由器')
         self.conn = None
-        self.conn = self.login(cfg)
-
-    def login(self,cfg):
+        self.cfg = cfg #无密码
+        self.conn = self.login(self.__cfg) #连接
+        self.localDef = 'localDef'
+        self.localManage = 'localManage'
+   
+        
+    def _getCfg(self):
+        """
+        """
+        return self.__cfg 
+    
+    def login(self,cfg=None):
         """登入路由器 返回 链接 """
+        cfg = cfg if cfg is not None else self._getCfg()
         try:
             conn = Connection(cfg['host'],cfg['user'],cfg['port'], connect_kwargs=cfg['connect_kwargs'] )
             result =conn.run(' uname -n', hide=True)
@@ -52,18 +65,32 @@ class wrtRoute:
     
     def logout(self):
         """  关闭连接 """
-        self.conn.close()
+        if self.conn is not  None:
+            self.conn.close()
+        self.conn=None
 
-
-    def gerRules(self,conn=None):
-        """  获取所有 nat  PREROUTING 规则 """
+    def _toRun(self,cmd,conn=None):
+        """ 核心执行 """
         conn = conn if conn is not None else self.conn
-        result =  conn.run(" iptables -t nat -L PREROUTING --line-numbers ", hide=True)   #--获取卡信息
-        print(result.stdout)
-        rules = self.rules2rows(result.stdout)
+        conn = conn if conn is not None else self.login() #自动连接
+        result =  conn.run( cmd , hide=True)   #--获取卡信息
+        print(cmd,'==\n',result. stdout) #loger
+        return result
+
+    def _gerRules(self,chain="PREROUTING",conn=None):
+        """ 获取iptables """
+        cmd = " iptables -t nat -L {} --line-numbers ".format(chain)
+        result =  self._toRun(cmd,conn)   #--获取卡信息
+        return result.stdout
+
+    def gerRules(self,chain="PREROUTING",conn=None):
+        """  获取所有 nat  PREROUTING 规则 """
+        stdout = self._gerRules(chain,conn)
+        rules = self._rules2rows(stdout)
         return rules 
     
-    def rules2rows(self,tabStr,tpl="iptables-PREROUTING.template"):
+    def _rules2rows(self,tabStr,tpl="iptables-rule.template"):
+        """  转换 """
         f = open(tpl)
         template = TextFSM(f)
         outTab = template.ParseText(tabStr)
@@ -71,41 +98,155 @@ class wrtRoute:
         outTab = [ dict(zip(["num","target",'prot','opt','source','destination'],r)) for r in outTab ]
         return  outTab
     
+    def gerChain(self,conn=None):
+        """  获取所有 nat  PREROUTING 规则 """
+        stdout = self._gerRules('',conn)
+        rules = self._chain2rows(stdout)
+        return rules 
+    
+    def _chain2rows(self,tabStr,tpl="iptables-chain.template"):
+        """  转换 """
+        f = open(tpl)
+        template = TextFSM(f)
+        outTab = template.ParseText(tabStr)
+        #print(outTab)
+        outTab = [ dict(zip(["chain" ],r)) for r in outTab ]
+        return  outTab
+    
+
+    def checkMain(self):
+        """ PREROUTING下是否包含 ['localDef','localManage' ]
+            1,2 条  
+        """
+        rules = self.gerRules('PREROUTING')
+        chains = self.gerChain( )
+        chainsLs = [ r['chain'] for r in  chains ]
+        #先后顺序 非常关键
+        for chain in ['localDef','localManage']:
+            # localDef
+            rulesId = [ r['num'] for r in rules if  r['target'] == chain  ]
+            if chain not in chainsLs:
+                #没有需要 添加
+                self._addMain(chain)
+            if len(rulesId) == 0 :
+                #没有需要加入PREROUTING
+                self._setMain(chain)
+        self.logout()
+        
+                
+      
+
+    def _setMain(self,chain):
+        """  设置 加入链到  PREROUTING """
+        cmd = " iptables -t nat -I PREROUTING   -j {}   ".format(chain)
+        self._toRun(cmd)
 
 
-    def delIpRules(self,rules,ip,act='ACCEPT',dst='anywhere'):
+    def _addMain(self,chain):
+        """   创建链  """
+        cmd = "iptables -t nat  -N {} ".format(chain)
+        self._toRun(cmd)
+
+
+    def _delLocalDef(self):
+        """ 删除默认规则 """
+        chainName  = 'localDef'
+        rules = self.gerRules(chainName)
+        rules = list(reversed(rules))
+        for r in rules:
+            cmd = " iptables -t nat -D {}  {} ".format(chainName,r['num'])
+            self._toRun(cmd)
+
+
+    def _delManageDef(self):
+        """ 删除用户规则 """
+        chainName  = 'localManage'
+        rules = self.gerRules(chainName)
+        rules = list(reversed(rules))
+        for r in rules:
+            cmd = " iptables -t nat -D {}  {} ".format(chainName,r['num'])
+            self._toRun(cmd)
+
+
+
+    def reload(self,cfg=None):
+        """ 目标白名单/来源白名单 设置到 localDef"""
+        self._delLocalDef()
+        cfg = cfg if cfg is not None else self.cfg
+        print('cfg=',cfg)
+        ls = cfg.get('目标白名单') if cfg.get('目标白名单') is not None else []
+        for i in ls:
+            cmd = "iptables -t nat -I localDef  -d  {} -j ACCEPT ".format(i)
+            self._toRun(cmd)
+        ls = cfg.get('来源白名单') if cfg.get('来源白名单') is not None else []
+        for i in ls:
+            cmd = "iptables -t nat -I localDef  -s  {} -j ACCEPT ".format(i)
+            self._toRun(cmd)
+        ls = cfg.get('拦截tcp端口') if cfg.get('拦截tcp端口') is not None else []
+        for dc in ls:
+            port = list(dc.keys())[0]
+            val = list( dc.values())[0]
+            cmd = "iptables -t nat -A localDef -p tcp --dport {} -j DNAT --to-destination {} ".format(port,val)
+            self._toRun(cmd)
+        ls = cfg.get('拦截udp端口') if cfg.get('拦截udp端口') is not None else []
+        for dc in ls:
+            port = list(dc.keys())[0]
+            val = list( dc.values())[0]
+            cmd = "iptables -t nat -A localDef -p udp --dport {} -j DNAT --to-destination {} ".format(port,val)
+            self._toRun(cmd)
+
+        self.logout()
+
+
+
+
+
+
+    #-----------业务
+
+
+
+    def _delIpRules(self,rules,ip,act='ACCEPT',dst='anywhere'):
         """ ip,ACCEPT source
             ip ，动作，来源
-            iptables -t nat -D PREROUTING  -s 192.168.20.222 -j ACCEPT
+            iptables -t nat -D localManage  -s 192.168.20.222 -j ACCEPT
         """
+        chainName  = 'localManage'
         rulesId = [ r['num'] for r in rules if  r['target'] == 'ACCEPT' and r['source'] == ip and   r['destination'] ==  dst ]
-        rulesCmd = [ 'iptables -t nat -D PREROUTING  -s {} -j {}'.format(ip,act) for r in rulesId   ]
+        rulesCmd = [ 'iptables -t nat -D {}  -s {} -j {}'.format(chainName,ip,act) for r in rulesId   ]
         return rulesCmd
         
-    def addIpRules(self,ip,act='ACCEPT' ):
+    def _addIpRules(self,ip,act='ACCEPT' ):
         """ ip,ACCEPT source
             ip ，动作，来源
-            iptables -t nat -D PREROUTING  -s 192.168.20.222 -j ACCEPT
+            iptables -t nat -D localManage  -s 192.168.20.222 -j ACCEPT
         """
-        ruleCmd =  'iptables -t nat -I PREROUTING  -s {} -j {}'.format(ip,act)  
+        chainName  = 'localManage'
+        ruleCmd =  'iptables -t nat -I {}  -s {} -j {}'.format(chainName,ip,act)  
             
         return ruleCmd
         
         
     def ipLogin(self,ip):
-        """ """
-        cmd = self.addIpRules(ip)
-        self.conn.run(cmd, hide=True) 
+        """ 客户端放行 """
+        cmd = self._addIpRules(ip)
+        self._toRun(cmd ) 
         self.logout()
 
 
 
     def ipLoguot(self,ip):
-        """ """
+        """ 客户端退出 """
         rules = self.gerRules()
-        rulesCmd = self.delIpRules(rules,ip)
+        rulesCmd = self._delIpRules(rules,ip)
         for cmd in rulesCmd:
-            self.conn.run(cmd, hide=True) 
+            self._toRun(cmd ) 
+        self.logout()
+
+    def resetUser(self):
+        """ 用户全部重连 """
+        self._delManageDef()
+       
         self.logout()
 
 
@@ -114,12 +255,7 @@ def save2json(dc,fileNmae):
     with open(fileNmae,"w") as f:
         json.dump(dc,f, sort_keys=True, indent=4, separators=(',', ': '))
         print("保存{}文件完成...".format(fileNmae) ,len(dc) )
-def save2file(s,fileNmae):
-    """ 把str 存入文件 """
-    print("保存{}文件完成...".format(fileNmae)   )
-    with open(fileNmae, "w", encoding='utf-8') as f:
-        f.write(str(s))
-        f.close()
+ 
 
 
 def unitTest():
@@ -127,7 +263,7 @@ def unitTest():
     
     cfgs = readCfg('./route_config.json')
     
-    wrt = wrtRoute(cfgs['主路由器'])
+    wrt = wrtRoute(cfgs)
     wrt.ipLogin('192.168.20.222')
  
 def unitTestDel():
@@ -135,7 +271,7 @@ def unitTestDel():
     
     cfgs = readCfg('./route_config.json')
     
-    wrt = wrtRoute(cfgs['主路由器'])
+    wrt = wrtRoute(cfgs)
     wrt.ipLoguot('192.168.20.222')
  
 
