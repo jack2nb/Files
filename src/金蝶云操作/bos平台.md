@@ -1,8 +1,13 @@
 
 
 ## BOS平台
+ [金蝶云产品手册](https://help.open.kingdee.com/dokuwiki/lib/exe/detail.php?id=%E9%87%87%E8%B4%AD%E7%AE%A1%E7%90%86&media=pur_%E9%87%87%E8%B4%AD%E6%95%B4%E4%BD%93%E6%B5%81%E7%A8%8B%E5%9B%BE_1_.png)
 
-[参考](![image-20231004160543716](C:\Users\Administrator\AppData\Roaming\Typora\typora-user-images\image-20231004160543716.png))
+ [金蝶云api](https://openapi.open.kingdee.com/ApiDoc?operateId=916006304992643073)
+
+ [金蝶云数据模型](https://open.kingdee.com/K3Cloud/CDPPortal/DataModel.aspx)
+
+ 
 
 ## 概念
 
