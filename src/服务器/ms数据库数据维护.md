@@ -4,6 +4,26 @@
 
 heidisql
 
+```sql
+CREATE TABLE  通知公告 (
+ 
+	id int  IDENTITY(1,1) NOT NULL  PRIMARY KEY ,
+	title nvarchar(100) NOT NULL,
+	linke nvarchar(100) NOT NULL,
+	CREATORID int NOT NULL,
+	AUTHOR nvarchar(100) NOT NULL,
+	FCREATETIME  date NOT NULL
+ )
+```
+
+```sql
+
+
+ALTER TABLE 通知公告  add   id int  IDENTITY(1,1) NOT NULL  PRIMARY KEY  ;
+
+ALTER table 通知公告  alter COLUMN id int  IDENTITY(1,1) NOT NULL  PRIMARY KEY  ;
+ 
+```
 #### 开启事务
 
 ```
