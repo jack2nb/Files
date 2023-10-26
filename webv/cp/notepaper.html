@@ -1,0 +1,48 @@
+<a-card class="glassbg ">
+    <a-row>
+        <a-col :span="14">
+            <h2>便签（代办）</h2>
+        </a-col>
+        <a-col align="end" :span="10">
+            <a-button type="link">
+                <template #icon>
+                    <i class="fa  fa-list-ul  "></i>
+                </template>更多
+            </a-button>
+        </a-col>
+    </a-row>
+    <!--便签体-->
+    <a-row :gutter="[10,10]">
+        <a-col :span="2">
+            <a-button type="link">
+                <template #icon>
+                    <i class="fa  fa-reply  "></i>
+                </template>
+            </a-button>
+        </a-col>
+
+        <a-col :span="20">
+            <a-row :gutter="[10,10]">
+                <!--便签列表  card高度-->
+                <a-col :xs="20" :xs="24" :sm="12" :md="12" :lg="8" :xl="8">
+                    <a-card class="glassbga   " :style="{ height: '140px'    }">
+                        <space>a便签</space>
+                        <pre>a便签  </pre>
+                    </a-card>
+                </a-col>
+                <a-col :xs="24" :sm="12" :md="12" :lg="8" :xl="8">
+                    <a-card class="glassbga   " :style="{ height: '140px'    }">
+                        <p>便签a card content</p>
+                    </a-card>
+                </a-col>
+            </a-row>
+        </a-col>
+        <a-col :span="2">
+            <a-button type="link">
+                <template #icon>
+                    <i class="fa fa-mail-forward"></i>
+                </template>
+            </a-button>
+        </a-col>
+    </a-row>
+</a-card>

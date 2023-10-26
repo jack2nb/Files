@@ -1,0 +1,116 @@
+<a-alert v-if="! pd.userId " message="当前不是有效的用户 " type="error" />
+
+<div v-else>
+
+
+  <h1>基础资料管理</h1>
+  <a-tabs v-model:activeKey="pd.activeKey" @change="m.点击标签">
+    <a-tab-pane key="通知公告" tab="通知公告">
+      <a-space class="table-operations" :size="20" :alig="center">
+        <a-button @click=" m.添加公告 ">添加公告</a-button>
+      </a-space>
+
+      <a-table :dataSource="pd.notice" :columns="pd.noticeColumns">
+        <template #opt="{ record }">
+          <a-space :size="10">
+            <a-button :loading="pd.butLoading['notice'+record.ip]" type="primary"
+              @click=" m.nShoeChange  ( record ) ">修改</a-button>
+            <a-popconfirm @confirm=" ndel(record) " title="确定要删除这条数据?" ok-text="确定" cancel-text="取消">
+              <a-button :loading="pd.butLoading['notice'+record.ip]" type="primary">删除</a-button>
+            </a-popconfirm>
+          </a-space>
+        </template>
+      </a-table>
+    </a-tab-pane>
+    <a-tab-pane key="常用入口" tab="常用入口" force-render>
+
+        <a-space class="table-operations" :size="20" :alig="center">
+          <a-button @click=" m.添加常用入口 ">添加常用入口</a-button>
+        </a-space>
+     
+      <a-table :dataSource="pd.entrance" :columns="pd.entColumns">
+        <template #opt="{ record }">
+          <a-space :size="10">
+            <a-button :loading="pd.butLoading['notice'+record.ip]" type="primary"
+              @click=" m.eShoeChange  ( record ) ">修改</a-button>
+            <a-popconfirm @confirm=" edel(record) " title="确定要删除这条数据?" ok-text="确定" cancel-text="取消">
+              <a-button :loading="pd.butLoading['notice'+record.ip]" type="primary">删除</a-button>
+            </a-popconfirm>
+          </a-space>
+        </template>
+      </a-table>
+    </a-tab-pane>
+
+  </a-tabs>
+</div>
+<a-divider />
+
+<a-drawer :visible="pd.添加公告抽屉" :title=" fm.nVal.id?'修改公告':'添加公告'" width="380" destroyOnClose="false" closable="true"
+  @close="pd.添加公告抽屉 = false">
+
+  <!---添加公告--->
+  <a-form :model="fm.nVal" :rules="fm.nRules" layout="vertical">
+    <input v-model:value="fm.nVal.id" type="hidden" />
+    <a-row :gutter="16">
+      <a-col :span="24">
+        <a-form-item label="标题" name="title" v-bind="fm.nValidateInfos.title">
+          <a-input placeholder="标题 " v-model:value="fm.nVal.title" />
+        </a-form-item>
+      </a-col>
+    </a-row>
+    <a-row :gutter="16">
+      <a-col :span="24">
+        <a-form-item label="链接" name="link" v-bind="fm.nValidateInfos.link">
+          <a-input placeholder="网址链接" v-model:value="fm.nVal.link" style="width: 100%"  
+            placeholder="输入一个地址" />
+        </a-form-item>
+      </a-col>
+    </a-row>
+    <a-row :gutter="16">
+      <a-col :span="24">
+        <a-form-item label="公布日期" name="time" v-bind="fm.nValidateInfos.time">
+          <a-date-picker placeholder="选择日期" v-model:value="fm.nVal.time" />
+        </a-form-item>
+      </a-col>
+    </a-row>
+  </a-form>
+  <a-space :size="10">
+    <a-button @click="pd.添加公告抽屉 = false">取消</a-button>
+    <a-button type="primary" @click="m.nSubmit" :loading="pd.butLoading['保存通知公告']">保存</a-button>
+  </a-space>
+
+
+</a-drawer>
+
+<a-drawer :visible="pd.添加常用抽屉" :title=" fm.eVal.id?'修改常用入口':'添加常用入口'" width="380" destroyOnClose="false" closable="true"
+  @close="pd.添加常用抽屉=false">
+
+  <!---常用入口--->
+
+  <a-form :model="fm.eVal" :rules="fm.eRules" layout="vertical">
+    <input v-model:value="fm.nVal.id" type="hidden" />
+    <a-row :gutter="16">
+      <a-col :span="24">
+        <a-form-item label="名字描述" name="title" v-bind="fm.eValidateInfos.title">
+          <a-input placeholder="描述" v-model:value="fm.eVal.title" />
+        </a-form-item>
+      </a-col>
+    </a-row>
+    <a-row :gutter="16">
+      <a-col :span="24">
+        <a-form-item label="入口地址" name="link" v-bind="fm.eValidateInfos.link">
+          <a-input placeholder="入口地址" v-model:value="fm.eVal.link" style="width: 100%" 
+            placeholder="输入入口地址" />
+        </a-form-item>
+      </a-col>
+    </a-row>
+
+    </a-row>
+  </a-form>
+  <a-space :size="10">
+    <a-button @click="pd.添加常用抽屉=false">取消</a-button>
+    <a-button type="primary" @click="m.eSubmit" :loading="pd.butLoading['保存常用入口']">保存</a-button>
+  </a-space>
+
+
+</a-drawer>

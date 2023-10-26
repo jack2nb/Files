@@ -1,0 +1,69 @@
+<a-row type="flex" align="middle" style="height: 100vh;">
+ 
+  <a-col :xs="0" :sm="0" :md="12" :lg="14" :xl="14">
+    <a-result status="404" title="无法上网?" sub-title="登入上网开始工作，进入专属主页.">
+      <template #extra>
+        <div class="ant-result-subtitle" v-if="pd.userIp "> ip地址: {{pd.userIp}}</div>
+      </template>
+    </a-result>
+  </a-col>
+
+  <a-col :xs="24" :sm="24" :md="12" :lg="10" :xl="10" :style="{ height: '250px'    }">
+    
+    <a-tabs v-model:activeKey="activeKey">
+      <a-tab-pane key="1" tab="员工入口">
+        <!---员工入口-->
+        <a-row type="flex" align="center">
+          <a-divider> </a-divider>
+        </a-row>
+        <a-row align="center">
+          <a-form>
+            <a-form-item>
+              <a-input v-model:value="pd.user" placeholder="你的名字">
+                <template #prefix> <i class="fa fa-user"></i> </template>
+              </a-input>
+            </a-form-item>
+            <a-form-item>
+              <a-input disabled v-model:value="pd.dep" placeholder="所在部门">
+                <template #prefix> <i class="fa fa-users"></i> </template>
+              </a-input>
+            </a-form-item>
+
+            <!-- a-form-item>
+              <a-input v-model:value="pd.password" type="password" placeholder="oa 系统的密码 忘记输入123">
+                <template #prefix> <i class="fa fa-lock"></i> </template>
+              </a-input>
+            </a-form-item-->
+            <a-form-item>
+              <a-button :loading="pd.buttonLoading['userClick']" @click="m.user2click" type="primary" html-type="submit"
+                :disabled="pd.user === '' ">
+                进入
+              </a-button>
+            </a-form-item>
+          </a-form>
+        </a-row>
+      </a-tab-pane>
+
+      <a-tab-pane key="3" tab="来宾入口"> <a-row type="flex" align="center">
+          <a-row align="center">
+            <a-divider> </a-divider>
+
+            <a-button :loading="pd.buttonLoading['userClick']" @click="m.ipLogin(pd.userIp,123)" type="primary"
+              html-type="submit">
+              点击进入上网
+            </a-button>
+          </a-row>
+      </a-tab-pane>
+
+
+      <template #renderTabBar="{ DefaultTabBar, ...props }">
+        <component :is="DefaultTabBar" v-bind="props" :style="{ zIndex: 1,   textAlign: 'center' }" />
+      </template>
+    </a-tabs>
+
+
+
+
+  </a-col>
+
+</a-row>

@@ -1,0 +1,39 @@
+<div v-if="pd.erpId">
+  <a-row>
+    <a-col :span="10">
+      <h2>重点指标</h2>
+    </a-col>
+    <a-col align="end" :span="14">
+
+    </a-col>
+  </a-row>
+  <!--指标-->
+  <a-row :gutter="[10,10]" type="flex" align="middle">
+
+    <a-col :xs="12" :sm="8" :md="6" :lg="6" :xl="6">
+      <a-popover  >
+        <template #content>
+          <p v-for="i in pd.未完成的单据数">{{i["name"]}}:{{ i["单据编号"]}}</p>
+          
+        </template>
+
+        <a-statistic :loading="!pd.loadings['未完成的单据数']" title="未完成的单据数" :value="pd.union ">
+
+        </a-statistic>
+      </a-popover>
+
+
+    </a-col>
+    <a-col :xs="12" :sm="8" :md="6" :lg="6" :xl="6">
+      <a-popover>
+        <template #content>
+          <p v-for="i in pd.flows">{{i["内容"]}}</p>
+        </template>
+        <a-statistic :loading="!pd.loadings['需要处理的流程']" title="需要处理的流程" :value="pd.flows.length">
+        </a-statistic>
+    </a-col>
+     
+
+  </a-row>
+  <a-divider> </a-divider>
+</div>

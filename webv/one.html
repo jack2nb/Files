@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="keyword" content="没有过时的技术，只有过时的产品">
+  <title>ant 2.x</title>
+
+
+</head>
+
+<body>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.29.4/moment.min.js"></script>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/vue/3.2.47/vue.global.prod.min.js"></script>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/ant-design-vue/2.2.8/antd.min.js"></script>
+
+  <link rel="stylesheet" type="text/css"
+    href=" https://cdnjs.cloudflare.com/ajax/libs/ant-design-vue/2.2.8/antd.min.css">
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/ant-design-vue/2.2.8/antd.min.js"></script>
+
+
+
+
+
+  <div id="app">
+    <a-row>
+      <a-col :xs="2" :sm="4" :md="6" :lg="8" :xl="10">Col</a-col>
+      <a-col :xs="20" :sm="16" :md="12" :lg="8" :xl="4">      <a-button type="primary">保存</a-button></a-col>
+      <a-col :xs="2" :sm="4" :md="6" :lg="8" :xl="10">Col</a-col>
+    </a-row>
+
+    <a-row>
+      <a-col :xs="2" :sm="4" :md="6" :lg="8" :xl="10">Col</a-col>
+      <a-col :xs="20" :sm="16" :md="12" :lg="8" :xl="4"> <a-button>取消</a-button></a-col>
+      <a-col :xs="2" :sm="4" :md="6" :lg="8" :xl="10">Col</a-col>
+    </a-row>
+
+    <a-row>
+      <a-col :xs="24" :sm="24" :md="24" :lg="12" :xl="12"><a-date-picker  /></a-col>
+      <a-col :xs="24" :sm="24" :md="24" :lg="12" :xl="12">
+        <a-calendar   /></a-col>
+    </a-row>
+  </div>
+
+  <script>
+
+    const pd = Vue.reactive({});// 定义层对象
+    const value = Vue.ref();// 定义层对象
+    // 创建Vue应用
+    let appdat = {
+      setup() {
+
+
+        pd.paddingContent = 35;//边距
+
+        pd.calendar = 35;//边距
+        return { pd }
+      },
+      created() {
+
+      },
+      mounted() {
+        // Vue-Redux 状态管理
+
+      },
+
+    }
+
+    app = Vue.createApp(appdat);
+
+    app.use(antd);
+    // 挂载Vue应用
+    app.mount('#app');
+  </script>
+</body>
+
+</html>

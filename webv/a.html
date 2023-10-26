@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <title>Title</title>
+  <style>
+    #loading {
+
+
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      width: 50px;
+      height: 50px;
+      background-color: #7FFF7F;
+
+    }
+  </style>
+</head>
+
+<body>
+
+  <div id="loading"></div>
+  <input type="button" value="播放动画" id="btn">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js"></script>
+  <script type="module">
+
+
+
+    let btn = document.getElementById('btn');
+
+    let d1 = document.getElementById('loading');
+
+    let param = {
+      left: 0
+    }
+
+    btn.onclick = () => {
+      anime({
+        targets: document.getElementById('loading'), 
+        loop: true,
+        duration: 2000,
+        // 边框变成圆角
+        borderRadius: ['0%', '50%', '0%'],
+        rotate: {
+          value: 360,
+          duration: 1000,
+          easing: 'easeInOutSine',
+        },
+      })
+    }
+
+  </script>
+</body>
+
+</html>

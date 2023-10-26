@@ -1,0 +1,51 @@
+<a-alert v-if="! pd.userId " message="当前不是有效的用户 " type="error" />
+
+<div v-else>
+  <mw-indicator />
+
+  <mw-notepaper />
+
+  <a-divider> </a-divider>
+
+  <a-row :gutter="[10,10]">
+    <a-col :xs="24" :sm="12" :md="10" :lg="10" :xl="10">
+      <a-card title="通知公告">
+        <a-list  size="small"    :data-source="pd.notice"   >
+          <template #renderItem="{ item }">
+            <a-list-item  >
+              <a-row   type="flex" justify="space-between"   style="width: 100%">
+                <a-col :span="18">  <a v-model:href="item.link"><a-button type="link"> {{ item.title }}</a-button></a></a-col>
+                <a-col :span="6">{{ m.time2momday(item.time) }}</a-col>
+              </a-row>
+            </a-list-item>
+          </template>
+        </a-list>
+
+
+      </a-card>
+    </a-col>
+    <a-col :xs="24" :sm="12" :md="14" :lg="14" :xl="14">
+      <a-card title="常用入口">
+        <a-row :gutter="[10,10]">
+          <a-col v-for="item in  pd.entrance " :xs="24" :sm="12" :md="12" :lg="8" :xl="6">
+            <a-card class="glassbga   ">
+              <a v-model:href="item.link" target="_blank">
+                <p>{{ item.title }}</p>
+              </a>
+            </a-card>
+          </a-col>
+
+        </a-row>
+      </a-card>
+    </a-col>
+  </a-row>
+
+
+  <!--响应布局-->
+  <a-divider> </a-divider>
+  <a-button type="link" v-for="(value, key) in pd.screens">
+    <a-tag v-if="!!value" :key="key" color="blue">
+      {{ key }}
+    </a-tag>
+  </a-button>
+</div>

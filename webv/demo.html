@@ -1,0 +1,126 @@
+<a-space direction="vertical">
+  <a-date-picker />
+   
+</a-space>
+
+<a-popconfirm
+title="Are you sure delete this task?"
+ok-text="Yes"
+cancel-text="No"
+@confirm="confirm"
+ 
+>
+<a href="#">Delete</a>
+</a-popconfirm>
+
+<div>
+  <a-divider orientation="left">Normal</a-divider>
+  <a-row type="flex">
+    <a-col :span="6" :order="4">1 col-order-4</a-col>
+    <a-col :span="6" :order="3">2 col-order-3</a-col>
+    <a-col :span="6" :order="2">3 col-order-2</a-col>
+    <a-col :span="6" :order="1">4 col-order-1</a-col>
+  </a-row>
+  <a-divider orientation="left">Responsive</a-divider>
+
+  <div>
+    <a-popover title="提示" trigger="hover">
+      <template #content>
+        <p>Content</p>
+       
+      </template>
+      <a-button>按钮</a-button>
+    </a-popover>
+     
+  </div>
+
+
+  <a-divider>表格</a-divider>
+  <p :style="pStyle">Contacts</p>
+  <a-row>
+    <a-col :span="12">
+      <description-item title="Email" content="ant-design-vue@example.com" />
+    </a-col>
+    <a-col :span="12">
+      <description-item title="Phone Number" content="+86 181 0000 0000" />
+    </a-col>
+  </a-row>
+  <a-row>
+    <a-col :span="24">
+      <description-item title="Github">
+        <template #content>
+          <a href="https://github.com/vueComponent/ant-design-vue">
+            github.com/vueComponent/ant-design-vue
+          </a>
+        </template>
+      </description-item>
+    </a-col>
+  </a-row>
+  <a-divider>提示内容</a-divider>
+
+  <a-skeleton active avatar :paragraph="{ rows: 4 }" />
+  <h1>组件</h1>
+  <mw-abc val="11a12" val2="120" />
+  <a-divider>按钮</a-divider>
+
+  <p>关于按钮.abc</p>
+  <a-button type="primary">Primary Button</a-button>
+  <a-button loading=true Color="red-6">按钮 Button</a-button>
+
+  <a-input v-model="inputValue" placeholder="Input" />
+  <button @click="showMessage">Show Message</button>
+
+
+
+
+  <a-divider>With Text</a-divider>
+  <a-space>
+    Space
+    <a-button type="primary">Button</a-button>
+    <a-upload>
+      <a-button>
+        <UploadOutlined />
+        Click to Upload
+      </a-button>
+    </a-upload>
+    <a-popconfirm title="Are you sure delete this task?" ok-text="Yes" cancel-text="No">
+      <a-button>Confirm</a-button>
+    </a-popconfirm>
+  </a-space>
+
+
+  <a-divider>With Text</a-divider>
+  <div>
+    <a-slider v-model:value="size" />
+    <br />
+    <br />
+    <a-space :size="size">
+      <a-button type="primary">Primary</a-button>
+      <a-button>Default</a-button>
+      <a-button type="dashed">Dashed</a-button>
+      <a-button type="link">Link</a-button>
+    </a-space>
+  </div>
+</div>
+
+
+
+
+<style lang="less" scoped>
+  #components-grid-demo-flex :deep(.ant-row) {
+    background: rgba(128, 128, 128, 0.08);
+  }
+</style>
+
+<style scoped>
+  .highlight {
+    background-color: rgb(255, 192, 105);
+    padding: 0px;
+  };
+  search-outlined {
+    background:url('./icons/search.png');
+  };
+  .ant-table-filter-icon{
+    background:url('./icons/search.png');
+  }
+  </style>

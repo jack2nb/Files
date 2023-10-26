@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="keyword" content="没有过时的技术，只有过时的产品">
+  <title>上网 Router</title>
+  <style>
+    #loading {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      width: 50px;
+      height: 50px;
+      background-color: #7FFF7F;
+    }
+  </style>
+
+</head>
+
+<body>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/labjs/1.2.0/LAB.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/loadjs/4.2.0/loadjs.umd.min.js"></script>
+  <div id="app"></div>
+
+  <div id="loading"></div>
+  <script>
+    class gindex {
+      version(n) { return n ? '?ver=12' : '12' }
+      cfg(key) {
+        const cfg = {
+          'routeUrl': '//192.168.11.122:2026/'
+          , 'dataUrl': '//192.168.11.122:2028/'
+        }
+        return cfg?.[key]
+      }
+    }
+    const gi = new gindex()
+
+
+    const loadAe = anime({
+      targets: document.getElementById('loading'),
+      loop: true,
+      duration: 2000,
+      // 边框变成圆角
+      borderRadius: ['0%', '50%', '0%'],
+      rotate: {
+        value: 360,
+        duration: 1000,
+        easing: 'easeInOutSine',
+      },
+    });
+
+    const loadHtml = async () => {
+      //异步加载
+      let url = './layout.html' + gi.version(true) //模板文件
+      const response = await fetch(url);
+      let tpl = await response.text();//模板内容
+
+      // 创建一个路由实例
+      const routes = [
+        // 定义路由规则
+        { path: '/', name: "入口", component: () => import(`./home.js${gi.version(true)}`), }
+        , { path: '/page', name: "主页", component: () => import(`./page.js${gi.version(true)}`), }
+        , { path: '/admin', name: "管理", component: () => import(`./admin/admin.js${gi.version(true)}`), }
+        , { path: '/base', name: "基础资料", component: () => import(`./admin/base.js${gi.version(true)}`), }
+        , { path: '/demo', name: "演示", component: () => import(`./demo.js${gi.version(true)}`), }
+        , { path: '/dababase', name: "数据库表", component: () => import(`./admin/database.js${gi.version(true)}`), }
+
+
+      ];
+      // 创建路由规则
+      const vrouter = VueRouter.createRouter({
+        history: VueRouter.createWebHashHistory(),
+        routes: routes
+      });
+
+      // 创建Vue应用
+      let appdat = {
+        setup() {
+          const urouter = VueRouter.useRouter() //必须在 响应setup中
+          const pd = Vue.reactive({});//变量
+          pd.screens = antd.Grid.useBreakpoint();//ui xs sm md gl xxl
+          pd.selectedKeys;
+          pd.header = 1;
+          pd.title = '';
+
+          pd.paddingContent = 35;//边距
+
+          ge.on('头', (val) => { pd.header = val });//ge.emit('头',1)
+          ge.on('goto', (val) => { urouter.push(val) }); //ge.emit('goto', '/admin');
+          //ge.on('标题',(val)=>{pd.title=val} );
+
+
+          Vue.watch(() => { return { selectedKeys: pd.selectedKeys } }, (n, o) => { console.log(n.selectedKeys) });
+          Vue.watch(() => { return { screens: pd.screens } }, (n, o) => { pd.paddingContent = n.screens.sm ? 35 : 5; });
+          return { routes, pd }
+        },
+        created() {
+          ge.emit('头', 0);
+        },
+        mounted() {
+          // Vue-Redux 状态管理
+          console.log('index mounted',);
+        },
+        template: tpl//使用模板
+      }
+
+      app = Vue.createApp(appdat);
+
+      // 将路由实例添加到Vue应用中
+      app.use(vrouter);
+      app.use(antd);
+      // 挂载Vue应用
+      app.mount('#app');
+    }
+
+
+    loadjs([
+      "https://cdnjs.cloudflare.com/ajax/libs/ant-design-vue/2.2.8/antd.min.css"
+      , "https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css"
+
+      , "./src/main.css"
+    ]);
+
+    let ge = null;
+    let app = null;
+
+
+    $LAB.script(["https://cdnjs.cloudflare.com/ajax/libs/vue/3.2.47/vue.global.prod.min.js"
+      , "https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.29.4/moment.min.js"
+      , "https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.29.4/locale/zh-cn.min.js"
+
+    ]
+      , ["https://cdnjs.cloudflare.com/ajax/libs/vue-router/4.0.16/vue-router.global.prod.min.js"
+        , "https://cdnjs.cloudflare.com/ajax/libs/ant-design-vue/2.2.8/antd.min.js"
+        , "https://cdnjs.cloudflare.com/ajax/libs/EventEmitter/5.2.8/EventEmitter.min.js"
+        , "https://cdnjs.cloudflare.com/ajax/libs/axios/1.4.0/axios.min.js"
+        , "https://cdnjs.cloudflare.com/ajax/libs/lodash.js/2.4.2/lodash.min.js"
+        , "./src/dataframe.min.js"
+
+
+
+
+      ]
+
+
+    ).wait(() => {
+      console.log('load src');
+      ge = new EventEmitter;
+      loadHtml();
+      document.getElementById('loading').hidden = true;
+    });
+
+
+
+
+
+
+
+
+
+
+  </script>
+</body>
+
+</html>

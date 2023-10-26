@@ -1,0 +1,23 @@
+<style>
+  .logo {
+    float: right;
+    margin: 16px 0 16px 24px;
+  }
+</style>
+<!-- Your Vue app content will go here -->
+<a-layout class="layout">
+  <!--a-affix :offset-top="top"  style="z-index:1500">   </a-affix-->
+  <a-layout-header v-if="pd.header">
+    <div class="logo" />
+    <a-menu v-model:selectedKeys="pd.selectedKeys" theme="dark" mode="horizontal" :style="{ lineHeight: '64px' }">
+      <a-menu-item v-for="r in routes" :key="r.name"> 
+        <router-link :to="r.path">{{r.name}}</router-link>
+      </a-menu-item>
+    </a-menu>
+  </a-layout-header>
+
+  <a-layout-content :style="{'padding':   pd.paddingContent+'px'}">
+    <router-view></router-view>
+  </a-layout-content>
+
+</a-layout>

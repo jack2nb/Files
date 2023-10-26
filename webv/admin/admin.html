@@ -1,0 +1,128 @@
+<div>
+
+  <h1>路由器 上网管理</h1>
+
+  <a-tabs v-model:activeKey="pd.activeKey" @change="m.点击标签">
+    <a-tab-pane key="上线用户" tab="上线用户">
+      <a-space class="table-operations" :size="20" :alig="center">
+        <a-button @click=" m.ipLogout " :disabled="pd.userIps.length==0">下线</a-button>
+        <a-button @click="m.ipLogoutAll">全部下线</a-button>
+      </a-space>
+      <a-table :loading="!pd.tabLoading['上线用户']" :dataSource="pd.upUsersTab" :columns="pd.upUsersColumns" :rowSelection="pd.upUsersSelect"
+        :row-selection="{ selectedRowKeys: pd.userSelect, onChange: m.onSelectChange }">
+        <template #filterDropdown="{ setSelectedKeys, selectedKeys, confirm, clearFilters, column }">
+          <div style="padding: 8px">
+            <a-input ref="searchInput" :placeholder="`筛选 ${column.dataIndex}`" :value="selectedKeys[0]"
+              style="width: 188px; margin-bottom: 8px; display: block"
+              @change="e => setSelectedKeys(e.target.value ? [e.target.value] : [])" @pressEnter="  confirm " />
+            <a-button type="primary" size="small" style="width: 90px; margin-right: 8px" @click="  confirm ">
+              <i class="fa fa-search"></i>
+              筛选
+            </a-button>
+            <a-button size="small" style="width: 90px" @click="clearFilters">
+              重置
+            </a-button>
+          </div>
+        </template>
+      </a-table>
+    </a-tab-pane>
+    <a-tab-pane key="规则" tab="规则" force-render>
+     
+      <div class="table-operations">
+        <a-space class="table-operations" :size="20" :alig="center">
+          <a-button @click="m.reloadRule">重载规则</a-button>
+          <a-modal v-model:visible="pd.modals['reloadRule']" title="重载中" @ok="handleOk">
+            <template #footer>
+              <a></a>
+            </template>
+            <p>请稍后...</p>
+          </a-modal>
+          <a-button @click="m.clearRule">清空规则</a-button>
+          <a-modal v-model:visible="pd.modals['clearRule']" title="清空中" @ok="handleOk">
+            <template #footer>
+              <a></a>
+            </template>
+            <p>请稍后...</p>
+          </a-modal>
+
+        </a-space>
+      </div>
+      <a-table :dataSource="pd.tabRulesTab" :columns="pd.tabRulesColumns" :row-selection="pd.tabRulesSelect" />
+    </a-tab-pane>
+    <a-tab-pane key="地址列表" tab="地址列表">
+
+      <a-table :dataSource="pd.ipMacTab" :columns="pd.ipMacColumns" :row-selection="pd.ipMacSelect"
+        :rowClassName="(record, index) => (index % 2 === 1 ? 'table-striped' : null)">
+        <template #filterDropdown="{ setSelectedKeys, selectedKeys, confirm, clearFilters, column }">
+          <div style="padding: 8px">
+            <a-input ref="searchInput" :placeholder="`筛选 ${column.dataIndex}`" :value="selectedKeys[0]"
+              style="width: 188px; margin-bottom: 8px; display: block"
+              @change="e => setSelectedKeys(e.target.value ? [e.target.value] : [])" @pressEnter="  confirm " />
+            <a-button type="primary" size="small" style="width: 90px; margin-right: 8px" @click="  confirm ">
+              <i class="fa fa-search"></i>
+              筛选
+            </a-button>
+            <a-button size="small" style="width: 90px" @click="clearFilters">
+              重置
+            </a-button>
+          </div>
+        </template>
+
+        <template #action="{ record }">
+          <a-span>
+            <a-button :loading="pd.butLoading[record.ip]" type="primary"
+              @click=" m.ipLogin  ( record.ip,record) ">上线</a-button>
+          </a-span>
+        </template>
+
+      </a-table>
+      <a-divider>表格start </a-divider>
+      {{pd.xxx}}
+      <a-input v-model:value="pd.xxx" placeholder="请输入内容"></a-input>
+      <ul>
+        <li v-for="i in pd.ipMacSearch">
+          ip地址： {{ i.item.ip }}
+          <br />
+          mac地址： {{ i.item.mac}}
+
+        </li>
+      </ul>
+      {{pd.yyy}}
+
+
+      <a-input-search v-model:value="pd.xxx" placeholder="本地搜索" style="width: 300px" @search="onSearch" />
+
+      {{pd.activeKey}}
+      <a-form-item label="结果：">
+        <a-select allowClear show-search placeholder="请选择标记结果">
+          <a-select-option v-for="d in pd.ipMacSearch" :key="d.item.ip " :title="d.item.mac">
+            {{ d.item.ip }}
+          </a-select-option>
+        </a-select>
+      </a-form-item>
+
+      <a-divider>表格end</a-divider>
+    </a-tab-pane>
+  </a-tabs>
+
+
+
+</div>
+
+
+
+
+
+
+
+<style lang="less" scoped>
+  #components-grid-demo-flex :deep(.ant-row) {
+    background: rgba(128, 128, 128, 0.08);
+  }
+</style>
+
+<style scoped>
+  .table-striped td {
+    background-color: #fafafa9d;
+  }
+</style>
