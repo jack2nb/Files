@@ -46,6 +46,7 @@ npx wrangler pages publish book
    - [sql报表](./金蝶云操作/sql报表.md)
    - [bos平台](./金蝶云操作/bos平台.md)
    - [bos异常采购控制](./金蝶云操作/bos异常采购控制.md)
+   - [bos订单计销售单位控制](./金蝶云操作/bos订单计销售单位控制.md)
    - [报表-直接人工](./erp/直接人工.md)
    - [报表-直接材料](./erp/直接材料.md)
    - [报表-月度对账](./erp/月度对账.md)
