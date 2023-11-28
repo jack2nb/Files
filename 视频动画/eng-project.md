@@ -116,16 +116,23 @@ Azure Speech 免费额度 每月5000字
 以上英文请用 Merriam-Webster Dictionary  的音标来注解并用json格式输出 例如：{"turtle":"ˈtər-tᵊl "}
 ```
 
-## 前期工作
+## 前期工作（数据）
 
 * 根据单词组 计算MP3时间 并存成 json文件带时间
 
+  * 根据db数据找到文件
+  * 根据文件得出时长
+  * 根据时长更新数据库
+  * 根据数据库生成json配文件
+  
   
 
-关键代码
+单词前期工作-5分钟10个单词生成json-jsonp
 
-```
-
+```python
+# 关键代码 
+info = ffmpeg.probe(fname)
+row.enTm = float(info['streams'][0]['duration'] )
 ```
 
 
@@ -143,6 +150,8 @@ Azure Speech 免费额度 每月5000字
 
 ```
 D:/jack/eng-amt/en500word/1/1/cfg_11.json
+
+
 ```
 
 

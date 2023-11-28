@@ -10,7 +10,7 @@ var fs = require("fs");
 var path = require("path");
 //载入配置文件
 const srcCfg = require('./src.json');
-const wordCfg = require('D:/jack/eng-amt/en500word/1/1/cfg_11.json');
+const wordCfg = require('D:/jack/eng-amt/en500word/0/1/cfg_1.json');//.\\.\\en500word\\0\\1\\cfg_1.json
 let word, srcPath;
 
 
@@ -23,11 +23,11 @@ let srcDt = {
     "背景01": "./src/黑白白板.png"
     , "教师04": "./src/教师4.png"
     , "教师07": "./src/老师7.png"
-    , "音标": "./src/大猩猩.png"
+    //, "音标": "./src/大猩猩.png"
 
 }
 
-var fast = 1
+var fast = 1 //耗时1秒 标准单位
 
 /* seed */
 mo.cameraMoveTo({ zoom: 1.5, duration: 0 }); //横向移动摄像机
@@ -39,13 +39,13 @@ let imgBg = srcDt['背景01']//'./src/bg-palnt3.png';//雨雾草 v1
 //bgImg = bgGroup.addImage(imgBg, {z:-99,y:-2.1,x:0,scale:3.6})
 
 //imgBg =  './src/grass.jpg';//草原 v2
-bgImg = bgGroup.addImage(imgBg, { z: -99, y: 0, x: 0, scale: 6.0 }) //缩放7.5
+bgImg = bgGroup.addImage(imgBg, { z: -99, y: 0, x: 0, scale: 6.0 }) //scale缩放7.5
 
 mo.addText('每天说英语', { position: [-5.2, -2.6], opacity: 0.5, scale: 0.15, color: "#2a2a2a" })
 mo.addText('Speak English Every Day', { position: [-4.70, -2.8], opacity: 0.5, scale: 0.13, color: "#2a2a2a" })
 
 mo.addText('生活常用词500个', { position: [0.0, 2.4], opacity: 0.9, scale: 0.38, color: "#2a2a2a" })
-    .wipeIn({ duration: 1 * fast })
+    .wipeIn({ duration: 1 * fast }) //duration耗时
 
 //------老师
 let teacher = {}
@@ -61,21 +61,24 @@ teacher.m = teacherM.addImage(srcDt['教师07'], { z: 98, y: -0.4, x: -10, scale
  
 
 function 闪一下(obj) {
+    //0.8秒耗时
     obj.changeOpacity(0.5, { t: ">", duration: 0.3 * fast, ease: "power2.in" })
     obj.changeOpacity(1, { t: ">", duration: 0.5 * fast, ease: "power2.Out" })
 }
 function 进度线(t, x = 0.2, y = 0.3) {
+    //耗时是参数
     var lineOne = mo.addRect({ x: x, y: y, width: 2.8, height: 0.03, color: "#44abda" })
     lineOne.fadeIn({ duration: 0 })
     lineOne.scaleXTo(0, { t: ">", duration: t * fast, ease: "none" })
     return lineOne
 }
 function 移到一边(obj, x, y) {
+    //2.1秒耗时
     obj.moveTo({ x: x, y: y, duration: 0.5 * fast })
     obj.changeOpacity(0.4, { t: "<", duration: 0.8 * fast, ease: "expo.in" })
     obj.scaleTo(0.165, { t: "<", duration: 0.8 * fast, ease: "expo.in" })
 }
-//-------循环生成字
+//-------循环生成字 
 var starty = 2
 var startx = 4
 var wordGp = mo.addGroup();
@@ -86,35 +89,43 @@ for (let key in wordCfg.data) {
     obj.g = wordGp.addGroup();
     obj.zhWord = wordCfg.data[key].zh
     obj.enWord = wordCfg.data[key].en
+    obj.img = wordCfg.data[key].img
+    //----时间
+    obj.en4m = wordCfg.data[key].en4m
+    obj.en4f = wordCfg.data[key].en4f
+    obj.zh4m = wordCfg.data[key].zh4m
+    obj.zh4f = wordCfg.data[key].zh4f
     //----创建单词
     obj.zh = obj.g.addText(obj.zhWord, { position: [0.2, 1], opacity: 0.9, scale: 0.59, color: "#0a0a0a" })
     obj.en = obj.g.addText(obj.enWord, { position: [0.2, -0.6], opacity: 0.9, scale: 0.59, color: "#0a0a0a" })
     //---英标图片
-    obj.ph = obj.g.addImage(srcDt['音标'], { x: 0.2, y: 0, scale: 0.38 })
+    //obj.ph = obj.g.addImage(srcDt['音标'], { x: 0.2, y: 0, scale: 0.38 })
+    obj.ph = obj.g.addImage('src/en500word/'+obj.img, { x: 0.2, y: 0, scale: 0.38 })
 
-
+    var teacherMoveTime =  0.8
     //---女老师in
-    teacher.f.moveTo({ y: -0.4, x: -4, duration: 1.4 * fast, ease: "expo.out" })
-    //----单词朗读
+    teacher.f.moveTo({ y: -0.4, x: -4, duration: teacherMoveTime * fast, ease: "expo.out" })
+    //----朗读
     obj.zh.flyIn({ duration:0.9 * fast });
-    闪一下(obj.zh)
-    进度线(1 * fast, 0.2, 0.4)//中文线
+    闪一下(obj.zh) //0.8秒耗时
+    进度线(obj.zh4f * fast, 0.2, 0.4)//中文线
     obj.ph.wipeIn({ duration: 1.1 * fast, ease: "power4.out" })
     obj.en.wipeIn({ t: "<", duration: 1.1 * fast });
-    闪一下(obj.en) //异步才能获取坐标 object3D
-    进度线(1 * fast, 0.2, -1.5)
-    //----老师out
-    teacher.f.moveTo({ y: -0.4, x: -10, duration: 1.4 * fast, ease: "expo.in" })
+    闪一下(obj.en) //0.8秒耗时 //异步才能获取坐标 object3D
+    进度线(obj.en4f * fast, 0.2, -1.5)//英文线
+    //----女老师out
+    teacher.f.moveTo({ y: -0.4, x: -10, duration: teacherMoveTime * fast, ease: "expo.in" })
     //----男老师in
-    teacher.m.moveTo({ y: -0.4, x: -4, duration: 1.4 * fast, ease: "expo.out" })
-    //----单词朗读
+    teacher.m.moveTo({ y: -0.4, x: -4, duration: teacherMoveTime * fast, ease: "expo.out" })
+    //----朗读
     //obj.zh.flyIn({ duration: 1.1 });
-    闪一下(obj.zh)
-    进度线(1 * fast, 0.2, 0.4)//中文线
+    闪一下(obj.zh) //0.8秒耗时
+    进度线(obj.zh4m * fast, 0.2, 0.4)//中文线
     //obj.en.wipeIn({ duration: 1.1 });
-    闪一下(obj.en) //异步才能获取坐标 object3D
-    进度线(1 * fast, 0.2, -1.5)
-    teacher.m.moveTo({ y: -0.4, x: -10, duration: 1.4 * fast, ease: "expo.in" })
+    闪一下(obj.en) //0.8秒耗时 //异步才能获取坐标 object3D
+    进度线(obj.en4m * fast, 0.2, -1.5)//英文线
+    //----男老师out
+    teacher.m.moveTo({ y: -0.4, x: -10, duration: teacherMoveTime * fast, ease: "expo.in" })
 
     // code block to be executed
     console.log('word', wordCfg.data[key])
@@ -123,13 +134,13 @@ for (let key in wordCfg.data) {
     obj.ph.changeOpacity(0, { t: "<", duration: 0.1 * fast, ease: "expo.in" })//隐藏音标
     if (key % 2) {
         console.log('左边')
-        移到一边(obj.en, startx, starty)
-        移到一边(obj.zh, startx, starty - 0.3)
+        移到一边(obj.en, startx, starty) //2.1秒耗时
+        移到一边(obj.zh, startx, starty - 0.3)//2.1秒耗时
         if (key != 0) { starty = starty - 0.8 }
     } else {
         console.log('右边')
-        移到一边(obj.en, startx * -1 + 0.2, starty)
-        移到一边(obj.zh, startx * -1 + 0.2, starty - 0.3)
+        移到一边(obj.en, startx * -1 + 0.2, starty) //2.1秒耗时
+        移到一边(obj.zh, startx * -1 + 0.2, starty - 0.3) //2.1秒耗时
     }
 }
 
