@@ -13,17 +13,6 @@
 get_ipython().system(' pip install ffmpeg-python')
 
 
-# In[3]:
-
-
-from pydub import AudioSegment
- 
-
-静音 = AudioSegment.silent(duration=3000)
-
-静音.export('./tmp/s3s.mp3',format="mp3")
-
-
 # ## 生成时间单词，json配置文件
 
 # In[28]:
@@ -33,6 +22,7 @@ import os,json
 import ffmpeg
 from dataclasses import dataclass, field ,asdict
 from typing import List
+from pydub import AudioSegment
 
 
 # In[29]:
@@ -62,7 +52,7 @@ script['显示标题']= 1
 # ### 创建一行行单词配置
 # 
 
-# In[35]:
+# In[209]:
 
 
 def mkScript(row):
@@ -87,7 +77,7 @@ def mkScript(row):
     p1st['en4m朗读线']= row ['en4m'] 
     p1st['男老师出']= x08
     # 文字归位
-    p1st['等待']=  0.8
+    p1st['等待']=  0.81
     #p1st['音标隐藏']=  1
     p1st['en单词出']= x08  #加特效音 :风速
     p1st['zh单词出']= x08  #加特效音:风速
@@ -97,14 +87,14 @@ def mkScript(row):
 
 # ## 根据2个参数 生成命令
 
-# In[177]:
+# In[210]:
 
 
 def mkMp3Cmd(p1st,row):
     cmd_ls = []
     files = []
     for idx,key  in enumerate(p1st.keys()):
-        outFile = str(idx).rjust(3,'0')+row['en']
+        outFile = '单词'+row['en']+str(idx).rjust(3,'0')
         files.append('./tmp/'+outFile+'.wav')
         if '朗读线' in key:
             #生成拷贝
@@ -121,20 +111,20 @@ def mkMp3Cmd(p1st,row):
             cmd = 生成空白(p1st[key], outFile )
             #print(cmd) 
             cmd_ls.append(cmd)
-        print(idx,key,p1st[key])
+        #print(idx,key,p1st[key])
         
         
     return cmd_ls,files
  
 
 
-# In[182]:
+# In[211]:
 
 
 str(5).rjust(3,'0')[-1]
 
 
-# In[188]:
+# In[218]:
 
 
 def mkao(pid):
@@ -148,13 +138,15 @@ def mkao(pid):
         cmd_ls,files = mkMp3Cmd(p1st,row)
 
         concatCmd = 合并mp3(files,row['zh'])
-        merge_ls.append(concatCmd) 
-    合并mp3(merge_ls,'id_{}'.format(pid))
-    return merge_ls
-mkao(1)
+        merge_ls.append(concatCmd)
+    
+     
+    return 合并mp3(merge_ls,'单词_id_{}'.format(pid))
+pidFile = mkao(1)
+pidFile,read_probe(pidFile)
 
 
-# In[179]:
+# In[ ]:
 
 
 
