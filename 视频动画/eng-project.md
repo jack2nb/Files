@@ -116,9 +116,9 @@ Azure Speech 免费额度 每月5000字
 以上英文请用 Merriam-Webster Dictionary  的音标来注解并用json格式输出 例如：{"turtle":"ˈtər-tᵊl "}
 ```
 
-## 前期工作（数据）
+## 配音工作（数据）
 
-* 根据单词组 计算MP3时间 并存成 json文件带时间
+* 根据单词组 计算wav时间 并存成 json文件带时间
 
   * 根据db数据找到文件
   * 根据文件得出时长
@@ -127,7 +127,7 @@ Azure Speech 免费额度 每月5000字
   
   
 
-单词前期工作-5分钟10个单词生成json-jsonp
+wav作为音频格式  ，单词前期工作-5分钟10个单词生成json-jsonp
 
 ```python
 # 关键代码 
