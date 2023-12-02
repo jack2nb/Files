@@ -7,7 +7,7 @@ import _ from 'lodash';
 //webpack
 var fs = require("fs");
 
-var path = require("path");
+//var path = require("path");
 //载入配置文件
 const srcCfg = require('./src.json');
 const wordCfg = require('D:/jack/eng-amt/en500word/0/0/cfg_0.json');//.\\.\\en500word\\0\\1\\cfg_1.json
@@ -115,7 +115,7 @@ for (let key in wordCfg.data) {
     闪一下(obj.zh) //0.8秒耗时
     进度线(obj.zh4f * fast, 0.2, 0.4)//中文线
     obj.ph.wipeIn({ duration: wordIn * fast, ease: "power4.out" })
-    obj.en.wipeIn({ t: "<", duration: wordIn * fast }); //en字入场
+    obj.en.wipeIn({ t: "<", duration: wordIn * fast }); //en字入场//typeText() //transformTexTo平滑过渡
     闪一下(obj.en) //0.8秒耗时 //异步才能获取坐标 object3D
     进度线(obj.en4f * fast, 0.2, -1.5)//英文线
     //----女老师out
@@ -250,11 +250,52 @@ if (movieSlice['排列'] == 1) {
 
     }
 }
-fast = 1
+fast = 0.001
 wordGp.moveTo({ y: -1, x: 0, duration: 1 * fast, ease: "expo.inOut" })
 mo.pause(1.5 * fast);
 wordGp.implode2D({ duration: 1.5 * fast, ease: "back.in" })
 //-----附带推广  ()
+fast = 1
+var endGp = mo.addGroup();
+var endOgj = {}
+
+endOgj.t1 = endGp.addText("学会了",
+    { position: [-8, 1.2], opacity: 1, scale: 0.29, color: "#0a0a0a" });
+endOgj.t11 = endGp.addText("点个关注或赞！",
+    { position: [8, 1.2], opacity: 1, scale: 0.29, color: "#0a0a0a" });
+endOgj.t2 = endGp.addText("看视频没学会",
+    { position: [-8, 0.5], opacity: 1, scale: 0.2, color: "#0a0a0a" });
+endOgj.t22 = endGp.addText("试试交互式学习。",
+    { position: [8, 0.5], opacity: 1, scale: 0.2, color: "#0a0a0a" });
+//--二维码
+var qCodeGp = mo.addGroup();
+qCodeGp.moveTo({ y: -5, duration:0 * fast, ease: "expo.out" });
+var qCodeOgj = {}
+qCodeOgj.img = qCodeGp.addImage('src/en500word/' + wordCfg.qrcode, { z: 55, x: -2.2, y: -1, scale: 1.5 }) //scale缩放 
+qCodeOgj.text = qCodeGp.addText("手机扫描进入",
+    { position: [-2.34, -0.16], opacity: 1, scale: 0.12, color: "#0a0a0a" });
+
+//--二维码
+var groupGp = mo.addGroup();
+groupGp.moveTo({ y: -5, duration:0 * fast, ease: "expo.out" });
+var groupOgj = {}
+groupOgj.img = groupGp.addImage('src/qqgroup2.jpg', { z: -99, x: 1.59, y: -1, scale: 1.3 }) //scale缩放 
+groupOgj.text = groupGp.addText("英语角（QQ群:280965346）",
+    { position: [1.95, -0.16], opacity: 1, scale: 0.12, color: "#0a0a0a" });
+//---结尾文字动画
+
+endOgj.t1.moveTo({ x: -2.25, duration: 0.5 * fast, ease: "expo.out" });
+endOgj.t11.moveTo({ x: 0.05, duration: 1 * fast, ease: "expo.out" });
+mo.pause(1.1 * fast);
+endOgj.t2.moveTo({ x: -0.5, duration: 0.8 * fast, ease: "expo.out" });
+mo.pause(0.8 * fast);
+endOgj.t22.moveTo({ x: 1.7, duration: 1 * fast, ease: "expo.out" });
+mo.pause(0.8 * fast);
+//---添加二维码动画
+qCodeGp.moveTo({ y: 0, duration: 0.5 * fast, ease: "expo.out" });
+mo.pause(1.1 * fast);
+groupGp.moveTo({ y: 0, duration:0.5 * fast, ease: "expo.out" });
+
 
 
 
