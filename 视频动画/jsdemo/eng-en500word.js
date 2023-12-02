@@ -10,7 +10,7 @@ var fs = require("fs");
 var path = require("path");
 //载入配置文件
 const srcCfg = require('./src.json');
-const wordCfg = require('D:/jack/eng-amt/en500word/0/1/cfg_1.json');//.\\.\\en500word\\0\\1\\cfg_1.json
+const wordCfg = require('D:/jack/eng-amt/en500word/0/0/cfg_0.json');//.\\.\\en500word\\0\\1\\cfg_1.json
 let word, srcPath;
 
 
@@ -26,7 +26,7 @@ let srcDt = {
     //, "音标": "./src/大猩猩.png"
 
 }
-const movieSlice = { "片头": 0, "单词": 1, "排列": 0, "片尾": 0 }
+const movieSlice = { "片头": 1, "单词": 1, "排列": 1, "片尾": 1 }
 
 var fast = 1 //耗时1秒 标准单位
 
@@ -45,6 +45,7 @@ bgImg = bgGroup.addImage(imgBg, { z: -99, y: 0, x: 0, scale: 6.0 }) //scale缩�
 mo.addText('每天说英语', { position: [-5.2, -2.6], opacity: 0.5, scale: 0.15, color: "#2a2a2a" })
 mo.addText('Speak English Every Day', { position: [-4.70, -2.8], opacity: 0.5, scale: 0.13, color: "#2a2a2a" })
 if (movieSlice['片头'] == 1) {
+    fast = 0.001
     mo.addText('生活常用词500个', { position: [0.0, 2.4], opacity: 0.9, scale: 0.38, color: "#2a2a2a" })
         .wipeIn({ duration: 1 * fast }) //duration耗时
 }
@@ -84,10 +85,11 @@ var starty = 2
 var startx = 4
 var wordGp = mo.addGroup();
 var objLs = []
+fast = 0.001
 for (let key in wordCfg.data) {
     if (movieSlice['单词'] == 0) { break }
     var obj = {}
-    objLs.push(obj)
+    objLs.push(obj) //物件列表
     obj.g = wordGp.addGroup();
     obj.zhWord = wordCfg.data[key].zh
     obj.enWord = wordCfg.data[key].en
@@ -126,7 +128,7 @@ for (let key in wordCfg.data) {
     进度线(obj.zh4m * fast, 0.2, 0.4)//中文线
     //obj.en.wipeIn({ duration: 1.1 });
     闪一下(obj.en) //0.8秒耗时 //异步才能获取坐标 object3D
-    进度线(obj.en4m * fast, 0.2, -1.5)//英文线
+    进度线(obj.en4m * fast, 0.2, -1.5)//英文朗读线
     //----男老师out
     teacher.m.moveTo({ y: -0.4, x: -10, duration: teacherMoveTime * fast, ease: "expo.in" })
 
@@ -148,6 +150,7 @@ for (let key in wordCfg.data) {
 }
 
 //---排列组合
+var fast = 0.001
 if (movieSlice['排列'] == 1) {
     //fast = 0
     var defy = 1.5 //默认y
@@ -169,6 +172,7 @@ if (movieSlice['排列'] == 1) {
             offb = offb + 1
             startx = offb * wsize + defx
         }
+        //en配列1.1秒
         objLs[key].en.moveTo({ t: "<", y: starty, x: startx, duration: 1.1 * fast, ease: "expo.in" })
         objLs[key].en.scaleTo(0.19, { t: "<", duration: 0.5 * fast, ease: "expo.in" })
         //--en横线
@@ -187,7 +191,7 @@ if (movieSlice['排列'] == 1) {
     offb = 0
     var defy = -0.4 //中文y默认
     for (let key in objLs) {
-        
+
         if (parseInt(key) + 1 <= objLs.length / 2) {
             starty = defy
             offa = offa + 1
@@ -197,33 +201,36 @@ if (movieSlice['排列'] == 1) {
             offb = offb + 1
             startx = offb * wsize + defx
         }
+        //zh配列1.1秒
         tmpInt = tmpLs.splice(_.random(0, tmpLs.length - 1), 1)[0]
         objLs[tmpInt].zh.moveTo({ t: "<", y: starty, x: startx, duration: 1.1 * fast, ease: "expo.in" })
         objLs[tmpInt].zh.scaleTo(0.19, { t: "<", duration: 0.5 * fast, ease: "expo.in" })
 
     }
-    fast = 1
-    //---最后选择
-    var lineLong  = mo.addRect({ x: 0, y: -1.55, width: 7, height: 0.03, color: "#63B14B" })//.changeOpacity(0,{ duration: 0.0001 })
+
+    //---最后朗读选择
+    var lineLong = mo.addRect({ x: 0, y: -1.55, width: 7, height: 0.03, color: "#63B14B" })//.changeOpacity(0,{ duration: 0.0001 })
     offa = 0
     offb = 0
     defy = 1.1 //默认y
     for (let key in objLs) {
-        
-        //---朗读一次
-        objLs[key].en.changeOpacity(1, { duration: 0.8, ease: "none" })
+        //----时间
+        obj.en4m = wordCfg.data[key].en4m
+        obj.zh4m = wordCfg.data[key].zh4m
+        //---en朗读一次 2.3秒
+        objLs[key].en.changeOpacity(1, { duration: 0.8 * fast, ease: "none" })
         objLs[key].enLine.fadeIn({ duration: 0 })
-        objLs[key].enLine.scaleXTo(0, { duration: 1.5 * fast, ease: "none" })
+        objLs[key].enLine.scaleXTo(0, { duration: obj.en4m * fast, ease: "none" }) //英文朗读线
 
-        //等待线
+        //等待线 2.5秒
         lineLong.changeOpacity(1, { duration: 0.0001 * fast, ease: "expo.in" })
-        lineLong.changeColor("#63B14B", { duration: 0.001 })
+        lineLong.changeColor("#63B14B", { duration: 0.0001 * fast })
         lineLong.wipeIn({ duration: 2.5 * fast, ease: "slow" });
         lineLong.changeColor("#EF8485", { t: "<", duration: 2 * fast, ease: "none" })
-        lineLong.changeOpacity(0, { duration: 0.001 * fast, ease: "expo.in" })
+        lineLong.changeOpacity(0, { duration: 0.0001 * fast, ease: "expo.in" })
         //lineLong.spinning({   duration:0.001});
-        //移动答案
 
+        //移动答案 2.3秒
         if (parseInt(key) + 1 <= objLs.length / 2) {
             starty = defy
             offa = offa + 1
@@ -233,21 +240,21 @@ if (movieSlice['排列'] == 1) {
             offb = offb + 1
             startx = offb * wsize + defx
         }
-        objLs[key].zh.changeOpacity(1, { duration: 0.8, ease: "none" })//取消文字半透明
+        objLs[key].zh.changeOpacity(1, { duration: 0.8 * fast, ease: "none" })//取消文字半透明
         objLs[key].zh.moveTo({ y: starty, x: startx, duration: 1.5 * fast, ease: "expo.inOut" })
 
         //朗读中文
         objLs[key].zhLine.fadeIn({ duration: 0 })
-        objLs[key].zhLine.scaleXTo(0, { t: ">", duration: 1.5 * fast, ease: "none" })
+        objLs[key].zhLine.scaleXTo(0, { t: ">", duration: obj.zh4m * fast, ease: "none" }) //中文朗读线
 
 
     }
 }
-
+fast = 1
 wordGp.moveTo({ y: -1, x: 0, duration: 1 * fast, ease: "expo.inOut" })
 mo.pause(1.5 * fast);
 wordGp.implode2D({ duration: 1.5 * fast, ease: "back.in" })
-//-----附带推广
+//-----附带推广  ()
 
 
 
