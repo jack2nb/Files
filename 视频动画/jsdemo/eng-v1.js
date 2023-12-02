@@ -47,7 +47,8 @@ mo.addText('Speak English Every Day', { position: [-4.70, -2.8], opacity: 0.5, s
 if (movieSlice['片头'] == 1) {
   //fast = 0.001
   mo.addText('生活常用词500个', { position: [0.0, 2.4], opacity: 0.9, scale: 0.38, color: "#2a2a2a" })
-    .wipeIn({ duration: 1 * fast }) //duration耗时
+    .wipeIn({ duration: 1 * fast }) ;//duration耗时  
+  mo.pause(2 * fast); //魔殊琪 朗读标题
 }
 //------老师
 let teacher = {}
@@ -114,9 +115,9 @@ for (let key in wordCfg.data) {
   obj.zh.flyIn({ t: ">", duration: wordIn * fast });//zh字入场
   闪一下(obj.zh) //0.8秒耗时
   进度线(obj.zh4f * fast, 0.2, 0.4)//中文线
-  obj.ph.wipeIn({ duration: wordIn * fast, ease: "power4.out" })
-  obj.en.wipeIn({ t: "<", duration: wordIn * fast }); //en字入场//typeText() //transformTexTo平滑过渡
-  闪一下(obj.en) //0.8秒耗时 //异步才能获取坐标 object3D
+  obj.ph.wipeIn({ duration: (wordIn+0.8) * fast, ease: "power4.out" })
+  obj.en.typeText({ t: "<", duration: wordIn * fast }); //en字入场//typeText() //transformTexTo平滑过渡
+  //闪一下(obj.en) //0.8秒耗时 //异步才能获取坐标 object3D
   进度线(obj.en4f * fast, 0.2, -1.5)//英文线
   //----女老师out
   teacher.f.moveTo({ t: ">", y: -0.4, x: -10, duration: teacherMoveTime * fast, ease: "expo.in" })
@@ -184,7 +185,7 @@ if (movieSlice['排列'] == 1) {
 
   }
   //---排列中文
-  mo.pause(1 * fast);
+  mo.pause(1 * fast); //排列等待
   var tmpLs = _.range(objLs.length);
   var tmpInt = 0;
   offa = 0
@@ -251,9 +252,9 @@ if (movieSlice['排列'] == 1) {
   }
 }
 //fast = 0.001
-wordGp.moveTo({ y: -1, x: 0, duration: 1 * fast, ease: "expo.inOut" })
+wordGp.moveTo({ y: -1, x: 0, duration: 1 * fast, ease: "expo.inOut" }) //退场3秒
 mo.pause(1.5 * fast);
-wordGp.implode2D({ duration: 1.5 * fast, ease: "back.in" })
+wordGp.implode2D({ duration: 1.1 * fast, ease: "back.in" })
 //-----附带推广  ()
 //fast = 1
 var endGp = mo.addGroup();
@@ -295,7 +296,6 @@ mo.pause(0.8 * fast);
 qCodeGp.moveTo({ y: 0, duration: 0.5 * fast, ease: "expo.out" });
 mo.pause(1.1 * fast);
 groupGp.moveTo({ y: 0, duration: 0.5 * fast, ease: "expo.out" });
-
-
+mo.pause(1.5 * fast);
 
 
