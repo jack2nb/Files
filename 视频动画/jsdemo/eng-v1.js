@@ -50,7 +50,11 @@ if (movieSlice['片头'] == 1) {
     .typeText({ duration: 0.5 * fast }) ;//duration耗时  
     mo.addText('单词量是学好英语的基石', { position: [0.0, 2], opacity: 0.7, scale: 0.14, color: "#2a2a2a" })
     .typeText({ t: ">",duration: 0.5 * fast }) ;//duration耗时  
-  mo.pause(2 * fast); //魔殊琪 朗读标题
+  //mo.pause(2 * fast); //魔殊琪 朗读标题
+  mo.addText('学一学', { position: [0.0, 0], opacity: 0.9, scale: 0.8, color: "#2a2a2a" })
+  .grow({ t: ">",  duration: 1.6 * fast, ease: "power4.out" })
+  .moveTo({  y: -8, duration: 0.6 * fast , ease: "power4.in" })
+  //.fadeOut({ t: ">",  duration: 1.4 * fast, ease: "power2.Out" })
 }
 //------老师
 let teacher = {}
@@ -77,12 +81,7 @@ function 进度线(t, x = 0.2, y = 0.3) {
   lineOne.scaleXTo(0, { duration: t * fast, ease: "none" })
   return lineOne
 }
-function 移到一边1(obj, x, y) {
-  //0.8秒耗时
-  obj.moveTo({ x: x, y: y, duration: 0.5 * fast })
-  obj.changeOpacity(0.4, { t: "<", duration: 0.6 * fast, ease: "expo.in" })
-  obj.scaleTo(0.165, { t: "<", duration: 0.6 * fast, ease: "expo.in" })
-}
+ 
 function 移到一边(obj, x, y,t='<') {
   //var t='<';
   //0.8秒耗时
@@ -120,7 +119,7 @@ for (let key in wordCfg.data) {
   //obj.ph = obj.g.addImage(srcDt['音标'], { x: 0.2, y: 0, scale: 0.38 })
   obj.ph = obj.g.addImage('src/en500word/' + obj.img, { x: 0.2, y: 0, scale: 0.38 })
 
-  const inout = 0.4 
+  const inout = 0.3 
   
   const wordIn = 0.6
   
@@ -141,10 +140,10 @@ for (let key in wordCfg.data) {
   teacher.m.moveTo({ t: ">", y: -0.4, x: -4, duration: inout * fast, ease: "expo.out" })
   //----朗读
   //obj.zh.flyIn({ duration: 1.1 });
-  闪一下(obj.zh) //0.6秒耗时
+  闪一下(obj.zh) //0.8秒耗时
   进度线(obj.zh4m * fast, 0.2, 0.4)//中文线
   //obj.en.wipeIn({ duration: 1.1 });
-  闪一下(obj.en) //0.6秒耗时 //异步才能获取坐标 object3D
+  闪一下(obj.en) //0.8秒耗时 //异步才能获取坐标 object3D
   进度线(obj.en4m * fast, 0.2, -1.3)//英文朗读线
   //----男老师out
   teacher.m.moveTo({ y: -0.4, x: -10, duration: inout * fast, ease: "expo.in" })
@@ -166,6 +165,9 @@ for (let key in wordCfg.data) {
   }
 }
 
+mo.addText('练一练', { position: [0.0, 0], opacity: 0.9, scale: 0.8, color: "#2a2a2a" })
+  .grow({ t: ">",  duration: 1.6 * fast, ease: "power4.out" })
+  .moveTo({  y: -8, duration: 0.6 * fast , ease: "power4.in" })
 //---排列组合
 //fast = 0.001
 if (movieSlice['排列'] == 1) {
@@ -202,7 +204,7 @@ if (movieSlice['排列'] == 1) {
     }
     //zh配列1.1秒
     tmpInt = tmpLs.splice(_.random(0, tmpLs.length - 1), 1)[0]
-    objLs[tmpInt].zh.moveTo({ t: "<", y: starty, x: startx, duration: 1.1 * fast, ease: "expo.in" })
+    objLs[tmpInt].zh.moveTo({ t: "<", y: starty, x: startx, duration: 0.5 * fast, ease: "expo.out" })
     objLs[tmpInt].zh.scaleTo(0.2, { t: "<", duration: 0.5 * fast,    ease: "expo.in" })
     objLs[tmpInt].zh.changeOpacity(1, { t: "<",duration: 0.5 * fast, ease: "none" }) //
 
@@ -240,8 +242,8 @@ if (movieSlice['排列'] == 1) {
     objLs[key].zhLine.fadeIn({ duration: 0 })
     objLs[key].zhLine.scaleXTo(0, { t: ">", duration: obj.zh4m * fast, ease: "none" }) //中文朗读线
     //移除中英
-    objLs[key].zh.implode2D({ duration: 1.1 * fast, ease: "back.in" })
-    objLs[key].en.implode2D({ t: "<",  duration: 1.1 * fast, ease: "back.in" })
+    objLs[key].zh.implode2D({ duration: 1 * fast, ease: "back.in" })
+    objLs[key].en.implode2D({ t: "<",  duration: 1 * fast, ease: "back.in" })
 
     
   }
