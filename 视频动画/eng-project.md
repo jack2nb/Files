@@ -110,7 +110,21 @@ Azure Speech 免费额度 每月5000字
 
 ### 发音
 
+微软发音库选择
+
+```
+https://speech.microsoft.com/portal/5eb25ee013f544f39e7fb1153d0fc9c7/voicegallery
+试听和导出来生成wav音频
+
+```
+
+
+
 ### 注音
+
+
+
+
 
 ```
 以上英文请用 Merriam-Webster Dictionary  的音标来注解并用json格式输出 例如：{"turtle":"ˈtər-tᵊl "}

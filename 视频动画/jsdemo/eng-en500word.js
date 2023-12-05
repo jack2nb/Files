@@ -77,11 +77,18 @@ function 进度线(t, x = 0.2, y = 0.3) {
   lineOne.scaleXTo(0, { duration: t * fast, ease: "none" })
   return lineOne
 }
-function 移到一边(obj, x, y) {
+function 移到一边1(obj, x, y) {
   //0.8秒耗时
   obj.moveTo({ x: x, y: y, duration: 0.5 * fast })
   obj.changeOpacity(0.4, { t: "<", duration: 0.6 * fast, ease: "expo.in" })
   obj.scaleTo(0.165, { t: "<", duration: 0.6 * fast, ease: "expo.in" })
+}
+function 移到一边(obj, x, y,t='<') {
+  //var t='<';
+  //0.8秒耗时
+  obj.moveTo({ t: t,x: x, y: y, duration: 0.5 * fast })
+  obj.changeOpacity(0.4, { t: t, duration: 0.6 * fast, ease: "expo.in" })
+  obj.scaleTo(0.165, { t: t, duration: 0.6 * fast, ease: "expo.in" })
 }
 //-------循环生成字 
 var starty = 2
@@ -149,13 +156,13 @@ for (let key in wordCfg.data) {
   obj.ph.changeOpacity(0, { t: ">", duration: 0.3 * fast, ease: "expo.in" })//隐藏音标
   if (key % 2) {
     console.log('左边')
-    移到一边(obj.en, startx, starty) //0.6秒耗时
-    移到一边(obj.zh, startx, starty - 0.3)//0.6秒耗时
+    移到一边(obj.en, startx, starty,'<') //0.6秒耗时
+    移到一边(obj.zh, startx, starty - 0.3,'<')//0.6秒耗时
     if (key != 0) { starty = starty - 0.8 }
   } else {
     console.log('右边')
-    移到一边(obj.en, startx * -1 + 0.2, starty) //0.6秒耗时
-    移到一边(obj.zh, startx * -1 + 0.2, starty - 0.3) //0.6秒耗时
+    移到一边(obj.en, startx * -1 + 0.2, starty,'<') //0.6秒耗时
+    移到一边(obj.zh, startx * -1 + 0.2, starty - 0.3,'<') //0.6秒耗时
   }
 }
 
@@ -271,11 +278,11 @@ var endOgj = {}
 
 endOgj.t1 = endGp.addText("学会了",
   { position: [-8, 1.2], opacity: 1, scale: 0.29, color: "#0a0a0a" });
-endOgj.t11 = endGp.addText("点个关注或赞！",
-  { position: [8, 1.2], opacity: 1, scale: 0.29, color: "#0a0a0a" });
-endOgj.t2 = endGp.addText("看视频没学会",
+endOgj.t11 = endGp.addText("点个关注！",
+  { position: [-8, 1.2], opacity: 1, scale: 0.29, color: "#0a0a0a" });
+endOgj.t2 = endGp.addText("看视频不过瘾",
   { position: [-8, 0.5], opacity: 1, scale: 0.2, color: "#0a0a0a" });
-endOgj.t22 = endGp.addText("试试交互式学习。",
+endOgj.t22 = endGp.addText("来交互式学习。",
   { position: [8, 0.5], opacity: 1, scale: 0.2, color: "#0a0a0a" });
 //--二维码
 var qCodeGp = mo.addGroup();
@@ -285,7 +292,7 @@ qCodeOgj.img = qCodeGp.addImage('src/en500word/' + wordCfg.qrcode, { z: 55, x: -
 qCodeOgj.text = qCodeGp.addText("扫描进入交互",
   { position: [-2.34, -0.16], opacity: 1, scale: 0.12, color: "#0a0a0a" });
 
-//--二维码
+//--群码
 var groupGp = mo.addGroup();
 groupGp.moveTo({ y: -5, duration: 0 * fast, ease: "expo.out" });
 var groupOgj = {}
@@ -295,7 +302,7 @@ groupOgj.text = groupGp.addText("英语角（QQ群:280965346）",
 //---结尾文字动画
 
 endOgj.t1.moveTo({ x: -2.25, duration: 0.5 * fast, ease: "expo.out" });
-endOgj.t11.moveTo({ x: 0.05, duration: 1 * fast, ease: "expo.out" });
+endOgj.t11.moveTo({ x: -0.35, duration: 1 * fast, ease: "expo.out" });
 mo.pause(1.1 * fast);
 endOgj.t2.moveTo({ x: -0.5, duration: 0.8 * fast, ease: "expo.out" });
 mo.pause(0.8 * fast);
