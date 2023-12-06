@@ -10,7 +10,7 @@ var fs = require("fs");
 //var path = require("path");
 //载入配置文件
 const srcCfg = require('./src.json');
-const wordCfg = require('D:/jack/eng-amt/en500word/0/4/cfg_4.json');//.\\.\\en500word\\0\\1\\cfg_1.json
+const wordCfg = require('D:/jack/eng-amt/en500word/0/0/cfg_0.json');//.\\.\\en500word\\0\\1\\cfg_1.json
 let word, srcPath;
 
 
@@ -113,7 +113,7 @@ for (let key in wordCfg.data) {
   obj.zh4m = wordCfg.data[key].zh4m
   obj.zh4f = wordCfg.data[key].zh4f
   //----创建单词
-  obj.zh = obj.g.addText(obj.zhWord, { font: 'condensed' , position: [0.2, 1], opacity: 0.9, scale: 0.59, color: textColor })
+  obj.zh = obj.g.addText(obj.zhWord, { font: 'gdh' , position: [0.2, 1], opacity: 0.9, scale: 0.59, color: textColor })
   obj.en = obj.g.addText(obj.enWord, { position: [0.2, -0.6], opacity: 0.9, scale: 0.59, color: textColor })
   //---英标图片
   //obj.ph = obj.g.addImage(srcDt['音标'], { x: 0.2, y: 0, scale: 0.38 })
@@ -242,8 +242,12 @@ if (movieSlice['排列'] == 1) {
     objLs[key].zhLine.fadeIn({ duration: 0 })
     objLs[key].zhLine.scaleXTo(0, { t: ">", duration: obj.zh4m * fast, ease: "none" }) //中文朗读线
     //移除中英
-    objLs[key].zh.implode2D({ duration: 1 * fast, ease: "back.in" })
-    objLs[key].en.implode2D({ t: "<",  duration: 1 * fast, ease: "back.in" })
+    //objLs[key].zh.implode2D({ duration: 1 * fast, ease: "back.in" })
+    objLs[key].zh.moveTo({ y: 0.4,duration: 1 * fast, ease: "expo.in" })
+    objLs[key].zh.scaleTo(0.0, {  t: "<", duration: 1 * fast, ease: "expo.in" })
+    //objLs[key].en.implode2D({ t: "<",  duration: 1 * fast, ease: "back.in" })
+    objLs[key].en.moveTo({y: 0.4, t: "<",  duration: 1 * fast, ease: "expo.in" })
+    objLs[key].en.scaleTo(0.0, {  t: "<", duration: 1 * fast, ease: "expo.in" })
 
     
   }
