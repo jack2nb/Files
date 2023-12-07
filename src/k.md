@@ -19,17 +19,43 @@ cscript ospp.vbs /dstatus
 
 卸载原本的激活码【xxxxx为密钥后五位】
 
-```cmd
-cscript ospp.vbs /unpkey:6MWKP
-cscript ospp.vbs /inpkey:NMMKJ-6RK4F-KMJVX-8D9MJ-6MWKP
-cscript ospp.vbs /sethst:e-db.jack2nb.top
 ```
+cscript ospp.vbs /unpkey:XXYY
+```
+
 开始激活
 
-```
-cscript ospp.vbs /act
+```cmd
 
-NMMKJ-6RK4F-KMJVX-8D9MJ-6MWKP
+cscript ospp.vbs /inpkey:NMMKJ-6RK4F-KMJVX-8D9MJ-6MWKP
+cscript ospp.vbs /sethst:e-db.jack2nb.top
+cscript ospp.vbs /act
+```
+
+
+
+
+### office 2013
+
+office转成vol版本
+
+```
+使用方法：以管理员身份运行相应版本的“Install_License.bat”
+```
+
+
+
+```
+ 
+cscript ospp.vbs /inpkey:YC7DK-G2NP3-2QQC3-J6H88-GVGXT
+cscript ospp.vbs /sethst:192.168.0.121
+cscript ospp.vbs /act
+```
+
+## 软件激活
+
+```
+
 ```
 
 

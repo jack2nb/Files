@@ -10,7 +10,7 @@ var fs = require("fs");
 //var path = require("path");
 //载入配置文件
 const srcCfg = require('./src.json');
-const wordCfg = require('D:/jack/eng-amt/en500word/0/0/cfg_0.json');//.\\.\\en500word\\0\\1\\cfg_1.json
+const wordCfg = require('D:/jack/eng-amt/en500word/0/6/cfg_6.json');//.\\.\\en500word\\0\\1\\cfg_1.json
 let word, srcPath;
 
 
@@ -211,8 +211,19 @@ if (movieSlice['排列'] == 1) {
   }
   
   //---循环最后朗读选择
-  var lineLong = mo.addRect({ x: 0, y: -1.65, width: 7, height: 0.03, color: "#63B14B" })//.changeOpacity(0,{ duration: 0.0001 })
- 
+  //var lineLong = mo.addRect({ x: 0, y: -1.65, width: 7, height: 0.03, color: "#63B14B" })//.changeOpacity(0,{ duration: 0.0001 })
+  function 等待选择(){
+  
+    var dot = mo.addTex('?',{ font: 'en' ,  opacity: 0.9, scale: 0.5 , color: "green" })
+    dot.show()
+    //闪一下(dot)
+    dot.changeOpacity(0.1, { t: ">", duration: 0.4 * fast, ease: "power2.in" })
+    dot.changeOpacity(0.9, { t: ">", duration: 0.4 * fast, ease: "power2.Out" })
+    dot.changeOpacity(0, { t: ">", duration: 0.7 * fast, ease: "power2.in" })//1.5-0.8 0.7
+    // dot.transformTexTo('. .',{ font: 'en' ,  duration: 0.5 * fast,   ease: "expo.in"   })
+    // .transformTexTo('.',{ font: 'en' ,   duration: 0.5 * fast,  ease: "expo.in"   })
+    // .transformTexTo('',{ font: 'en' ,   duration: 0.5 * fast,   ease: "expo.in"  })   
+  }
   for (let key in objLs) {
     //----时间
     obj.en4m = wordCfg.data[key].en4m
@@ -227,12 +238,13 @@ if (movieSlice['排列'] == 1) {
     objLs[key].enLine.scaleXTo(0, { duration: obj.en4m * fast, ease: "none" }) //英文朗读线
 
     //等待线 1.5秒
-    lineLong.changeOpacity(1, { duration: 0.0001 * fast, ease: "expo.in" })
-    lineLong.changeColor("#63B14B", { duration: 0.0001 * fast })
-    lineLong.wipeIn({ duration: 1.5 * fast, ease: "slow" });
-    lineLong.changeColor("#EF8485", { t: "<", duration: 1 * fast, ease: "none" })
-    lineLong.changeOpacity(0, { duration: 0.0001 * fast, ease: "expo.in" })
+    // lineLong.changeOpacity(1, { duration: 0.0001 * fast, ease: "expo.in" })
+    // lineLong.changeColor("#63B14B", { duration: 0.0001 * fast })
+    // lineLong.wipeIn({ duration: 1.5 * fast, ease: "slow" });
+    // lineLong.changeColor("#EF8485", { t: "<", duration: 1 * fast, ease: "none" })
+    // lineLong.changeOpacity(0, { duration: 0.0001 * fast, ease: "expo.in" })
     //lineLong.spinning({   duration:0.001});
+    等待选择();
  
     //移动中文0.8
     objLs[key].zh.moveTo({y: 0.2, x: 0, duration: 0.8  * fast, ease: "expo.inOut" })
