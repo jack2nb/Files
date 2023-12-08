@@ -10,7 +10,7 @@ var fs = require("fs");
 //var path = require("path");
 //载入配置文件
 const srcCfg = require('./src.json');
-const wordCfg = require('D:/jack/eng-amt/en500word/0/6/cfg_6.json');//.\\.\\en500word\\0\\1\\cfg_1.json
+const wordCfg = require('D:/jack/eng-amt/en500word/0/8/cfg_8.json');//.\\.\\en500word\\0\\1\\cfg_1.json
 let word, srcPath;
 
 
@@ -273,9 +273,9 @@ if (movieSlice['排列'] == 1) {
 var endGp = mo.addGroup();
 var endOgj = {}
 
-endOgj.t1 = endGp.addText("学会了",
+endOgj.t1 = endGp.addText("学会",
   { position: [-8, 1.2], opacity: 1, scale: 0.29, color: "#0a0a0a" });
-endOgj.t11 = endGp.addText("点个关注！",
+endOgj.t11 = endGp.addText("点个赞奖励自己！",
   { position: [-8, 1.2], opacity: 1, scale: 0.29, color: "#0a0a0a" });
 endOgj.t2 = endGp.addText("看视频不过瘾",
   { position: [-8, 0.5], opacity: 1, scale: 0.2, color: "#0a0a0a" });
@@ -299,7 +299,7 @@ groupOgj.text = groupGp.addText("英语角（QQ群:280965346）",
 //---结尾文字动画
 
 endOgj.t1.moveTo({ x: -2.25, duration: 0.5 * fast, ease: "expo.out" });
-endOgj.t11.moveTo({ x: -0.35, duration: 1 * fast, ease: "expo.out" });
+endOgj.t11.moveTo({ x: 0.25, duration: 1 * fast, ease: "expo.out" });
 mo.pause(1.1 * fast);
 endOgj.t2.moveTo({ x: -0.5, duration: 0.8 * fast, ease: "expo.out" });
 mo.pause(0.8 * fast);
