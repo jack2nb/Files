@@ -10,7 +10,7 @@ var fs = require("fs");
 //var path = require("path");
 //载入配置文件
 const srcCfg = require('./src.json');
-const wordCfg = require('D:/jack/eng-amt/en500word/0/8/cfg_8.json');//.\\.\\en500word\\0\\1\\cfg_1.json
+const wordCfg = require('D:/jack/eng-amt/en500word/1/1/cfg_11.json');//.\\.\\en500word\\0\\1\\cfg_1.json
 let word, srcPath;
 
 
@@ -51,7 +51,7 @@ if (movieSlice['片头'] == 1) {
     mo.addText('单词量是学好英语的基石', { position: [0.0, 2], opacity: 0.7, scale: 0.14, color: "#2a2a2a" })
     .typeText({ t: ">",duration: 0.5 * fast }) ;//duration耗时  
   //mo.pause(2 * fast); //魔殊琪 朗读标题
-  mo.addText('学一学', { position: [0.0, 0], opacity: 0.9, scale: 0.8, color: "#2a2a2a" })
+  mo.addText('只学十个', { position: [0.0, 0.5], opacity: 0.9, scale: 0.5, color: "#2a2a2a" })
   .grow({ t: ">",  duration: 1.6 * fast, ease: "power4.out" })
   .moveTo({  y: -8, duration: 0.6 * fast , ease: "power4.in" })
   //.fadeOut({ t: ">",  duration: 1.4 * fast, ease: "power2.Out" })
@@ -113,11 +113,11 @@ for (let key in wordCfg.data) {
   obj.zh4m = wordCfg.data[key].zh4m
   obj.zh4f = wordCfg.data[key].zh4f
   //----创建单词
-  obj.zh = obj.g.addText(obj.zhWord, { font: 'gdh' , position: [0.2, 1], opacity: 0.9, scale: 0.59, color: textColor })
-  obj.en = obj.g.addText(obj.enWord, { position: [0.2, -0.6], opacity: 0.9, scale: 0.59, color: textColor })
+  obj.zh = obj.g.addText(obj.zhWord, { font: 'gdh' , position: [0, 1], opacity: 0.9, scale: 0.59, color: textColor })
+  obj.en = obj.g.addText(obj.enWord, { position: [0, -0.6], opacity: 0.9, scale: 0.59, color: textColor })
   //---英标图片
   //obj.ph = obj.g.addImage(srcDt['音标'], { x: 0.2, y: 0, scale: 0.38 })
-  obj.ph = obj.g.addImage('src/en500word/' + obj.img, { x: 0.2, y: 0, scale: 0.38 })
+  obj.ph = obj.g.addImage('src/en500word/' + obj.img, { x: 0, y: 0, scale: 0.38 })
 
   const inout = 0.3 
   
@@ -128,12 +128,12 @@ for (let key in wordCfg.data) {
   //----朗读
   obj.zh.flyIn({ t: ">", duration: wordIn * fast });//zh字入场
   //闪一下(obj.zh) //0.8秒耗时
-  进度线(obj.zh4f * fast, 0.2, 0.4)//中文线
+  进度线(obj.zh4f * fast, 0, 0.4)//中文线
   obj.en.typeText({ duration: (wordIn+0.8) * fast }); //en字入场//typeText() //transformTexTo平滑过渡
   obj.ph.wipeIn({  duration:0.001 * fast, ease: "power4.out" })
   
   //闪一下(obj.en) //0.6秒耗时 //异步才能获取坐标 object3D
-  进度线(obj.en4f * fast, 0.2, -1.3)//英文线
+  进度线(obj.en4f * fast, 0, -1.3)//英文线
   //----女老师out
   teacher.f.moveTo({ t: ">", y: -0.4, x: -10, duration: inout * fast, ease: "expo.in" })
   //----男老师in
@@ -141,10 +141,10 @@ for (let key in wordCfg.data) {
   //----朗读
   //obj.zh.flyIn({ duration: 1.1 });
   闪一下(obj.zh) //0.8秒耗时
-  进度线(obj.zh4m * fast, 0.2, 0.4)//中文线
+  进度线(obj.zh4m * fast, 0, 0.4)//中文线
   //obj.en.wipeIn({ duration: 1.1 });
   闪一下(obj.en) //0.8秒耗时 //异步才能获取坐标 object3D
-  进度线(obj.en4m * fast, 0.2, -1.3)//英文朗读线
+  进度线(obj.en4m * fast, 0, -1.3)//英文朗读线
   //----男老师out
   teacher.m.moveTo({ y: -0.4, x: -10, duration: inout * fast, ease: "expo.in" })
 
@@ -165,7 +165,7 @@ for (let key in wordCfg.data) {
   }
 }
 
-mo.addText('练一练', { position: [0.0, 0], opacity: 0.9, scale: 0.8, color: "#2a2a2a" })
+mo.addText('互动-抢答', { position: [0.0, 0], opacity: 0.9, scale: 0.5, color: "#2a2a2a" })
   .grow({ t: ">",  duration: 1.6 * fast, ease: "power4.out" })
   .moveTo({  y: -8, duration: 0.6 * fast , ease: "power4.in" })
 //---排列组合
@@ -285,25 +285,25 @@ endOgj.t22 = endGp.addText("来交互式学习。",
 var qCodeGp = mo.addGroup();
 qCodeGp.moveTo({ y: -5, duration: 0 * fast, ease: "expo.out" });
 var qCodeOgj = {}
-qCodeOgj.img = qCodeGp.addImage('src/en500word/' + wordCfg.qrcode, { z: 55, x: -2.2, y: -1, scale: 1.5 }) //scale缩放 
+qCodeOgj.img = qCodeGp.addImage('src/en500word/' + wordCfg.qrcode, { z: 55, x: -1.7, y: -1, scale: 1.5 }) //scale缩放 
 qCodeOgj.text = qCodeGp.addText("扫描进入交互",
-  { position: [-2.34, -0.16], opacity: 1, scale: 0.12, color: "#0a0a0a" });
+  { position: [-1.84, -0.16], opacity: 1, scale: 0.12, color: "#0a0a0a" });
 
 //--群码
 var groupGp = mo.addGroup();
 groupGp.moveTo({ y: -5, duration: 0 * fast, ease: "expo.out" });
 var groupOgj = {}
-groupOgj.img = groupGp.addImage('src/qqgroup2.jpg', { z: -99, x: 1.59, y: -1, scale: 1.3 }) //scale缩放 
+groupOgj.img = groupGp.addImage('src/qqgroup2.jpg', { z: -99, x: 1.3, y: -1, scale: 1.3 }) //scale缩放 
 groupOgj.text = groupGp.addText("英语角（QQ群:280965346）",
-  { position: [1.95, -0.16], opacity: 1, scale: 0.12, color: "#0a0a0a" });
+  { position: [1.35, -0.16], opacity: 1, scale: 0.12, color: "#0a0a0a" });
 //---结尾文字动画
 
-endOgj.t1.moveTo({ x: -2.25, duration: 0.5 * fast, ease: "expo.out" });
+endOgj.t1.moveTo({ x: -1.9, duration: 0.5 * fast, ease: "expo.out" });
 endOgj.t11.moveTo({ x: 0.25, duration: 1 * fast, ease: "expo.out" });
 mo.pause(1.1 * fast);
 endOgj.t2.moveTo({ x: -0.5, duration: 0.8 * fast, ease: "expo.out" });
 mo.pause(0.8 * fast);
-endOgj.t22.moveTo({ x: 1.7, duration: 1 * fast, ease: "expo.out" });
+endOgj.t22.moveTo({ x: 1.5, duration: 1 * fast, ease: "expo.out" });
 mo.pause(0.8 * fast);
 //---添加二维码动画
 qCodeGp.moveTo({ y: 0, duration: 0.5 * fast, ease: "expo.out" });
