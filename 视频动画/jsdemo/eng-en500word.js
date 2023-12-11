@@ -10,9 +10,8 @@ var fs = require("fs");
 //var path = require("path");
 //载入配置文件
 const srcCfg = require('./src.json');
-const wordCfg = require('D:/jack/eng-amt/en500word/1/1/cfg_11.json');//.\\.\\en500word\\0\\1\\cfg_1.json
-let word, srcPath;
-
+const wordCfg = require('D:/jack/eng-amt/en500word/1/3/cfg_13.json');//.\\.\\en500word\\0\\1\\cfg_1.json
+let    srcPath;
 
 srcPath = srcCfg['imgRoot']//'./t123456_img/'
 console.log('cfg==', srcCfg, wordCfg, wordCfg.toString())
@@ -21,12 +20,17 @@ console.log('cfg==', srcCfg, wordCfg, wordCfg.toString())
 
 let srcDt = {
   "背景01": "./src/黑白白板.png"
-  , "教师04": "./src/教师4.png"
-  , "教师07": "./src/老师7.png"
+  , "教师女": "./src/教师4.png"
+  , "教师男": "./src/老师7.png"
+  , "点赞": "./src/点赞4.png"
+  , "关注": "./src/加关注 (1).png"
+  , "转发": "./src/转发9 (1).png"
   //, "音标": "./src/大猩猩.png"
 
 }
 const movieSlice = { "片头": 1, "单词": 1, "排列": 1, "片尾": 1 }
+let stepWord,  setpObj={}
+const stepGp = mo.addGroup();
 
 var fast = 1 //耗时1秒 标准单位
 
@@ -35,7 +39,7 @@ mo.cameraMoveTo({ zoom: 1.5, duration: 0 }); //横向移动摄像机
 //-----背景
 let bgImg
 let bgGroup = mo.addGroup();
-let bg = bgGroup.addRect({ z: -100, scale: 20, color: "#ffffff" });
+//let bg = bgGroup.addRect({ z: -100, scale: 20, color: "#ffffff" });
 let imgBg = srcDt['背景01']//'./src/bg-palnt3.png';//雨雾草 v1
 //bgImg = bgGroup.addImage(imgBg, {z:-99,y:-2.1,x:0,scale:3.6})
 
@@ -45,15 +49,25 @@ bgImg = bgGroup.addImage(imgBg, { z: -99, y: 0, x: 0, scale: 6.0 }) //scale缩�
 mo.addText('每天说英语', { position: [-5.2, -2.6], opacity: 0.5, scale: 0.15, color: "#2a2a2a" })
 mo.addText('Speak English Every Day', { position: [-4.70, -2.8], opacity: 0.5, scale: 0.13, color: "#2a2a2a" })
 if (movieSlice['片头'] == 1) {
-  //fast = 0.001
+  fast = 0.001
   mo.addText('生活常用词500个', { position: [0.0, 2.5], opacity: 0.9, scale: 0.38, color: "#2a2a2a" })
     .typeText({ duration: 0.5 * fast }) ;//duration耗时  
     mo.addText('单词量是学好英语的基石', { position: [0.0, 2], opacity: 0.7, scale: 0.14, color: "#2a2a2a" })
     .typeText({ t: ">",duration: 0.5 * fast }) ;//duration耗时  
   //mo.pause(2 * fast); //魔殊琪 朗读标题
-  mo.addText('只学十个', { position: [0.0, 0.5], opacity: 0.9, scale: 0.5, color: "#2a2a2a" })
-  .grow({ t: ">",  duration: 1.6 * fast, ease: "power4.out" })
-  .moveTo({  y: -8, duration: 0.6 * fast , ease: "power4.in" })
+  //点赞
+  setpObj.word = stepGp.addText('先学十个', { position: [0.0, 0.2], opacity: 0.9, scale: 0.5, color: "#2a2a2a" })
+  setpObj.word.grow({ t: ">",  duration: 1.6 * fast, ease: "power4.out" }) //入
+  setpObj.img1 = stepGp.addImage(srcDt['点赞'] , { z: -99, y: 1, x: -0.8, scale: 0.6 }) //点赞1
+  setpObj.img2 = stepGp.addImage(srcDt['点赞'] , { z: -99, y: 1, x: 0, scale: 0.6 }) //点赞2
+  setpObj.img3 = stepGp.addImage(srcDt['点赞'] , { z: -99, y: 1, x: 0.8, scale: 0.6 }) //点赞3
+  setpObj.img1.grow({ t: "<",  duration: 0.5 * fast, ease: "power4.in" }) //入
+  setpObj.img2.grow({ t: "<",  duration: 1 * fast, ease: "power4.in" }) //入
+  setpObj.img3.grow({ t: "<",  duration: 1.6 * fast, ease: "power4.in" }) //入
+  setpObj.word.moveTo({  y: -8, duration: 0.6 * fast , ease: "power4.in" }) //出
+  setpObj.img1.moveTo({  t: "<", y: -8, duration: 0.6 * fast , ease: "power4.in" }) //出
+  setpObj.img2.moveTo({ t: "<",  y: -8, duration: 0.6 * fast , ease: "power4.in" }) //出
+  setpObj.img3.moveTo({  t: "<", y: -8, duration: 0.6 * fast , ease: "power4.in" }) //出
   //.fadeOut({ t: ">",  duration: 1.4 * fast, ease: "power2.Out" })
 }
 //------老师
@@ -61,11 +75,11 @@ let teacher = {}
 
 //------女老师
 let teacherF = mo.addGroup();
-teacher.f = teacherF.addImage(srcDt['教师04'], { z: 98, y: -0.4, x: -10, scale: 3.8 })//.changeOpacity(0.9,{  duration:0})
+teacher.f = teacherF.addImage(srcDt['教师女'], { z: 98, y: -0.4, x: -10, scale: 3.8 })//.changeOpacity(0.9,{  duration:0})
 //teacher.f .fadeOut( {  duration: 0 })
 //------男老师
 let teacherM = mo.addGroup();
-teacher.m = teacherM.addImage(srcDt['教师07'], { z: 98, y: -0.4, x: -10, scale: 2.8 })//.changeOpacity(0.9,{  duration:0})
+teacher.m = teacherM.addImage(srcDt['教师男'], { z: 98, y: -0.4, x: -10, scale: 2.8 })//.changeOpacity(0.9,{  duration:0})
 //teacher.m .fadeOut( {  duration:0 })
 
 
@@ -89,14 +103,17 @@ function 移到一边(obj, x, y,t='<') {
   obj.changeOpacity(0.4, { t: t, duration: 0.6 * fast, ease: "expo.in" })
   obj.scaleTo(0.165, { t: t, duration: 0.6 * fast, ease: "expo.in" })
 }
-//-------循环生成字 
+//#######循环生学习
+const inout = 0.2
+const wordIn = 0.5
+
 var starty = 2
 var startx = 4
 var textColor ;
 var textColors=['blue','teal','brown','indigo','purple'] ;
 var wordGp = mo.addGroup();
 var objLs = []
-//fast = 0.001
+fast = 0.001
 for (let key in wordCfg.data) {
   if (movieSlice['单词'] == 0) { break }
   textColor = textColors[ key%(textColors.length)]
@@ -118,11 +135,6 @@ for (let key in wordCfg.data) {
   //---英标图片
   //obj.ph = obj.g.addImage(srcDt['音标'], { x: 0.2, y: 0, scale: 0.38 })
   obj.ph = obj.g.addImage('src/en500word/' + obj.img, { x: 0, y: 0, scale: 0.38 })
-
-  const inout = 0.3 
-  
-  const wordIn = 0.6
-  
   //---女老师in
   teacher.f.moveTo({ y: -0.4, x: -4, duration: inout * fast, ease: "expo.out" })
   //----朗读
@@ -149,7 +161,7 @@ for (let key in wordCfg.data) {
   teacher.m.moveTo({ y: -0.4, x: -10, duration: inout * fast, ease: "expo.in" })
 
   // code block to be executed
-  console.log('word', wordCfg.data[key])
+  //console.log('word', wordCfg.data[key])
   //mo.pause(0.5 * fast);
   //----移到旁边
   obj.ph.changeOpacity(0, { t: ">", duration: 0.3 * fast, ease: "expo.in" })//隐藏音标
@@ -164,12 +176,23 @@ for (let key in wordCfg.data) {
     移到一边(obj.zh, startx * -1 + 0.2, starty ,'<') //0.6秒耗时
   }
 }
+//关注
+  setpObj.word = stepGp.addText('互动--抢答', { position: [0.0, 0.2], opacity: 0.9, scale: 0.5, color: "#2a2a2a" })
+  setpObj.word.grow({ t: ">",  duration: 1.6 * fast, ease: "power4.out" }) //入
+  setpObj.img1 = stepGp.addImage(srcDt['关注'] , { z: -99, y: 1, x: -0.8, scale: 0.6 }) //点赞1
+  setpObj.img2 = stepGp.addImage(srcDt['关注'] , { z: -99, y: 1, x: 0, scale: 0.6 }) //点赞2
+  setpObj.img3 = stepGp.addImage(srcDt['关注'] , { z: -99, y: 1, x: 0.8, scale: 0.6 }) //点赞3
+  setpObj.img1.grow({ t: "<",  duration: 0.5 * fast, ease: "power4.in" }) //入
+  setpObj.img2.grow({ t: "<",  duration: 1 * fast, ease: "power4.in" }) //入
+  setpObj.img3.grow({ t: "<",  duration: 1.6 * fast, ease: "power4.in" }) //入
+  setpObj.word.moveTo({  y: -8, duration: 0.6 * fast , ease: "power4.in" }) //出
+  setpObj.img1.moveTo({  t: "<", y: -8, duration: 0.6 * fast , ease: "power4.in" }) //出
+  setpObj.img2.moveTo({ t: "<",  y: -8, duration: 0.6 * fast , ease: "power4.in" }) //出
+  setpObj.img3.moveTo({  t: "<", y: -8, duration: 0.6 * fast , ease: "power4.in" }) //出
 
-mo.addText('互动-抢答', { position: [0.0, 0], opacity: 0.9, scale: 0.5, color: "#2a2a2a" })
-  .grow({ t: ">",  duration: 1.6 * fast, ease: "power4.out" })
-  .moveTo({  y: -8, duration: 0.6 * fast , ease: "power4.in" })
-//---排列组合
-//fast = 0.001
+
+  // ######## 排列组合
+fast = 0.001
 if (movieSlice['排列'] == 1) {
   //fast = 0
   // var defy = 1.5 //默认y
@@ -178,7 +201,6 @@ if (movieSlice['排列'] == 1) {
   var offa = 0
   var offb = 0
   var wsize = 1.44
- 
  
   //---中文排列到中间
   mo.pause(1 * fast); //排列等待
@@ -264,51 +286,89 @@ if (movieSlice['排列'] == 1) {
     
   }
 }
-//fast = 0.001
+fast = 1
 // wordGp.moveTo({ y: -1, x: 0, duration: 1 * fast, ease: "expo.inOut" }) //退场3秒
 // mo.pause(1.5 * fast);
 // wordGp.implode2D({ duration: 1.1 * fast, ease: "back.in" })
-//-----附带推广  ()
-//fast = 1
-var endGp = mo.addGroup();
-var endOgj = {}
+//  ####### 推广互动式
+//转发
+ 
+  setpObj.word = stepGp.addText('交互式--连连看', { position: [0.0, 0.2], opacity: 0.9, scale: 0.5, color: "#2a2a2a" })
+  setpObj.word.grow({ t: ">",  duration: 1.6 * fast, ease: "power4.out" }) //入
+  setpObj.img1 = stepGp.addImage(srcDt['转发'] , { z: -99, y: 1, x: -1.5, scale: 0.6 }) //点赞1
+  setpObj.img2 = stepGp.addImage(srcDt['转发'] , { z: -99, y: 1, x: 0, scale: 0.6 }) //点赞2
+  setpObj.img3 = stepGp.addImage(srcDt['转发'] , { z: -99, y: 1, x: 1.5, scale: 0.6 }) //点赞3
+  setpObj.img1.grow({ t: "<",  duration: 0.5 * fast, ease: "power4.in" }) //入
+  setpObj.img2.grow({ t: "<",  duration: 1 * fast, ease: "power4.in" }) //入
+  setpObj.img3.grow({ t: "<",  duration: 1.6 * fast, ease: "power4.in" }) //入
+  setpObj.word.moveTo({  y: -8, duration: 0.6 * fast , ease: "power4.in" }) //出
+  setpObj.img1.moveTo({  t: "<", y: -8, duration: 0.6 * fast , ease: "power4.in" }) //出
+  setpObj.img2.moveTo({ t: "<",  y: -8, duration: 0.6 * fast , ease: "power4.in" }) //出
+  setpObj.img3.moveTo({  t: "<", y: -8, duration: 0.6 * fast , ease: "power4.in" }) //出
 
-endOgj.t1 = endGp.addText("学会",
-  { position: [-8, 1.2], opacity: 1, scale: 0.29, color: "#0a0a0a" });
-endOgj.t11 = endGp.addText("点个赞奖励自己！",
-  { position: [-8, 1.2], opacity: 1, scale: 0.29, color: "#0a0a0a" });
-endOgj.t2 = endGp.addText("看视频不过瘾",
-  { position: [-8, 0.5], opacity: 1, scale: 0.2, color: "#0a0a0a" });
-endOgj.t22 = endGp.addText("来交互式学习。",
-  { position: [8, 0.5], opacity: 1, scale: 0.2, color: "#0a0a0a" });
-//--二维码
-var qCodeGp = mo.addGroup();
-qCodeGp.moveTo({ y: -5, duration: 0 * fast, ease: "expo.out" });
-var qCodeOgj = {}
-qCodeOgj.img = qCodeGp.addImage('src/en500word/' + wordCfg.qrcode, { z: 55, x: -1.7, y: -1, scale: 1.5 }) //scale缩放 
-qCodeOgj.text = qCodeGp.addText("扫描进入交互",
-  { position: [-1.84, -0.16], opacity: 1, scale: 0.12, color: "#0a0a0a" });
 
-//--群码
-var groupGp = mo.addGroup();
-groupGp.moveTo({ y: -5, duration: 0 * fast, ease: "expo.out" });
-var groupOgj = {}
-groupOgj.img = groupGp.addImage('src/qqgroup2.jpg', { z: -99, x: 1.3, y: -1, scale: 1.3 }) //scale缩放 
-groupOgj.text = groupGp.addText("英语角（QQ群:280965346）",
-  { position: [1.35, -0.16], opacity: 1, scale: 0.12, color: "#0a0a0a" });
-//---结尾文字动画
+  var loops = _.range(5);
+  var tmpInt = 0;
+ 
 
-endOgj.t1.moveTo({ x: -1.9, duration: 0.5 * fast, ease: "expo.out" });
-endOgj.t11.moveTo({ x: 0.25, duration: 1 * fast, ease: "expo.out" });
-mo.pause(1.1 * fast);
-endOgj.t2.moveTo({ x: -0.5, duration: 0.8 * fast, ease: "expo.out" });
-mo.pause(0.8 * fast);
-endOgj.t22.moveTo({ x: 1.5, duration: 1 * fast, ease: "expo.out" });
-mo.pause(0.8 * fast);
-//---添加二维码动画
-qCodeGp.moveTo({ y: 0, duration: 0.5 * fast, ease: "expo.out" });
-mo.pause(1.1 * fast);
-groupGp.moveTo({ y: 0, duration: 0.5 * fast, ease: "expo.out" });
-mo.pause(3 * fast);
+  var defy = 1.6 //中文y默认
+  var zhx = -1.5//默认x
+  var enx = 1.5//默认x
+  var offy = -0.5
+  starty = defy
+  for (let key in _.range( 5)) {
+  
+    starty = starty + offy
+    tmpInt = loops.splice(_.random(0, loops.length - 1), 1)[0] //取出一个
+    //zh配列 
+    objLs[tmpInt].zh.moveTo({ t: "<",z:100, y: starty, x: zhx, duration: 0.5 * fast, ease: "expo.out" })
+    objLs[tmpInt].zh.scaleTo(0.3, { t: "<", duration: 0.5 * fast,    ease: "expo.in" })
+    objLs[tmpInt].zh.changeOpacity(1, { t: "<",duration: 0.5 * fast, ease: "none" }) //
+    objLs[tmpInt].en.moveTo({ t: "<", z:100,y: starty, x: enx, duration: 0.5 * fast, ease: "expo.out" })
+    objLs[tmpInt].en.scaleTo(0.3, { t: "<", duration: 0.5 * fast,    ease: "expo.in" })
+    objLs[tmpInt].en.changeOpacity(1, { t: "<",duration: 0.5 * fast, ease: "none" }) //
+
+  }
+//fast = 0.001
+// var endGp = mo.addGroup();
+// var endOgj = {}
+
+// endOgj.t1 = endGp.addText("学会",
+//   { position: [-8, 1.2], opacity: 1, scale: 0.29, color: "#0a0a0a" });
+// endOgj.t11 = endGp.addText("点个赞奖励自己！",
+//   { position: [-8, 1.2], opacity: 1, scale: 0.29, color: "#0a0a0a" });
+// endOgj.t2 = endGp.addText("看视频不过瘾",
+//   { position: [-8, 0.5], opacity: 1, scale: 0.2, color: "#0a0a0a" });
+// endOgj.t22 = endGp.addText("来交互式学习。",
+//   { position: [8, 0.5], opacity: 1, scale: 0.2, color: "#0a0a0a" });
+// //--二维码
+// var qCodeGp = mo.addGroup();
+// qCodeGp.moveTo({ y: -5, duration: 0 * fast, ease: "expo.out" });
+// var qCodeOgj = {}
+// qCodeOgj.img = qCodeGp.addImage('src/en500word/' + wordCfg.qrcode, { z: 55, x: -1.7, y: -1, scale: 1.5 }) //scale缩放 
+// qCodeOgj.text = qCodeGp.addText("扫描进入交互",
+//   { position: [-1.84, -0.16], opacity: 1, scale: 0.12, color: "#0a0a0a" });
+
+// //--群码
+// var groupGp = mo.addGroup();
+// groupGp.moveTo({ y: -5, duration: 0 * fast, ease: "expo.out" });
+// var groupOgj = {}
+// //groupOgj.img = groupGp.addImage('src/qqgroup2.jpg', { z: -99, x: 1.3, y: -1, scale: 1.3 }) //scale缩放 
+// groupOgj.text = groupGp.addText("英语角（QQ群:280965346）",
+//   { position: [1.35, -0.16], opacity: 1, scale: 0.12, color: "#0a0a0a" });
+// //---结尾文字动画
+
+// endOgj.t1.moveTo({ x: -1.9, duration: 0.5 * fast, ease: "expo.out" });
+// endOgj.t11.moveTo({ x: 0.25, duration: 1 * fast, ease: "expo.out" });
+// mo.pause(1.1 * fast);
+// endOgj.t2.moveTo({ x: -0.5, duration: 0.8 * fast, ease: "expo.out" });
+// mo.pause(0.8 * fast);
+// endOgj.t22.moveTo({ x: 1.5, duration: 1 * fast, ease: "expo.out" });
+// mo.pause(0.8 * fast);
+// //---添加二维码动画
+// qCodeGp.moveTo({ y: 0, duration: 0.5 * fast, ease: "expo.out" });
+// mo.pause(1.1 * fast);
+// groupGp.moveTo({ y: 0, duration: 0.5 * fast, ease: "expo.out" });
+// mo.pause(3 * fast);
 
 
