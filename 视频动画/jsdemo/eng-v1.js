@@ -140,15 +140,14 @@ for (let key in wordCfg.data) {
   obj.ph = obj.g.addImage('src/en500word/' + obj.img, { x: 0, y: 0, scale: 0.38 })
   //---女老师in
   teacher.f.moveTo({ y: -0.4, x: -4, duration: inout * fast, ease: "expo.out" })
-  //----朗读
   obj.zh.flyIn({ t: ">", duration: wordIn * fast });//zh字入场
-  //闪一下(obj.zh) //0.8秒耗时
-  进度线(obj.zh4f * fast, 0, 0.4)//中文线
+  //----
+  进度线(obj.zh4f * fast, 0, 0.4)//中文朗读线
   obj.en.typeText({ duration: (wordIn + 0.8) * fast }); //en字入场//typeText() //transformTexTo平滑过渡
   obj.ph.wipeIn({ duration: 0.001 * fast, ease: "power4.out" })
 
   //闪一下(obj.en) //0.6秒耗时 //异步才能获取坐标 object3D
-  进度线(obj.en4f * fast, 0, -1.3)//英文线
+  进度线(obj.en4f * fast, 0, -1.3)//英文朗读线
   //----女老师out
   teacher.f.moveTo({ t: ">", y: -0.4, x: -10, duration: inout * fast, ease: "expo.in" })
   //----男老师in
@@ -253,25 +252,25 @@ if (movieSlice['排列'] == 1) {
     //----时间
     obj.en4m = wordCfg.data[key].en4m
     obj.zh4m = wordCfg.data[key].zh4m
-    //移动英文 0.5-0.5 + 0.8
+    //移动英文 0.5  + 0.8
     objLs[key].en.moveTo({ t: ">", y: 1.2, x: 0, duration: 0.5 * fast, ease: "expo.in" })
     objLs[key].en.changeOpacity(1, { t: "<", duration: 0.5 * fast, ease: "none" }) //
     objLs[key].en.scaleTo(0.6, { t: "<", duration: 0.5 * fast, ease: "expo.in" })
     闪一下(objLs[key].en) //0.8秒耗时
-    //---en朗读线 0.4秒
+    //---en朗读线  
     objLs[key].enLine.fadeIn({ duration: 0 })
     objLs[key].enLine.scaleXTo(0, { duration: obj.en4m * fast, ease: "none" }) //英文朗读线
  
-    等待选择();
+    等待选择(); //1.5s
 
-    //移动中文0.8
+    //移动中文答案0.6
     objLs[key].zh.moveTo({ y: 0.2, x: 0, duration: 0.6 * fast, ease: "expo.inOut" })
     objLs[key].zh.changeOpacity(0.9, { t: "<", duration: 0.6 * fast, ease: "none" })//取消文字半透明
     objLs[key].zh.scaleTo(0.35, { t: "<", duration: 0.6 * fast, ease: "expo.inOut" })
     //中文朗读线
     objLs[key].zhLine.fadeIn({ duration: 0 })
     objLs[key].zhLine.scaleXTo(0, { t: ">", duration: obj.zh4m * fast, ease: "none" }) //中文朗读线
-    //移除中英
+    //移除单词组
     //objLs[key].zh.implode2D({ duration: 1 * fast, ease: "back.in" })
     objLs[key].zh.moveTo({ y: 0.4, duration: 0.8 * fast, ease: "expo.in" })
     objLs[key].zh.scaleTo(0.0, { t: "<", duration: 0.8 * fast, ease: "expo.in" })
