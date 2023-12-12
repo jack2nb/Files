@@ -10,7 +10,7 @@ var fs = require("fs");
 //var path = require("path");
 //载入配置文件
 const srcCfg = require('./src.json');
-const wordCfg = require('D:/jack/eng-amt/en500word/1/5/cfg_15.json');//.\\.\\en500word\\0\\1\\cfg_1.json
+const wordCfg = require('D:/jack/eng-amt/en500word/1/8/cfg_18.json');//.\\.\\en500word\\0\\1\\cfg_1.json
 let srcPath;
 
 srcPath = srcCfg['imgRoot']//'./t123456_img/'
@@ -56,7 +56,7 @@ if (movieSlice['片头'] == 1) {
   // wordTitle = mo.addTex('生活常用词500个', {  font: 'gdh',position: [0.0, 2.5], opacity: 0.9, scale: 0.38, color: "#2a2a2a"  })
   // wordTitle.wipeIn({ duration: 0.5 * fast});
 
-  wordTitle = mo.addText('生活常用词500个', { position: [0.0, 2.5], opacity: 0.9, scale: 0.38, color: "#2a2a2a" });
+  wordTitle = mo.addText('生活常用词500个/'+wordCfg['rid'], { position: [0.0, 2.5], opacity: 0.9, scale: 0.38, color: "#2a2a2a" });
   wordTitle.typeText({ duration: 0.5 * fast });//duration耗时  
   mo.addText('单词量是学好英语的基石', { position: [0.0, 2], opacity: 0.7, scale: 0.14, color: "#2a2a2a" })
     .typeText({ t: ">", duration: 0.5 * fast });//duration耗时  
@@ -111,10 +111,10 @@ function 移到一边(obj, x, y, t = '<') {
 }
 //---进度号码
 let currentNum = 11
-let showNum = mo.addTex( '', {   duration: dur, scale: 3, color: "#2a2a2a" })
+let showNum = mo.addTex( '', {   duration: dur, scale: 2, color: "#2a2a2a" })
 showNum.show({ duration :dur , t:'<' })
 showNum.changeOpacity(0.07, { t: "<", duration: dur})
-showNum = showNum.transformTexTo(  '', { font: 'en', t: "<", opacity: 0.07, scale: 3,duration: dur })
+showNum = showNum.transformTexTo(  '', { font: 'en', t: "<", opacity: 0.07, scale: 2,duration: dur })
 //#######循环生学习
 const inout = 0.2
 const wordIn = 0.5
