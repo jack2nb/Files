@@ -10,7 +10,7 @@ var fs = require("fs");
 //var path = require("path");
 //载入配置文件
 const srcCfg = require('./src.json');
-const wordCfg = require('D:/jack/eng-amt/en500word/1/8/cfg_18.json');//.\\.\\en500word\\0\\1\\cfg_1.json
+const wordCfg = require('D:/jack/eng-amt/en500word/1/9/cfg_19.json');//.\\.\\en500word\\0\\1\\cfg_1.json
 let srcPath;
 
 srcPath = srcCfg['imgRoot']//'./t123456_img/'
