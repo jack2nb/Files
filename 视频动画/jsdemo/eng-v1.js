@@ -10,14 +10,14 @@ var fs = require("fs");
 //var path = require("path");
 //载入配置文件
 const srcCfg = require('./src.json');
-const wordCfg = require('D:/jack/eng-amt/en500word/1/6/cfg_16.json');//.\\.\\en500word\\0\\1\\cfg_1.json
+const wordCfg = require('D:/jack/eng-amt/en500word/1/5/cfg_15.json');//.\\.\\en500word\\0\\1\\cfg_1.json
 let srcPath;
 
 srcPath = srcCfg['imgRoot']//'./t123456_img/'
 console.log('cfg==', srcCfg, wordCfg, wordCfg.toString())
 
 var fast = 1 //耗时1秒 标准单位
-var dur = 0.0001
+var dur = 0.000001
 let srcDt = {
   "背景01": "./src/黑白白板.png"
   , "教师女": "./src/教师4.png"
@@ -112,7 +112,9 @@ function 移到一边(obj, x, y, t = '<') {
 //---进度号码
 let currentNum = 11
 let showNum = mo.addTex( '', {   duration: dur, scale: 3, color: "#2a2a2a" })
-
+showNum.show({ duration :dur , t:'<' })
+showNum.changeOpacity(0.07, { t: "<", duration: dur})
+showNum = showNum.transformTexTo(  '', { font: 'en', t: "<", opacity: 0.07, scale: 3,duration: dur })
 //#######循环生学习
 const inout = 0.2
 const wordIn = 0.5
@@ -147,7 +149,7 @@ for (let key in wordCfg.data) {
   obj.ph = obj.g.addImage('src/en500word/' + obj.img, { x: 0, y: 0, scale: 0.38 })
 
   //--进度号码
-  showNum.show({ duration :dur , t:'<' })
+
   
   currentNum = currentNum - 1
   showNum = showNum.transformTexTo(currentNum + '', { font: 'en', t: "<", opacity: 0.07, scale: 3,duration: dur })
