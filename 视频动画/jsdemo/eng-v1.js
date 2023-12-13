@@ -10,7 +10,7 @@ var fs = require("fs");
 //var path = require("path");
 //载入配置文件
 const srcCfg = require('./src.json');
-const wordCfg = require('D:/jack/eng-amt/en500word/1/9/cfg_19.json');//.\\.\\en500word\\0\\1\\cfg_1.json
+const wordCfg = require('D:/jack/eng-amt/en500word/2/1/cfg_21.json');//.\\.\\en500word\\0\\1\\cfg_1.json
 let srcPath;
 
 srcPath = srcCfg['imgRoot']//'./t123456_img/'
@@ -60,7 +60,8 @@ if (movieSlice['片头'] == 1) {
   wordTitle.typeText({ duration: 0.5 * fast });//duration耗时  
   mo.addText('单词量是学好英语的基石', { position: [0.0, 2], opacity: 0.7, scale: 0.14, color: "#2a2a2a" })
     .typeText({ t: ">", duration: 0.5 * fast });//duration耗时  
-  //mo.pause(2 * fast); //魔殊琪 朗读标题
+  mo.pause(1 * fast); //魔殊琪 朗读标题
+  
   //点赞
   setpObj.word = stepGp.addText('先学后练-10个', { position: [0.0, 0.2], opacity: 0.9, scale: 0.5, color: "#2a2a2a" })
   setpObj.word.grow({ t: ">", duration: 1.6 * fast, ease: "power4.out" }) //入
