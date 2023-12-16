@@ -10,7 +10,7 @@ var fs = require("fs");
 //var path = require("path");
 //载入配置文件
 const srcCfg = require('./src.json');
-const wordCfg = require('D:/jack/eng-amt/en500word/2/1/cfg_21.json');//.\\.\\en500word\\0\\1\\cfg_1.json
+const wordCfg = require('D:/jack/eng-amt/en500word/2/8/cfg_28.json');//.\\.\\en500word\\0\\1\\cfg_1.json
 let srcPath;
 
 srcPath = srcCfg['imgRoot']//'./t123456_img/'
@@ -414,7 +414,7 @@ var qCodeGp = mo.addGroup();
 qCodeGp.moveTo({ y: -5, duration: 0 * fast, ease: "expo.out" });
 var qCodeOgj = {}
 qCodeOgj.img = qCodeGp.addImage('src/en500word/' + wordCfg.qrcode, { x: 0, y: -0.1, scale: 2.5 }) //scale缩放
-qCodeGp.addText("扫描：试试交互",
+qCodeGp.addText("扫描：试试交互 (免费)",
   { position: [0, 1.3], opacity: 1, scale: 0.18, color: "#0a0a0a" });
 qCodeGp.addText("英语角 QQ群:280965346 ",
   { position: [0, -1.5], opacity: 1, scale: 0.12, color: "#0a0a0a" });

@@ -1,16 +1,22 @@
 # encoding: UTF-8
 
 """
-
-用json输入来做简单curd
+sql on json 用json来做简单curd
  
+author:jack
+email:jack2nb@qq.com
 
-http://apijson.cn/api/
 
-代码进化史，
+代码进化史：如非必要，勿增实体，简单好用才是王道。
+数据不在孤岛，用一个平台支持数据湖
+分：资源与执行
+资源做缓存，执行多实例
+db:[ {"name":"","uri":"" } ]
+搜索功能：库.表.字段/名称/关联  
+例： oa.T_USER.NAME/ID/k3c.V9_itDevInfo.userId
 """
 
-import os,re
+import os,re,pickle 
 import logging
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
@@ -70,47 +76,102 @@ class gm():
 
 
 
+
 class JosnApi():
-    """只操 操作单表"""
+    """只操作单库表"""
     tables = []
 
-    def __init__(self, conn_str, debug=False):
+    def __init__(self, conn_str, debug=False,mod_path='./tab'):
         """  接受數據鏈接   配置 """
-        self.conn_str = conn_str  # 鏈接串、
+        
+        
         self.debug = True if  debug in [1,True,'true'] else  False
-        self._conn()
-        self._load()
+        self.db_engine = self._conn(conn_str ,self.debug)
+        models = self._check_model('db.check') #//读取缓存
+        if models is None:
+            self.models = self._load(self.db_engine)#//载入表 
+            self._check_model('db.check',self.models,mod_path) #//写入缓存
+        else :
+            self.models = models
         self.session = None
 
-    def _conn(self):
-        """  鏈接庫"""
-
-        self.db_engine = create_engine(self.conn_str, echo=self.debug)
-
-    def _load(self):
-        """" 载入表 """
+    def _conn(self,conn_str,debug=False):
+        """  鏈接庫 """
+        db_engine = create_engine(conn_str, echo=debug)
+        return  db_engine
+ 
+    def load(self):
+ 
+        return  self._load(self.db_engine)
+    
+    
+    
+    def _load(self,db_engine):
+        """" 载入 数据库表 
+        资源载入
+        @return {"table_name":Table}
+        """
+        
+        models = {}
         metadata = MetaData()
         #metadata.reflect(bind=self.db_engine) #可能非常慢
-        insp = inspect(self.db_engine)
-        
-        for t in insp.get_table_names():
-            find = re.search('^tmp', t, re.IGNORECASE)
-            if find:
-                print (t)
-                continue
-            print(t,'\n')
-            Table(t, metadata ,  autoload_with=self.db_engine)
-        #insp.get_columns('T_BD_STAFF_L')
-        self.models = metadata.tables  # 获取所有的表对象
-        self.tables = metadata.tables.keys()  # 获取所有的表名
+        insp = inspect(db_engine)
+        tables = insp.get_table_names()# 所有表名
 
-    def _session(self):
+        for t in tables:
+            find = re.search('^tmp|^temp', t, re.IGNORECASE)
+            if find:
+                print ('跳过“{}”表'.format(t))
+                continue
+            #//映射模型
+            tab = Table(t, metadata ,  autoload_with=db_engine) 
+            models[t] = tab # 手动添加
+            print("表 {} ".format(t) )
+        #insp.get_columns('T_BD_STAFF_L')
+        #self.models = metadata.tables  # 获取所有的表对象
+        self.tables = tables #metadata.tables.keys()  # 获取所有的表名
+        return  models
+    
+    def _load_one(self,db_engine,t):
+        """" 创建一个表model """
+        metadata = MetaData()
+        tab = Table(t, metadata ,  autoload_with=db_engine)
+        return tab
+
+    def _check_model(self,name,models=None,mod_path='./tab'):
+        """ 缓存get/set 一个数据库一个模型缓存文件
+        @parma name :str  dbname
+        @parma models :{table_name : Table } 模型合集
+        @parma mod_path :str  dir path
+        缓存models模块 加速启动
+        """
+        if not os.path.exists(mod_path):
+            os.makedirs(mod_path)
+        mod_file = os.path.join(mod_path,name)
+        if models is None:
+            # get
+            #//读取缓冲模型
+            if  os.path.exists(mod_file) :
+                with open(mod_file, 'rb') as f:
+                    try:
+                        return  pickle.load(f)
+                    except Exception as e:
+                        logging.error('打开文件{}存在错误'.format(mod_file))
+                        raise Exception(e) 
+            else:
+                return None
+        else:
+            # set
+            with open(mod_file, 'wb') as f:
+                pickle.dump(models, f)
+                return models
+ 
+    def _session(self,db_engine):
         """  创建/获取 一个会话"""
         if self.session:
             return self.session
-        DB_Session = sessionmaker(bind=self.db_engine)
-        self.session = DB_Session()
-        return self.session
+        DB_Session = sessionmaker(bind=db_engine)
+        return DB_Session()
     
 
     def get(self, json_query):
@@ -119,51 +180,97 @@ class JosnApi():
         "tab":{},
         "tab@group":{} 别名支持一表多次查询
         通过|符号支持join 翻译 in 语法
+        {
+        "user": 
+            {  
+            "@column": "id,nickname ",
+            "@limit": 4
+            }
+        }
         """
         # 预检先查询不需要join的表
         vn = self.prepro(json_query)
         # ------
-        session = self._session()
+        session = self._session(self.db_engine)
         ret_dc = {}
         #print('vn==',vn)
-        for alias in vn.keys():#表循环
-            if alias[0:1] == '#':# json注解
+        for alias in vn.keys():#表循环查询
+            if alias[0] in ['@','#'] :# json注解
                 continue
             session.rollback()#？？
             # 需要预检
-            if alias[0:1] == '|':
+            if alias[0] == '|':
                 #//关联查询
-                alias  = alias[1:] #//恢复原始tab名
-                tab = alias.split('@')[0] # !tab@xyz join其他表
+                alias  = alias[1:] #//恢复原始db/tab%xyz 名
+                tab = alias.split('%')[0] # db/tab   join其他表
                 model = self.models[tab]
-                ret_dc[alias] = self._select_join(ret_dc,session, model, vn['|'+alias])  
+                dc = vn['|'+alias]
+                limit = dc.pop('@limit') if  dc.get('@limit') is not None else None
+                page = dc.pop('@page') if  dc.get('@page') is not None else None
+                order = dc.pop('@order') if  dc.get('@order') is not None else None
+                rows = self._select_join(ret_dc,session, model,dc) 
+                # 自己做分页排序
+                ret_dc[alias] = self._order_limit(rows,limit,page,order)
+                #print('order--limit',limit,page,order,dc)
             else:
-                tab = alias.split('@')[0] # tab@xyz 表别名
+                tab = alias.split('%')[0] # tab%xyz 表别名
                 model = self.models[tab]
                 #with Session.begin() as session:
                 ret_dc[alias] = self._select(session, model, vn[alias])
             
         return ret_dc
     
+    def _order_limit(self,rows,limit,page,order):
+        """  排序加limit
+        @param limit : number
+        @param page :number
+        """
+        # print('type：：',type(rows))
+        # rows = list(rows)
+        if order is not None:
+            col = order[1:]
+            rows.sort(key=lambda r: r[col])
+            if order[0] == '-':
+                rows.reverse()
+        if page is None or page<0:
+            page = 0 
+        if limit is not None:
+            start = limit * page
+            end  = start+limit
+            rows = rows[start:end]
+            #print('==========================',start,end,order )
+        return  rows
+
     def prepro(self,vn):
-        """ 预处理 先创建一个list 更具list顺序重排dict"""
+        """ 预处理 先创建一个list 更具list顺序重排dict
+        @param vm:json
+        @return json
+            "|tab": {
+                "abc|":"tab.id"
+            }
+        """
         vn = OrderedDict(vn)
         key_ls = list(vn.keys() )
         for k in list( vn.keys()):
-            col,v = self._get_join(vn[k])
-            if v:
-                tc = v.split('.')
+            col,rpoint = self._get_join(vn[k])
+            if rpoint:
+                t2c = rpoint.split('.')
                 key_ls.remove(k)#//删除
-                ikey = tc[0] if  tc[0] in key_ls else ( '|'+tc[0]) if ('|'+tc[0]) in key_ls else None
-                idx = key_ls.index(ikey)#//查找
+                ikey = t2c[0] if  t2c[0] in key_ls else ( '|'+t2c[0]) if ('|'+t2c[0]) in key_ls else None
+                idx = key_ls.index(ikey)#//查找( 引用的表名找不到)
                 key_ls.insert(idx+1,'|'+k)#//插入
                 # dict key改名
                 vn['|'+k] = vn.pop(k)
-
         return  vn
 
     def _get_join(self,dc):
-        """ 返回  k、v"""
+        """ 返回第一个  k、v 
+        @param dc :json
+            {
+            "abc|":"tab.id"
+            }
+        @return abc,tab.id
+        """
         col=None
         tabcol=None
         for key in dc :
@@ -173,27 +280,36 @@ class JosnApi():
                 break #//找到即停
         return col,tabcol
 
-    def _select_join(self, ret_dc,session, model, dc):
-        """ 分次查询 
+    def _select_join(self, rdc,session, model, dc):
+        """ 多次查询  ,分次in通过select
+        @param rdc:{"key"[{row}]}
+        @param session 
+        @param model
+        @param dc: {key:val} 
         ret_dc : 已经完成的书记集
-        {"colxyz|":"tab.id"}
+        {
+            "colxyz|":"tab.id"
+            ,"edf|":"t3.id"
+        }
+        @return []
         返回计算后的结果
+      
         """
-        ret_ls = []
-        # @翻译 | 为 join 
         col,tabcol = self._get_join(dc) # 获取带'|'的键值对
         dc.pop(col+'|') #//删除join段
+        #print('join1==',col,tabcol,dc)
         # @翻译
-        tcls = tabcol.split('.')#[0]
-        tab_rows = ret_dc[tcls[0]] #//引用表数据，去重
+        tcls = tabcol.split('.')
+        rtab = tcls[0]
         rcol = tcls[1] #//引用表字段
+        tab_rows = rdc[rtab] #//引用表数据，去重
         #print('error==',tab_rows,rcol,ret_dc) 
-        dat =  [row[rcol] for row in tab_rows] 
-        #----多次查询 sql长度  
-
+        dat =  [row[rcol] for row in tab_rows] #//取出被in的数据[1,2,3]
         dat = list(set(dat))#//去重 
         if len(dat) == 0:   
-            return ret_ls  
+            return []  
+        #----多次查询 sql长度  
+        ret_ls = []
         in_ls = []
         ls_len = 0 
         add = []  
@@ -206,7 +322,7 @@ class JosnApi():
                 ret_ls.extend( add ) if len(add) else None
             else:
                 ls_len = ls_len + len(str(s))
-                if ls_len >= 400: # 加入后超长了
+                if ls_len >= 800: # 加入后超长了
                     dc[col+'#']  = in_ls#@ 送回
                     #print('加入后超长了',dc)
                     add = self._select(session, model, dc)
@@ -215,10 +331,31 @@ class JosnApi():
                     ls_len = len(str(s))
                 else:
                     in_ls.append(s) #添加
-
+        #多次in
+        ret_ls = self._local_in(rdc,ret_ls,dc)
         return ret_ls
     
-    
+    def _local_in(self,rdc,ret_ls,dc):
+        """  2次join   """
+        col,tabcol = self._get_join(dc) # 获取带'|'的键值对
+        while col:
+            dc.pop(col+'|') #//删除join段
+            #print('join2==',col,tabcol,dc)
+            tcls = tabcol.split('.')
+            rtab = tcls[0]
+            rcol = tcls[1] #//引用表字段
+            tab_rows = rdc[rtab] #//引用表数据，去重
+            #print('error==',tab_rows,rcol,ret_dc) 
+            dat =  [row[rcol] for row in tab_rows] #//取出被in的数据[1,2,3]
+            dat = list(set(dat))#//去重 
+            if len(dat) == 0:   
+                return []  
+            ret_ls = [  row  for row in  ret_ls if row[col] in dat ]  #本地筛选              
+            col,tabcol = self._get_join(dc) # 二次循环
+            
+        return  ret_ls
+
+        
     def _select(self, session, model, dc):
         """  单一单表查询  
             "@column": "id,date.日期,user_id" 需要显示的字段 不指定字段就是 * 
@@ -306,9 +443,6 @@ class JosnApi():
                 q = q.filter(model.c[col[0:-1]].isnot(None))
             else :
                 q = q.filter(model.c[col[0:-1]].is_(None))
-
-
-
         return q
 
     def _where(self, q, model, dc):
@@ -331,7 +465,7 @@ class JosnApi():
             if col[0] in ['@','#' ]:
                 continue
             # 结尾--查询条件
-            if col[-1] in ['#', '*',  '&', '^','|']:
+            if col[-1] in ['#', '*',  '&', '^','|','$']:
                 q = self._where_adv(q, model, col, val)
                 continue
             # //累加条件
@@ -417,28 +551,40 @@ class JosnApi():
         if group is None:
             return q
         q = q.group_by( model.c[group] )
-        # 分组
-        having = dc.get('@having')
-        if having is None:
-            return q
-        q = q.having( model.c[having] )
-
+        # having分组未实现
         return  q
     
     def delete(self, json_query):
-        """  删除入口 调用 _del """
-        session = self._session()
+        """  删除入口 
+            {
+            "user": {
+                "id": 7
+                }
+            }
+        """
+        
         ret_dc = {}
         # ----
         vn = json_query
+        session = self._session(self.db_engine)
         for tab in vn.keys():
+            if tab[0] in ['@', '#']:
+                continue
+            ## 选择资源进行处理
             model = self.models[tab]
+            
             ret_dc[tab] = self._del(session, model, vn[tab])
         return ret_dc
     
     def post(self, json_query):
-        """ 插入入口 调用 _insert
-        
+        """ 插入入口 
+         {"user":{
+            "name":"jack"
+            ,"email":"jack@demo.com"
+            }
+        }
+
+        一次请求一个事务
         """
         vn = json_query
         # ------
@@ -447,57 +593,82 @@ class JosnApi():
             if tab[0] in ['@', '#']:
                 continue
             model = self.models[tab]
-            ret_dc[tab] = self._insert(model, vn[tab])
+            db_engine = self.db_engine
+            ret_dc[tab] = self._insert(db_engine,model, vn[tab])
         return ret_dc
 
 
     def put(self, json_query):
-        """  更新入口 调用 _update """
-        session = self._session()
+        """  更新入口 
+            {
+                "user": {
+                    "id": 8
+                    "@update":{
+                        "nickname":"来之 http的更新 good news"
+                    }
+                },
+                
+            }
+            一次请求一个事务
+        """
+        session = self._session(self.db_engine)
         ret_dc = {}
         # ----
         vn = json_query
-        update = json_query.pop('update')
+        
         for tab in vn.keys():
+            if tab[0] in ['@', '#']:
+                continue
             model = self.models[tab]
-            ret_dc[tab] = self._update(session, model, vn[tab],update)
+            ret_dc[tab] = self._update(session, model, vn[tab])
         return ret_dc
     
-    def _update(self, session, model, dc,update):
-        """  更新数据数据 """
-        q = session.query(model)
+    def _update(self, session, model, dc):
+        """  更新数据数据 
+            abc=abc+11 
+        """
+        update = dc.pop('@update')
         # ----条件
+        q = session.query(model)
         q = self._where(q, model, dc)
+        
         try:
             req = q.update(update)
         except Exception as e:
             session.rollback()
+            logging.error('参数{}存在错误'.format(dc))
             raise Exception(e)
-            return -1
         else:
             session.commit()
         return req
     
 
-    def _insert(self, model, dc):
+    def _insert(self,db_engine, model, dc):
         """  返回id  一条/和多条"""
         # dc = [{"username": "dddd7", "nickname": "mmmm", "email": "a@mal.com"}]
         # 会话（不会自动提交）
-        with self.db_engine.begin() as db_conn:
+        with db_engine.begin() as db_conn:
             #r1 = connection.execute(table1.select())
             #connection.execute(table1.insert(), {"col1": 7, "col2": "this is some data"})
-            db_conn = self.db_engine.connect()
-            ins = model.insert().values(dc)
+            #db_conn = db_engine.connect()
+            #print('insert datat >>>>')
             result = None
             try:
+                ins = model.insert().values(dc)
                 result = db_conn.execute(ins)
-                db_conn.commit()
+                #print('insert datat ====',dc,result)
             except Exception as e:
                 db_conn.rollback()
                 raise Exception(e)
+            db_conn.commit()
         #结果是元组()
-        return list(result.inserted_primary_key) if result else -1
+        return list(result.inserted_primary_key) if result else -1 #//返回主键
+    
+    def _insert_one(self,db_engine, model, dc):
+        """ 一条一条插入 """
+        pass
 
+    
     def _del(self, session, model, dc):
         """  删除数据 """
         q = session.query(model)
@@ -528,7 +699,7 @@ class JosnApi():
             }
         else:
             vn = json_query
-        session = self._session()
+        session = self._session(self.db_engine)
         # ------
         ret_dc = {}
         for tab in vn.keys():
@@ -573,12 +744,235 @@ class JosnApi():
         else:
             vn = json_query
         # ------
-        session = self._session()
+        session = self._session(self.db_engine)
         ret_dc = {}
         for tab in vn.keys():
             model = self.models[tab]
             ret_dc[tab] = self._select(session, model, vn[tab])
         return ret_dc
+
+
+class SqlOnJson(JosnApi):
+    """数据操作入口  多数据库
+    {
+     "oa/user":{}
+     "erp/order":{}
+    }
+    """
+    dbs = {}
+
+    def __init__(self, dbs_ls, debug=False,mod_path='./tab'):
+        """  接受數據鏈接   配置
+        [ {"name":"oa","uri":"xxx://ooo"} ]
+
+        """
+        self.mod_path = mod_path
+        self.dbs = {}
+        self.default_db = dbs_ls[0]['name'] #//默认表
+        debug = True if  debug in [1,True,'true'] else  False
+        #//多个数据库
+        for db in dbs_ls:
+            tmp = {}
+            self.session = None
+            tmp['engine'] = self._conn(db.get('uri'),debug)
+
+            models = self._check_model(db.get('name')) #//读取缓存
+            if models is None:
+                models = self._load(tmp['engine'])
+                self._check_model(db.get('name'),models,mod_path) #//存入缓存
+                tmp['models'] =  models
+            else:
+                tmp['models'] =  models
+            tmp['session'] =  self._session(tmp['engine'] )
+            
+            self.dbs[db.get('name')] = tmp 
+
+
+    def sw_src(self,alias):
+        """ 根据条件 选择资源 
+          
+        @param alias:str  ddbb/tab@alias
+     
+        @returns model,session ,engin 
+        """
+        dbtab_ls = alias.split('/')
+        if len(dbtab_ls) == 2 :
+            tab = dbtab_ls[1]
+            db = dbtab_ls[0]
+        else:
+            tab = dbtab_ls[0]
+            db = self.default_db
+        src_dc = self.dbs[db]
+        tab = tab.split('@')[0] #//tab@alias
+        return  src_dc['models'][tab],src_dc['session'],src_dc['engine'] 
+    
+    def load_one(self,alias):
+        """ 重载一个表 
+        @parame alias : str 
+        "dbx/table2"
+
+        """
+        dbtab_ls = alias.split('/')
+        if len(dbtab_ls) == 2 :
+            tab = dbtab_ls[1]
+            db = dbtab_ls[0]
+        else:
+            tab = dbtab_ls[0]
+            db = self.default_db
+        src_dc = self.dbs[db]
+        #//修改
+        tab_mod = self._load_one(src_dc['engine'] ,tab)
+        self.dbs[db]['models'][tab] = tab_mod
+        #//保存
+        #print(src_dc['engine'],db,tab,tab_mod,self.dbs[db]['models'][tab])
+        self._check_model(db,self.dbs[db]['models'],self.mod_path)  
+        return  alias
+    
+    def col_info(self,model): 
+        """ 字段信息
+            return [{}]
+        """
+        items = model.c.items ()
+        return  [ {"col":col[0],"type":str(col[1].type)  } for  idx,col in  enumerate( items )]
+        
+    def tab_info(self,alias):
+        """ 通过 db/tab 获取表信息
+            return [{}]
+        """
+        dbtab_ls = alias.split('/')
+   
+        if len(dbtab_ls) == 2 :
+            tab = dbtab_ls[1]
+            db = dbtab_ls[0]
+        else:
+            tab = dbtab_ls[0]
+            db = self.default_db
+        model = self.dbs[db]['models'][tab]
+        return self.col_info(model)
+
+       
+
+    def get(self, json_query):
+        """ 查询入口 调用 _select
+        一个key查询一个表
+        "tab":{},
+        "tab@group":{} 别名支持一表多次查询
+        通过|符号支持join 翻译 in 语法
+        {
+        "user": 
+            {  
+            "@column": "id,nickname ",
+            "@limit": 4
+            }
+        }
+        """
+        # 预检先查询不需要join的表
+        vn = self.prepro(json_query)
+        # ------
+
+        ret_dc = {}
+        #print('vn==',vn)
+        for alias in vn.keys():#表循环
+            if alias[0] in ['@', '#']:
+                continue
+            # 需要预检
+            if alias[0] == '|':
+                #//关联查询
+                alias  = alias[1:] #//恢复原始tab名
+                tab = alias.split('%')[0] # erp/tab%xyz 返回erp/tab
+                #model = self.models[tab]
+                ## 选择资源
+                model,session,engine = self.sw_src(tab)
+                session.rollback()#？？
+                dc = vn['|'+alias]
+                limit = dc.pop('@limit') if  dc.get('@limit') is not None else None
+                page = dc.pop('@page') if  dc.get('@page') is not None else None
+                order = dc.pop('@order') if  dc.get('@order') is not None else None
+                rows = self._select_join(ret_dc,session, model,dc) 
+                # 自己做分页排序
+                ret_dc[alias] = self._order_limit(rows,limit,page,order)
+                print('order--limit',limit,page,order,dc)
+
+
+            else:
+                tab = alias.split('%')[0] # tab%xyz 表别名
+                #model = self.models[tab]
+                #with Session.begin() as session:
+                ## 选择资源
+                model,session,engine = self.sw_src(tab)
+                session.rollback()#？？
+                ret_dc[alias] = self._select(session, model, vn[alias])
+            
+        return ret_dc
+    
+    def delete(self, json_query):
+        """  删除入口 
+            {
+            "user": {
+                "id": 7
+                }
+            }
+        """
+        
+        ret_dc = {}
+        # ----
+        vn = json_query
+        for tab in vn.keys():
+            if tab[0] in ['@', '#']:
+                continue
+            ## 选择资源进行处理
+            # 分配资源到vn，集中处理 跨数据库事务
+            # session = self._session()
+            model,session,engine = self.sw_src(tab)
+            ret_dc[tab] = self._del(session, model, vn[tab])
+        return ret_dc
+    
+    def post(self, json_query):
+        """ 插入入口 
+         {"user":{
+            "name":"jack"
+            ,"email":"jack@demo.com"
+            }
+        }
+        """
+        vn = json_query
+        # ------
+        ret_dc = {}
+        for tab in vn.keys():
+            if tab[0] in ['@', '#']:
+                continue
+            # 分配资源到vn，集中处理 跨数据库事务
+            
+            model,session,db_engine = self.sw_src(tab)
+            ret_dc[tab] = self._insert(db_engine,model, vn[tab])
+        return ret_dc
+
+
+    def put(self, json_query):
+        """  更新入口 
+            {
+                "user": {
+                    "id": 8
+                },
+                "update":{
+                    "nickname":"来之 http的更新 good news"
+                }
+            }
+        """
+        #session = self._session()
+        ret_dc = {}
+        # ----
+        vn = json_query
+        for tab in vn.keys():
+            if tab[0] in ['@', '#']: #//指令或备注
+                continue
+            # 分配资源到vn，集中处理 跨数据库事务
+            model,session,db_engine = self.sw_src(tab)
+            ret_dc[tab] = self._update(session, model, vn[tab])
+        return ret_dc
+    
+
+
 
 if __name__ == "__main__":
     # 第一步，创建一个日志器
