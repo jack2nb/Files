@@ -54,6 +54,31 @@ reboot
 restore factory-default
 ```
 
+
+
+## stp配置
+
+
+
+```
+display stp
+display stp brief
+```
+
+```
+sys
+stp   enable
+stp config-digest-snooping
+
+reset stp 
+```
+
+
+
+
+
+
+
 ## 二三层设置
 
 
