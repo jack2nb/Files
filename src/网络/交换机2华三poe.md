@@ -56,13 +56,15 @@ restore factory-default
 
 
 
-## stp配置
+## stp环路冗余配置
 
 
 
 ```
 display stp
 display stp brief
+
+dis stp history
 ```
 
 ```
