@@ -1,0 +1,8 @@
+{
+"#comment":"路由配置文件,提供数据查询，路由上网管理微服务，不提供html文件",
+"route服务配置文件": "route_config.json",
+"sqlOnJson服务配置文件": "sql_config.json",
+"webPort": 2026,
+"debug": true
+ 
+}

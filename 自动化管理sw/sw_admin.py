@@ -10,6 +10,7 @@ import telnetlib
 from textfsm import TextFSM
 import re,json
 
+from fabric import Connection  # pip install  fabric==2.6
 
 
 
@@ -591,6 +592,119 @@ class h3cSwS1850:
 
 
 
+class openwrt:
+    """ 
+    管理路由器
+    获取 arp信息"""
+
+    ""
+ 
+
+    def __init__(self,cfg):
+        """ """
+        self.macJson = None
+        self.arpJson = None
+        self.cfgStr = None
+        self.conn = self.login(cfg )
+        #print(cfg)
+        #self.todo()
+        #self.conn.close()
+
+
+    def login(self,cfg=None):
+        """登入路由器 返回 链接 """
+       
+        set_time_oute = cfg.get('connect_timeout') if  cfg.get('connect_timeout') is not None else 5 
+        try:
+            # paramiko known_hosts 或  pip3 install paramiko -U  # pip3 install paramiko==2.8.0
+ 
+            conn = Connection(cfg['ip'],cfg['user'],cfg['port']
+                              , connect_kwargs={"password": cfg['passwd']}
+                            ,connect_timeout=set_time_oute )
+            result =conn.run(' uname -n', hide=True)
+            print(result.stdout)
+        except Exception as e:
+            print(u" 连接主机出现问题 跳过  {} cfg={} ".format(e,cfg))
+        self.conn = conn
+        return conn
+
+    def logout(self):
+        """  关闭连接 """
+        if self.conn is not  None:
+            self.conn.close()
+        self.conn=None
+
+
+
+    def todo(self):
+        """ 实际要执行的内容"""
+        #apr读取并转成rows
+        # tabLs = self.arp2tab(self.tn)
+        # self.arpTab = self.list2str(tabLs)
+        # print(self.arpTab)       
+        # self.arpLs = self.arp2rows(self.arpTab)
+        # print(self.arpLs)     
+        #格式化json美化输出
+        self.arp2json()
+        print(self.arpJson)    
+        #mac读取并转成rows
+        # tabLs = self.mac2tab(self.tn)
+        # self.macTab = self.list2str(tabLs)
+        # #print(self.macTab)       
+        # self.macLs = self.mac2rows(self.macTab)
+        # # 格式化json美化输出
+        # self.macJson  = self.mac2json(self.macLs)
+        
+        self.logout()
+
+    def arp2mac(self,row):
+        """ 4c:bd:8f:90:71:9c 转换成 4cbd-8f90-719c """
+        row['mac'] = self.mac2mac(row['mac'] )
+
+
+    def mac2mac(self,mac_str):
+        """ 4c:bd:8f:90:71:9c 转换成 4cbd-8f90-719c """
+        return  mac_str.replace(':','',1).replace(':','-',1).replace(':','',1).replace(':','-',1).replace(':','',1)
+
+    def arp(self,conn=None):
+        """  获取ip和mac"""
+        cmd = " ip neigh show "
+        result =  self._toRun(cmd,conn)   #--获取卡信息
+        tabStr = result.stdout
+        tpl = 'iptables-arp.template'
+        #--处理字符串
+        f = open(tpl)
+        template = TextFSM(f)
+        outTab = template.ParseText(tabStr)
+        #print(outTab)
+        outTab = [ dict(zip(["ip","dev","mac" ],r)) for r in outTab ]
+        
+        return outTab 
+    
+    def _toRun(self,cmd,conn=None):
+        """ 核心执行 """
+        conn = conn if conn is not None else self.conn
+        conn = conn if conn is not None else self.login() #自动连接
+        result =  conn.run( cmd , hide=True)   #执行命令 allow_agent=False,look_for_keys=False
+        #print(cmd,'==\n',result. stdout) #loger
+        return result
+    
+ 
+
+    def arp2json(self):
+        """  带表头 col """
+        arpLs = self.arp()
+        [ self.arp2mac(r)  for r in arpLs ]
+        self.arpJson = arpLs#json.dumps(rows, sort_keys=True, indent=4, separators=(',', ': '))
+        #print(self.arpJson)
+        return self.arpJson 
+
+   
+
+
+
+ 
+
 
 def save2json(dc,fileNmae):
     """ 把json 存入文件 """
@@ -627,6 +741,9 @@ def selectClass(typeName):
     dc["rg.nbs5552xg"] = rgSwInfo
     dc["h3c.s5560s"] = h3cSwS5560s
     dc["h3c.s1850"] = h3cSwS1850
+    dc["openwrt.22"] = openwrt
+
+    
  
     return dc.get(typeName)
 

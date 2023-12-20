@@ -39,12 +39,13 @@ class wrtRoute:
     def __init__(self,cfg):
         """ """
         self.__cfg = cfg.pop('主路由器')
-        self.conn = None
         self.cfg = cfg #无密码
+        self.conn = None
         self.conn = self.login(self.__cfg) #连接
         self.localDef = 'localDef'
         self.localManage = 'localManage'
-   
+    
+        self.checkMain()#//创建或检查默认定义的链
         
     def _getCfg(self):
         """
@@ -54,8 +55,13 @@ class wrtRoute:
     def login(self,cfg=None):
         """登入路由器 返回 链接 """
         cfg = cfg if cfg is not None else self._getCfg()
+        set_time_oute = cfg.get('connect_timeout') if  cfg.get('connect_timeout') is not None else 5 
         try:
-            conn = Connection(cfg['host'],cfg['user'],cfg['port'], connect_kwargs=cfg['connect_kwargs'] )
+            # paramiko known_hosts 或  pip3 install paramiko -U  # pip3 install paramiko==2.8.0
+ 
+            conn = Connection(cfg['host'],cfg['user'],cfg['port']
+                              , connect_kwargs=cfg['connect_kwargs']
+                            ,connect_timeout=set_time_oute )
             result =conn.run(' uname -n', hide=True)
             print(result.stdout)
         except Exception as e:
@@ -73,7 +79,7 @@ class wrtRoute:
         """ 核心执行 """
         conn = conn if conn is not None else self.conn
         conn = conn if conn is not None else self.login() #自动连接
-        result =  conn.run( cmd , hide=True)   #--获取卡信息
+        result =  conn.run( cmd , hide=True)   #执行命令 allow_agent=False,look_for_keys=False
         print(cmd,'==\n',result. stdout) #loger
         return result
 
@@ -95,7 +101,7 @@ class wrtRoute:
         template = TextFSM(f)
         outTab = template.ParseText(tabStr)
         #print(outTab)
-        outTab = [ dict(zip(["num","target",'prot','opt','source','destination'],r)) for r in outTab ]
+        outTab = [ dict(zip(["num","target",'prot','opt','source','destination','other'],r)) for r in outTab ]
         return  outTab
     
     def gerChain(self,conn=None):
@@ -113,9 +119,24 @@ class wrtRoute:
         outTab = [ dict(zip(["chain" ],r)) for r in outTab ]
         return  outTab
     
+    def arp(self,conn=None):
+        """  获取ip和mac"""
+        cmd = " ip neigh show "
+        result =  self._toRun(cmd,conn)   #--获取卡信息
+        tabStr = result.stdout
+        tpl = 'iptables-arp.template'
+        #--处理字符串
+        f = open(tpl)
+        template = TextFSM(f)
+        outTab = template.ParseText(tabStr)
+        #print(outTab)
+        outTab = [ dict(zip(["ip","dev","mac" ],r)) for r in outTab ]
+        
+        return outTab
 
     def checkMain(self):
-        """ PREROUTING下是否包含 ['localDef','localManage' ]
+        """ 初始建立自定义规则
+        PREROUTING下是否包含 ['localDef','localManage' ]
             1,2 条  
         """
         rules = self.gerRules('PREROUTING')
@@ -167,6 +188,11 @@ class wrtRoute:
             cmd = " iptables -t nat -D {}  {} ".format(chainName,r['num'])
             self._toRun(cmd)
 
+    def clear(self ):
+        """ 清除规则 localDef"""
+
+        self._delLocalDef()
+        self.logout()
 
 
     def reload(self,cfg=None):
@@ -232,16 +258,18 @@ class wrtRoute:
         cmd = self._addIpRules(ip)
         self._toRun(cmd ) 
         self.logout()
-
+        return  ip
 
 
     def ipLoguot(self,ip):
         """ 客户端退出 """
-        rules = self.gerRules()
+        chainName  = 'localManage'
+        rules = self.gerRules(chainName)
         rulesCmd = self._delIpRules(rules,ip)
         for cmd in rulesCmd:
             self._toRun(cmd ) 
         self.logout()
+        return  ip
 
     def resetUser(self):
         """ 用户全部重连 """

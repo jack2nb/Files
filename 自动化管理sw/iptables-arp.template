@@ -1,0 +1,8 @@
+Value ip (\d+\.\d+\.\d+\.\d+)
+Value dev (\S+)
+Value mac (\w+:\w+:\w+:\w+:\w+:\w+)
+
+
+
+Start
+ ^${ip}\s+dev\s+${dev}\s+lladdr\s+${mac}\s+.*? -> Record
