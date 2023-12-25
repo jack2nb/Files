@@ -20,6 +20,20 @@
 undo info-center enable
 ```
 
+```
+dis version
+
+tftp  10.0.0.4  put startup.cfg startup.bak       
+tftp  10.0.0.4  put wa2600a_fit.bin  wa2600a_fit.bak
+
+ 
+tftp  10.0.0.4 get WA2600A-CMW520-R1308P05-FAT.bin  wa2600a_fat.bin             
+bootrom update file wa2600a_fat.bin
+boot-loader file wa2600a_fat.bin main
+reboot
+
+```
+
 
 
 
@@ -49,7 +63,6 @@ set authentication password simple admin
 
 user privilege level 3
 
-password simple admin
 ```
 
 ### ip查看
@@ -69,6 +82,17 @@ display dhcp client
 display web users
 display ip https
 ip https enable
+
+```
+
+```
+local-user admin
+
+
+password simple admin
+authorization-attribute level 3
+service-type web
+
 
 ```
 
