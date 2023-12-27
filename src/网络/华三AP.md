@@ -10,18 +10,34 @@
 
 [H3C WA2600系列无线接入点  配置调测 配置指导 H3C WA系列无线接入点 配置指导 ](https://www.h3c.com/cn/d_201707/1017275_30005_0.htm)
 
-
+[web胖ap设置](https://www.h3c.com/cn/d_201502/854962_30005_0.htm)
 
 ## 初始设置  
 
+```
+dis version
+dis clock
+```
+
+
+
 ### IP设置
+
+
+
+```
+clock datetime 11:11:11 2023/12/26
+```
+
+
 
 ```
 undo info-center enable
+
 ```
 
 ```
-dis version
+
 
 tftp  10.0.0.4  put startup.cfg startup.bak       
 tftp  10.0.0.4  put wa2600a_fit.bin  wa2600a_fit.bak
