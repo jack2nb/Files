@@ -126,4 +126,8 @@ interface wlan-radio
 
 ```
 
- 
+ ###  无线简单密码配置
+
+
+
+![](./imgs/ap设置.png)
