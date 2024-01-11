@@ -71,5 +71,20 @@ virt-install --virt-type kvm --name uefi  --noautoconsole --ram 1024    --boot l
 
 ```
 
+## novnc
 
+
+apt install -y novnc websockify python3-websockify 
+ 
+
+
+```cmd
+cd /etc/systemd/system/
+vi   novnc.service
+systemctl enable novnc
+systemctl start  novnc
+```
+
+
+ /usr/bin/websockify 8590 127.0.0.1:5907
 
