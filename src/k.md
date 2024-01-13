@@ -1,4 +1,9 @@
 ###  激活系统
+理管（理清楚才好管）: 流程，制度， 智制 治 ,考核 (pdca) 权责利
+卢麒元老师《韩昌黎文集》
+
+ 
+备份软件， 手动一个月
 
 命令行
 ```cmd
@@ -64,12 +69,27 @@ cscript ospp.vbs /act
 
 ##  虚拟机
 
-
-
+sudo apt-mark hold linux-image-generic linux-headers-generic
+ 
 ```shell
 virt-install --virt-type kvm --name uefi  --noautoconsole --ram 1024    --boot loader=/usr/share/ovmf/OVMF.fd --disk none --graphics none --network none 
 
 ```
+
+##  vnc
+
+
+apt install -y  
+ 
+
+
+```cmd
+cd /etc/systemd/system/
+vi    vncserver@.service
+systemctl enable vncserver@123.service
+systemctl start  vncserver@123.service
+```
+
 
 ## novnc
 
@@ -78,13 +98,8 @@ apt install -y novnc websockify python3-websockify
  
 
 
-```cmd
-cd /etc/systemd/system/
-vi   novnc.service
-systemctl enable novnc
-systemctl start  novnc
-```
+openssl req -new -x509 -days 365 -nodes -out /usr/share/novnc/novnc.pem -keyout  /usr/share/novnc/novnc.pem
 
+/usr/bin/websockify -D --web=/usr/share/novnc  --cert=/usr/share/novnc/novnc.pem  5023  localhost:6023
 
- /usr/bin/websockify 8590 127.0.0.1:5907
-
+--target-config=/usr/share/novnc/novnc.conf  #一口多连 
