@@ -2,7 +2,7 @@
 理管（理清楚才好管）: 流程，制度， 智制 治 ,考核 (pdca) 权责利
 卢麒元老师《韩昌黎文集》
 
- 
+
 备份软件， 手动一个月
 
 命令行
@@ -70,7 +70,7 @@ cscript ospp.vbs /act
 ##  虚拟机
 
 sudo apt-mark hold linux-image-generic linux-headers-generic
- 
+
 ```shell
 virt-install --virt-type kvm --name uefi  --noautoconsole --ram 1024    --boot loader=/usr/share/ovmf/OVMF.fd --disk none --graphics none --network none 
 
@@ -78,24 +78,74 @@ virt-install --virt-type kvm --name uefi  --noautoconsole --ram 1024    --boot l
 
 ##  vnc
 
+```
+apt install -y   x11vnc
+```
 
-apt install -y  
- 
 
 
-```cmd
+
+
+```shell
 cd /etc/systemd/system/
 vi    vncserver@.service
 systemctl enable vncserver@123.service
 systemctl start  vncserver@123.service
 ```
 
+```bash
+[Unit]
+Description=Remote desktop service (VNC)
+After=syslog.target network.target
+
+[Service]
+Type=simple
+User=root
+PAMName=login
+PIDFile=/home/%u/.vnc/%H%i.pid
+ExecStartPre=/bin/sh -c '/usr/bin/vncserver -kill :%i > /dev/null 2>&1 || :'
+ExecStart=/usr/bin/vncserver :%i -geometry 1440x900 -alwaysshared -fg
+ExecStop=/usr/bin/vncserver -kill :%i
+
+[Install]
+WantedBy=multi-user.target
+
+```
+
+
+
+配置文件
+
+```bash
+#!/bin/sh
+# Uncomment the following two lines for normal desktop:
+# unset SESSION_MANAGER
+# exec /etc/X11/xinit/xinitrc
+ 
+[ -x /etc/vnc/xstartup ] && exec /etc/vnc/xstartup
+[ -r $HOME/.Xresources ] && xrdb $HOME/.Xresources
+xsetroot -solid grey
+vncconfig -iconic &
+x-terminal-emulator -geometry 80x24+10+10 -ls -title "$VNCDESKTOP Desktop" &
+x-window-manager &
+ 
+#gnome-terminal &
+ 
+sesion-manager & xfdesktop & xfce4-panel &
+xfce4-menu-plugin &
+xfsettingsd &
+xfconfd &
+xfwm4 &
+
+```
+
+
 
 ## novnc
 
-
+```
 apt install -y novnc websockify python3-websockify 
- 
+
 
 
 openssl req -new -x509 -days 365 -nodes -out /usr/share/novnc/novnc.pem -keyout  /usr/share/novnc/novnc.pem
@@ -103,3 +153,5 @@ openssl req -new -x509 -days 365 -nodes -out /usr/share/novnc/novnc.pem -keyout 
 /usr/bin/websockify -D --web=/usr/share/novnc  --cert=/usr/share/novnc/novnc.pem  5023  localhost:6023
 
 --target-config=/usr/share/novnc/novnc.conf  #一口多连 
+```
+
