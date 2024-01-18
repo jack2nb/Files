@@ -67,14 +67,15 @@ cscript ospp.vbs /act
 
 
 
-##  虚拟机
-
-sudo apt-mark hold linux-image-generic linux-headers-generic
-
-```shell
-virt-install --virt-type kvm --name uefi  --noautoconsole --ram 1024    --boot loader=/usr/share/ovmf/OVMF.fd --disk none --graphics none --network none 
+##  禁止内核更新
 
 ```
+sudo apt-mark hold linux-image-generic linux-headers-generic
+```
+
+
+
+
 
 ##  vnc
 
@@ -104,7 +105,7 @@ User=root
 PAMName=login
 PIDFile=/home/%u/.vnc/%H%i.pid
 ExecStartPre=/bin/sh -c '/usr/bin/vncserver -kill :%i > /dev/null 2>&1 || :'
-ExecStart=/usr/bin/vncserver :%i -geometry 1440x900 -alwaysshared -fg
+ExecStart=/usr/bin/vncserver :%i -geometry 1440x900 -alwaysshared -f
 ExecStop=/usr/bin/vncserver -kill :%i
 
 [Install]
@@ -118,24 +119,9 @@ WantedBy=multi-user.target
 
 ```bash
 #!/bin/sh
-# Uncomment the following two lines for normal desktop:
-# unset SESSION_MANAGER
-# exec /etc/X11/xinit/xinitrc
- 
-[ -x /etc/vnc/xstartup ] && exec /etc/vnc/xstartup
-[ -r $HOME/.Xresources ] && xrdb $HOME/.Xresources
-xsetroot -solid grey
-vncconfig -iconic &
-x-terminal-emulator -geometry 80x24+10+10 -ls -title "$VNCDESKTOP Desktop" &
-x-window-manager &
- 
-#gnome-terminal &
- 
-sesion-manager & xfdesktop & xfce4-panel &
-xfce4-menu-plugin &
-xfsettingsd &
-xfconfd &
-xfwm4 &
+unset SESSION_MANAGER
+unset DBUS_SESSION_BUS_ADDRESS
+exec startxfce4
 
 ```
 
