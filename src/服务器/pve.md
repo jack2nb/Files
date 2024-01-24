@@ -100,7 +100,26 @@ systemctl restart pvedaemon.service
 
 
 
+## lxc命令创建
 
+pvx下  openwrt 只能用
+
+### 命令创建
+
+```cmd
+pct create 2000 /var/lib/vz/template/cache/openwrt-23.05.2-x86-64-rootfs.tar.gz \
+--arch amd64 --hostname lxc-OpenWrt   --rootfs local-lvm:0.5 --memory 500 -swap 0 --cores 2 \
+--ostype unmanaged --unprivileged 0 -net0 bridge=vmbr0,name=eth0
+
+```
+
+磁盘0.5GB  内存500MB  
+
+### 进入终端
+
+```
+lxc-attach 2000 
+```
 
 
 
