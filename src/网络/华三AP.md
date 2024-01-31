@@ -14,9 +14,11 @@
 
 无缝漫游 需要支持kvr协议
 
-
-
 [集客AC AP 知识大全](https://www.right.com.cn/forum/thread-1501038-1-1.html)
+
+
+
+胖ap通过表格配置，批量下发配置
 
 ## 初始设置  
 

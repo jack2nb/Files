@@ -1,4 +1,6 @@
-# 虚拟化
+# Proxmox  虚拟化
+
+高度集成使用方便，网络独立于linux
 
 [参考](https://pve-doc-cn.readthedocs.io/zh-cn/latest/chapter_pveceph/index.html)
 
@@ -11,7 +13,7 @@ qm stop 100
 
 
 
-### 命令创建主机
+### 命令创建kvm主机
 
 ```
 qm create 114 \
@@ -31,7 +33,7 @@ qm create 114 \
 
 ## lxc虚拟化
 
-
+轻量虚拟化，适合软路由
 
 ```
 cd /etc/pve/lxc/
@@ -39,6 +41,8 @@ ls -l
 ```
 
 #### 直通设置
+
+lxc中开docker需要
 
 ```
 lxc.apparmor.profile: unconfined
@@ -67,7 +71,6 @@ ip route add  0.0.0.0/0  via 192.168.22.5  dev eth0
 ```
 cp  /etc/apt/sources.list  /etc/apt/sources.list~
 
-
 sed -i 's|archive.ubuntu.com/ubuntu|mirrors.tuna.tsinghua.edu.cn/ubuntu|g' /etc/apt/sources.list
 
 ```
@@ -87,10 +90,6 @@ systemctl restart pvedaemon.service
 ```
  apt install apt-transport-https ca-certificates
 ```
-
-
-
-
 
 
 
