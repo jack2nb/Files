@@ -4,7 +4,77 @@
 
 ## 监控
 
+
+
 ## rsyslog
+
+
+
+### 容器部署zabbix
+
+```
+ vi docker-compose.yml 
+```
+
+```yml
+version: '3'
+services:
+  zabbix-server:
+    image: zabbix/zabbix-server-mysql:alpine-6.4-latest
+    ports:
+      - 10051:10051
+    environment:
+      - DB_SERVER_HOST=mysql-server
+      - MYSQL_USER=zabbix
+      - MYSQL_PASSWORD=zabbix
+      - MYSQL_DATABASE=zabbix
+    depends_on:
+      - mysql-server
+    networks:
+      - zabbix-network
+
+  zabbix-web:
+    image: zabbix/zabbix-web-nginx-mysql:alpine-6.4-latest
+    ports:
+      - 84:8080 
+    environment:
+      - DB_SERVER_HOST=mysql-server
+      - MYSQL_USER=zabbix
+      - MYSQL_PASSWORD=zabbix
+      - MYSQL_DATABASE=zabbix
+      - ZBX_SERVER_HOST=zabbix-server
+    depends_on:
+      - zabbix-server
+    networks:
+      - zabbix-network
+
+  mysql-server:
+    image: mysql:8.0-oracle
+    ports:
+      - 3306:3306
+    environment:
+      - MYSQL_ROOT_PASSWORD=root
+      - MYSQL_DATABASE=zabbix
+      - MYSQL_USER=zabbix
+      - MYSQL_PASSWORD=zabbix
+    volumes:
+      - mysql-data:/var/lib/mysql
+    networks:
+      - zabbix-network
+
+networks:
+  zabbix-network:
+
+volumes:
+  mysql-data:
+```
+
+```
+docker-compose -d up
+
+
+docker compose up -d -f ./docker-compose.yml 
+```
 
 
 
