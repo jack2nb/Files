@@ -49,7 +49,7 @@ services:
       - zabbix-network
 
   mysql-server:
-    image: mysql:8.0-oracle
+    image: mysql:latest
     ports:
       - 3306:3306
     environment:
@@ -69,14 +69,128 @@ volumes:
   mysql-data:
 ```
 
+
+```yml
+version: '3'
+services:
+  mysql:
+    image: mysql:8.0
+    container_name: mysql
+    restart: always
+    privileged: true
+    environment:
+      - MYSQL_ROOT_PASSWORD=myrootpass
+      - MYSQL_DATABASE=zabbix
+      - MYSQL_USER=zabbix
+      - MYSQL_PASSWORD=mypass
+      - TZ=Asia/Shanghai
+      - LANG=en_US.UTF-8
+    expose:
+      - "3306"
+    networks:
+      zabbix-net:
+    command: --character-set-server=utf8 --collation-server=utf8_bin
+  zabbix-gateway:
+    image: zabbix/zabbix-java-gateway:6.0-centos-latest
+    container_name: zabbix-gateway
+    volumes:
+      - /etc/localtime:/etc/localtime
+    restart: always
+    privileged: true
+    ports:
+      - "10052:10052"
+    networks:
+      zabbix-net:
+  zabbix-snmptraps:
+    image: zabbix/zabbix-snmptraps:6.0-centos-latest
+    container_name: zabbix-snmptraps
+    restart: always
+    privileged: true
+    ports:
+      - "1162:1162/udp"
+    networks:
+      zabbix-net:
+  zabbix-server:
+    image: zabbix/zabbix-server-mysql:6.0-centos-latest
+    container_name: zabbix-server
+    restart: always
+    privileged: true
+    environment:
+      - ZBX_LISTENPORT=10051
+      - DB_SERVER_HOST=mysql
+      - DB_SERVER_PORT=3306
+      - MYSQL_DATABASE=zabbix
+      - MYSQL_USER=zabbix
+      - MYSQL_PASSWORD=mypass
+      - MYSQL_ROOT_PASSWORD=myrootpass
+      - ZBX_CACHESIZE=1G
+      - ZBX_HISTORYCACHESIZE=512M
+      - ZBX_HISTORYINDEXCACHESIZE=16M
+      - ZBX_TRENDCACHESIZE=256M
+      - ZBX_VALUECACHESIZE=256M
+      - ZBX_STARTPINGERS=64
+      - ZBX_IPMIPOLLERS=1
+      - ZBX_ENABLE_SNMP_TRAPS=true
+      - ZBX_STARTTRAPPERS=1
+      - ZBX_JAVAGATEWAY_ENABLE=true
+      - ZBX_JAVAGATEWAY=zabbix-gateway
+      - ZBX_STARTJAVAPOLLERS=1
+    ports:
+      - "10051:10051"
+    networks:
+      zabbix-net:
+    links:
+      - mysql
+      - zabbix-gateway
+  zabbix-web:
+    image: zabbix/zabbix-web-nginx-mysql:6.0-centos-latest
+    container_name: zabbix-web
+    volumes:
+      - /usr/share/fonts/truetype/simfang.ttf:/usr/share/zabbix/assets/fonts/DejaVuSans.ttf
+      - /etc/localtime:/etc/localtime
+    restart: always
+    privileged: true
+    environment:
+      - ZBX_SERVER_NAME=Zabbix 6.0
+      - ZBX_SERVER_HOST=zabbix-server
+      - ZBX_SERVER_PORT=10051
+      - DB_SERVER_HOST=mysql
+      - DB_SERVER_PORT=3306
+      - MYSQL_DATABASE=zabbix
+      - MYSQL_USER=zabbix
+      - MYSQL_PASSWORD=mypass
+      - MYSQL_ROOT_PASSWORD=myrootpass
+      - PHP_TZ=Asia/Shanghai
+    ports:
+      - "84:8080"
+    networks:
+      zabbix-net:
+    links:
+      - mysql
+      - zabbix-server
+networks:
+  zabbix-net:
+    driver: bridge
+    ipam:
+      config:
+        - subnet: 10.10.10.0/24
+          gateway: 10.10.10.1
 ```
+
+
+```cmd
 docker-compose -d up
 
 
-docker compose up -d -f ./docker-compose.yml 
+docker compose  -f ./docker-compose6.0.yml  up -d
 ```
 
+默认账号：Admin
+默认密码为：zabbix
 
+## 修改语言
+
+用户设置--配置--用户--语言
 
 ## 添加顺序
 
@@ -110,22 +224,11 @@ Server=0.0.0.0/0
 
 ### 扩展zabbiz的安装源
 
-1. 定制下载建议建议
+1. 定制下载建议 
 
-https://www.zabbix.com/download?zabbix=5.0&os_distribution=ubuntu&os_versi
+https://www.zabbix.com/download?zabbix=6.0&os_distribution=ubuntu&os_versi
 
-```
-
-
-wget https://repo.zabbix.com/zabbix/5.0/ubuntu/pool/main/z/zabbix-release/zabbix-release_5.0-1+focal_all.deb
-
-dpkg -i zabbix-release_5.0-1+focal_all.deb
-
-apt update
-
-apt install zabbix-get
-
-```
+ 
 
 ##  snmp收集数据
 
