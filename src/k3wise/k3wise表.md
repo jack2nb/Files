@@ -6,11 +6,15 @@
 
 ### 账套查询
 
+KDAcctDB数据库下
+
 ```sql
-select * from t_ad_kdAccount_gl
+select * from  t_ad_kdAccount_gl
 ```
 
 
+
+账套(AIS20231205110017)
 
 
 
