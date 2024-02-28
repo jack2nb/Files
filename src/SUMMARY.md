@@ -95,7 +95,7 @@ npx wrangler pages publish book
    - [K3wis 常用表](./k3wise/k3wise表.md)
    - [K3wise问题重启服务](./服务器/k3问题正在调用中间层层处理.md)
    - [企业微信清理缓存](./其他管理/企业微信清理缓存.md)   
-   - [介绍](./其他管理/简历.md)
+   - [介绍](./showme/readme.md)
    - [linux配置](./k.md)
 
 

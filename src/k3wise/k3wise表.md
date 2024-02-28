@@ -14,7 +14,7 @@ select * from  t_ad_kdAccount_gl
 
 
 
-账套(AIS20231205110017)
+账套(AIS20240227123408)
 
 
 
@@ -26,6 +26,7 @@ select * from  t_ad_kdAccount_gl
 | 余额表                 | t_Balance         |              |
 | 数量余额表             | t_QuantityBalance |              |
 | 损益科目本年实际发生额 | t_ProfitAndLoss   |              |
+| 科目组别               | T_AcctGroup       |              |
 
 
 
