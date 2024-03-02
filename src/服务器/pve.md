@@ -2,6 +2,8 @@
 
 高度集成使用方便，网络独立于linux
 
+关键设备要专用，应用设备要通用
+
 [参考](https://pve-doc-cn.readthedocs.io/zh-cn/latest/chapter_pveceph/index.html)
 
 https://192.168.22.25:8006/
@@ -120,7 +122,23 @@ lxc-attach 2000
 
 
 
+## 导入kvm虚拟机
 
+
+
+```
+qm importdisk <vmid> <source> <storage>
+
+
+qm importdisk 102 ubuntu-18.04.vmdk  pve01data --format=qcow2
+
+```
+
+## 查看配置
+
+```
+qm config 102
+```
 
 
 
