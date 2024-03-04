@@ -1,3 +1,6 @@
+
+<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mermaid/9.4.3/mermaid.min.js"></script>
+
 # 一图胜千言
 
 ### 进度图(甘特)
@@ -92,7 +95,21 @@ flowchart LR
 ```
 
 
+## 思维导图
 
+```mermaid
+	graph LR
+	思维导图--> 第一部分
+	第一部分-->1.1小节
+	第一部分-->1.2小节
+	
+	思维导图--> 第二部分
+	第二部分-->2.2小节
+	
+	思维导图--> 第三部分
+	第三部分--> 3.1小节
+	思维导图--> 若干
+```
 
 
 
@@ -109,14 +126,11 @@ pie
 
 ------------------
 
-<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mermaid/9.4.3/mermaid.min.js"></script>
+
 <script>
 console.log('显示图表') 
 mermaid.init({ noteMargin: 10 }, '.language-mermaid');
 </script>
-
-
-​        
 
 
 # 视频

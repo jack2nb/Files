@@ -1,9 +1,6 @@
 ###  激活系统
-理管（理清楚才好管）: 流程，制度， 智制 治 ,考核 (pdca) 权责利
-卢麒元老师《韩昌黎文集》
 
 
-备份软件， 手动一个月
 
 命令行
 ```cmd
@@ -139,5 +136,13 @@ openssl req -new -x509 -days 365 -nodes -out /usr/share/novnc/novnc.pem -keyout 
 /usr/bin/websockify -D --web=/usr/share/novnc  --cert=/usr/share/novnc/novnc.pem  5023  localhost:6023
 
 --target-config=/usr/share/novnc/novnc.conf  #一口多连 
+```
+
+启动novnc服务
+
+```
+/usr/bin/websockify -D --web=/usr/share/novnc  --cert=/usr/share/novnc/novnc.pem  5023  localhost:6023
+
+
 ```
 
