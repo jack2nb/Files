@@ -1,5 +1,9 @@
 
-<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mermaid/9.4.3/mermaid.min.js"></script>
+<pre>图文加载中...请稍后....</pre>
+<script onload="document.querySelector('main > pre').remove();"  type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mermaid/9.4.3/mermaid.min.js"></script>
+
+
+
 
 # 一图胜千言
 
@@ -126,11 +130,11 @@ pie
 
 ------------------
 
-
 <script>
 console.log('显示图表') 
 mermaid.init({ noteMargin: 10 }, '.language-mermaid');
 </script>
+
 
 
 # 视频
