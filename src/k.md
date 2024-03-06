@@ -62,6 +62,13 @@ cscript ospp.vbs /act
 
 
 
+#### ovs虚拟交换机
+
+```
+ip link set ovs1 up
+ip addr add 192.168.2.12/24 dev ovs1
+```
+
 
 
 ##  禁止内核更新
