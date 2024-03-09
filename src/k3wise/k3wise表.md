@@ -12,13 +12,7 @@ KDAcctDB数据库下
 select * from  t_ad_kdAccount_gl
 ```
 
-
-
 账套(AIS20240227123408)
-
-
-
-### 起初余额查询
 
 | 表含义                 | 表名              |              |
 | ---------------------- | ----------------- | ------------ |
@@ -28,6 +22,8 @@ select * from  t_ad_kdAccount_gl
 | 损益科目本年实际发生额 | t_ProfitAndLoss   |              |
 | 科目组别               | T_AcctGroup       |              |
 
+
+### 期初余额查询
 
 
 ```sql
