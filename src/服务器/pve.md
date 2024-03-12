@@ -144,11 +144,45 @@ qm config 102
 
 
 
+## 调整分区
+
+```
+parted
+print
+resizepart 2 12GB
+```
+
+常用镜像下载
+
+```
+https://mirrors.sjtug.sjtu.edu.cn/linuxliteos/isos/6.6/linux-lite-6.6-64bit.iso
+https://downloads.openwrt.org/releases/23.05.2/targets/x86/64/openwrt-23.05.2-x86-64-generic-ext4-combined-efi.img.gz
+
+ 
+
+
+```
 
 
 
+### 命令下载ct模板
+
+修改源
+
+```
+cp /usr/share/perl5/PVE/APLInfo.pm /usr/share/perl5/PVE/APLInfo.pm_back
+sed -i 's|http://download.proxmox.com|https://mirrors.tuna.tsinghua.edu.cn/proxmox|g' /usr/share/perl5/PVE/APLInfo.pm
+```
 
 
+
+*.tar.zst
+
+```
+pveam list local 
+
+pveam download local  
+```
 
 
 

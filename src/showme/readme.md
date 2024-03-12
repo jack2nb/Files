@@ -215,11 +215,14 @@ h3 > a {
 # 技能清单
 以下均为我熟练使用的技能
 
+ 
+
+- 设计规划:UML/PowerDesign
 - Web后端：python/tornado/Flask/Node/Express/Nginx
 - Web前端：VUE/bootstrap/javascript/jquery/lodash/axios
 - 数据分析：pandas/cufflinks/echarts/scipy/jupyter/metadata
 - 数据库相关：MySQL/PgSQL/ORACLE/Sql service/SQLite
-- 文档管理：Git/Svn/mdbook
+- 文档管理：Git/Svn/mdbook/
 - 自动化运维：docker/fabric/spug/dolphin/Zabbix 
 - 网络：交换机管理，路由器配置
 - 编程：python，shell，JavaScript，php
