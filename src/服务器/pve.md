@@ -130,7 +130,7 @@ lxc-attach 2000
 qm importdisk <vmid> <source> <storage>
 
 
-qm importdisk 102 ubuntu-18.04.vmdk  pve01data --format=qcow2
+qm importdisk 102 ubuntu-18.04.vmdk  local-lvm --format=qcow2
 
 ```
 
@@ -152,20 +152,11 @@ print
 resizepart 2 12GB
 ```
 
-常用镜像下载
-
-```
-https://mirrors.sjtug.sjtu.edu.cn/linuxliteos/isos/6.6/linux-lite-6.6-64bit.iso
-https://downloads.openwrt.org/releases/23.05.2/targets/x86/64/openwrt-23.05.2-x86-64-generic-ext4-combined-efi.img.gz
-
- 
-
-
-```
 
 
 
-### 命令下载ct模板
+
+## 下载ct模板
 
 修改源
 
@@ -184,6 +175,9 @@ pveam list local
 pveam download local  
 ```
 
+xlc模板
 
-
+```
+https://downloads.immortalwrt.org/releases/23.05.1/targets/x86/64/immortalwrt-23.05.1-x86-64-rootfs.tar.gz
+```
 
