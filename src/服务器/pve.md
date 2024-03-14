@@ -35,7 +35,7 @@ qm create 114 \
 
 ## lxc虚拟化
 
-轻量虚拟化，适合软路由
+配置文件
 
 ```
 cd /etc/pve/lxc/
@@ -44,13 +44,7 @@ ls -l
 
 #### 直通设置
 
-lxc中开docker需要
 
-```
-lxc.apparmor.profile: unconfined
-lxc.cgroup.devices.allow: a
-lxc.cap.drop:
-```
 
 #### 启动后查看服务
 
@@ -115,6 +109,8 @@ pct create 2000 /var/lib/vz/template/cache/openwrt-23.05.2-x86-64-rootfs.tar.gz 
 ### 进入终端
 
 ```
+
+pct start 2000  
 lxc-attach 2000 
 ```
 
@@ -167,7 +163,9 @@ sed -i 's|http://download.proxmox.com|https://mirrors.tuna.tsinghua.edu.cn/proxm
 
 
 
-*.tar.zst
+### tar.zst模板
+
+web界面直接下载
 
 ```
 pveam list local 
@@ -175,9 +173,28 @@ pveam list local
 pveam download local  
 ```
 
-xlc模板
+### xlc模板
 
 ```
 https://downloads.immortalwrt.org/releases/23.05.1/targets/x86/64/immortalwrt-23.05.1-x86-64-rootfs.tar.gz
 ```
+
+
+
+## lxc创建docker
+
+勾上无特权模式
+
+ ```
+cd /etc/pve/lxc/
+vim /etc/pve/lxc/ID.conf
+ ```
+
+pve8配置
+
+```
+lxc.cgroup.devices.allow = c 10:200 rwm
+lxc.mount.entry = /dev/net/tun dev/net/tun none bind,create=file
+```
+
 
