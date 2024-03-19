@@ -153,3 +153,6 @@ openssl req -new -x509 -days 365 -nodes -out /usr/share/novnc/novnc.pem -keyout 
 
 ```
 
+通过web管理服务器 
+
+![](D:\jack\云文档\src\服务器\imgs\novnc.png)
