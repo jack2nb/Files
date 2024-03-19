@@ -2,9 +2,9 @@
 
 # 新账套创建
 
-(参考1)[https://jingyan.baidu.com/article/27fa7326c9fbab07f8271fff.html]
+[百度参考文档](https://jingyan.baidu.com/article/27fa7326c9fbab07f8271fff.html)
 
-(参考2)[https://vip.kingdee.com/article/82059387493354752?productLineId=7&lang=zh-CN]
+[社区参考文档](https://vip.kingdee.com/article/82059387493354752?productLineId=7&lang=zh-CN)
 
 ## 流程
 

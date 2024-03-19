@@ -156,3 +156,63 @@ openssl req -new -x509 -days 365 -nodes -out /usr/share/novnc/novnc.pem -keyout 
 通过web管理服务器 
 
 ![](D:\jack\云文档\src\服务器\imgs\novnc.png)
+
+
+
+
+
+
+
+### 服务器登入策略
+
+
+
+计算机配置\Windows 设置\安全设置\本地策略\安全选项
+
+```
+帐户: 使用空密码的本地帐户只允许进行控制台登录 : 禁用
+```
+
+
+
+计算机配置\Windows设置\安全设置\帐户策略\密码策略
+
+```
+密码必须符合复杂性要求:禁用
+```
+
+
+
+计算机配置\管理模板\控制面板\个性化
+
+```
+不显示锁屏:已启用
+```
+
+### 自动登入
+
+```
+Netplwiz
+```
+
+```
+HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows NT\CurrentVersion\Winlogon
+
+双击DefaultUserName 字符串条目，键入您的用户名 
+双击DefaultPassword 字符串条目，键入您的密码 
+双击“AutoAdminLogon” 字符串条目   设置为1 
+
+ 
+```
+
+```
+Windows Registry Editor Version 5.00
+
+[HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows NT\CurrentVersion\Winlogon]
+"AutoAdminLogon"="1"
+"DefaultUserName"="Administrator"
+"DefaultPassword"="wsf"
+
+
+```
+
