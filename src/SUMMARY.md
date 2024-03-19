@@ -28,7 +28,7 @@ npx wrangler pages publish book
       - [注塑部门](./erp/factory/注塑部门.md)	
    - [OA工作流](./oa流程/行政流程.md)
       - [勤假](./oa流程/勤假流程.md)	
-      - [采购](./oa流程/行政流程.md)	
+      - [采购](./oa流程/采购流程.md)	
 
 - [金蝶云星空]()
    - [erp常用设置](./金蝶云操作/常用管理设置.md)
