@@ -2,6 +2,8 @@
 
 高度集成使用方便，网络独立于linux
 
+![](./imgs/pve.png)
+
 关键设备要专用，应用设备要通用
 
 [参考](https://pve-doc-cn.readthedocs.io/zh-cn/latest/chapter_pveceph/index.html)
