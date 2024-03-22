@@ -1,6 +1,6 @@
 
 <pre>图文加载中...请稍后....</pre>
-<script onload="document.querySelector('main > pre').remove();"  type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mermaid/9.4.3/mermaid.min.js"></script>
+<script onload="document.querySelector('main > pre').remove();"  type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mermaid/10.4.0/mermaid.min.js"></script>
 
 
 
@@ -24,6 +24,40 @@ section 测试
     界面测试      :2020-01-12  , 12d
     联调api      : 24d
 ```
+
+```mermaid
+sequenceDiagram    
+    土豪 ->> 取款机 : 查询余额
+    取款机 -->> 土豪 : 余额
+    
+    alt 余额 > 5000
+        土豪 ->> 取款机 : 取上限值 5000 块
+    else 5000 < 余额 < 100
+        土豪 ->> 取款机 : 有多少取多少
+    else 余额 < 100
+        土豪 ->> 取款机 : 退卡
+    end
+    
+    取款机 -->> 土豪 : 退卡
+```
+
+```mermaid
+quadrantChart
+    title 宣传活动的范围和参与度
+    x-axis "低覆盖宣传" --> "高覆盖宣传"
+    y-axis "低参与度" --> "高参与度"
+    quadrant-1 "1应该扩大宣传范围"
+    quadrant-2 "2需要扩大宣传范围"
+    quadrant-3 "3重新评估"
+    quadrant-4 "4可以改进"
+    "活动 A": [0.3, 0.6]
+    "活动 B": [0.45, 0.23]
+    "活动 C": [0.57, 0.69]
+    "活动 D": [0.78, 0.34]
+    "活动 E": [0.40, 0.34]
+    "活动 F": [0.35, 0.78]
+```
+
 
 ### 并行流
 
