@@ -54,11 +54,9 @@ cscript ospp.vbs /sethst:192.168.0.121
 cscript ospp.vbs /act
 ```
 
-## 软件激活
 
-```
 
-```
+
 
 
 

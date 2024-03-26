@@ -6,7 +6,94 @@
 
 
 
-## rsyslog
+###  ELK Stack
+
+日志外发
+
+rsyslog /logstash 使用的默认514端口收集日志
+
+```
+ vi docker-compose-elk.yml 
+```
+
+
+
+```yml
+# 使用ELK Stack收集和分析Docker容器日志的Docker Compose示例
+version: '3'
+
+services:
+  elasticsearch:
+    image: docker.elastic.co/elasticsearch/elasticsearch:7.10.0
+    environment:
+      - discovery.type=single-node
+
+  logstash:
+    image: docker.elastic.co/logstash/logstash:7.10.0
+    ports:
+      - "5000:5000"
+      - "5044:5044"
+      - "514:514"
+
+  kibana:
+    image: docker.elastic.co/kibana/kibana:7.10.0
+    ports:
+      - "5601:5601"
+```
+
+```
+docker compose  -f ./docker-compose-elk.yml   up -d
+```
+
+```
+vi /usr/share/elasticsearch/config/elasticsearch.yml  #elasticsearch配置文件
+```
+
+```
+vi /usr/share/kibana/config/kibana.yml  #kibana配置文件  #i18n.locale: "zh-CN"
+```
+
+```
+vi /usr/share/logstash/pipeline/logstash.conf  # logstash配置文件
+```
+
+```
+input{
+ syslog{
+   port => 514
+ }
+}
+
+output{
+  stdout{
+   codec => rubydebug
+  }
+}
+```
+
+```
+filter {
+  if "hw" in [tags] {
+    grok{
+      match => {"message" => "%{SYSLOGTIMESTAMP:time} %{DATA:hostname} %{GREEDYDATA:info}"}
+    }
+  }
+}
+```
+
+```
+output {
+  stdout {codec => rubydebug}
+    if "hw" in [tags] {
+      elasticsearch {
+        hosts => ["elasticsearch:9200"]
+        index => "tcshwnet-%{+YYYY.MM.dd}"
+        manage_template => false
+        sniffing => false
+    }
+  }
+}
+```
 
 
 
@@ -94,19 +181,13 @@ mac表oid   (但是端口不准)
 
 
 
-
-
-### 使用ssh管理 +++ 
-
-
-
 ### 容器部署zabbix
 
 ```
  vi docker-compose.yml 
 ```
 
-### 最新版
+### 最新版6.4
 
 ```yml
 version: '3'
@@ -161,7 +242,7 @@ volumes:
   mysql-data:
 ```
 
-## 稳定版
+### 稳定版
 
 
 ```yml
