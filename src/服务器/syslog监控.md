@@ -144,7 +144,9 @@ output {
  
 ```
 
-### 过滤转换
+### 过滤转换  
+
+（可在kibana开发工具中调试转换规则）
 
 ```ruby
 filter {
@@ -173,6 +175,8 @@ output {
 }
 ```
 
+
+
 #### ip解析库
 
 ```
@@ -184,32 +188,32 @@ output {
 
 ### 抓包验证数据
 
-监听查看
+##### 监听查看
 
 ```
 sudo netstat -anlup|grep 514
 ```
 
-发送日志
+##### 发送日志
 
 ```
 logger -n  192.168.0.123 asdfasdasfasdfsad
 ```
 
-抓包验证
+##### 抓包验证
 
 ```
-tcpdump -v -nn -i eno1   port 514 and udp
+tcpdump -v -nn -i enp1s0   port 514 and udp
 ```
 
 ```
- Msg: Jan 23 2008 13:27:53 3700 %%01SHELL/6/DISPLAY_CMDRECORD(l)[21]:Record command information. (Task=VT0 , Ip=192.168.20.199, User=admin, Command="d| include info-center")
+Jan 23 2008 13:27:53 3700 %%01SHELL/6/DISPLAY_CMDRECORD(l)[21]:Record command information. (Task=VT0 , Ip=192.168.20.199, User=admin, Command="d| include info-center")
 ```
 
 #### 解析后的数据
 
 ```
- Msg: 1 2024-03-27T08:09:42.417757+08:00 vm jack - - [timeQuality tzKnown="1" isSynced="1" syncAccuracy="223000"] asdfasdasfasdfsad
+1 2024-03-27T08:09:42.417757+08:00 vm jack - - [timeQuality tzKnown="1" isSynced="1" syncAccuracy="223000"] asdfasdasfasdfsad
 ```
 
 
@@ -232,6 +236,10 @@ tcpdump -v -nn -i eno1   port 514 and udp
            "message" => "<13>1 2024-03-27T10:05:50.040097+08:00 vm jack - - [timeQuality tzKnown=\"1\" isSynced=\"1\" syncAccuracy=\"634500\"] asdfasdasfasdfsad"
 }
 ```
+
+## 日志外发
+
+
 
 ### Nginx日志接入
 
@@ -261,4 +269,17 @@ error_log syslog:server=192.168.0.123:514,facility=weboa,tag=nginx_error_log,sev
 ```
 
 
+
+### linux日志外发
+
+```
+# provides UDP syslog reception
+module(load="imudp")
+input(type="imudp" port="514")
+*.* @192.168.0.123:514
+```
+
+```
+sudo systemctl  restart rsyslog
+```
 
