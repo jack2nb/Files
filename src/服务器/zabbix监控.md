@@ -1,8 +1,10 @@
  
 
 
- 
-## 运维平台
+
+## 运行监控
+
+
 
 ![](./imgs/zabbix-snmp.png)
 
@@ -18,8 +20,6 @@
 ### 添加顺序
 
 配置.主机组 -》配置.主机-》主机.监控项-》监测.最新数据
-
-snmp
 
 ```shell
 snmpwalk -c public -v 2c   localhost  sysDescr     

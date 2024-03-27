@@ -2,21 +2,15 @@
 
 
 
-## 监控
+## 日志监控ELK Stack
 
-
-
-###  ELK Stack
-
-日志外发
-
-rsyslog /logstash 使用的默认514端口收集日志
+logstash 使用的默认514端口收集日志
 
 ```
  vi docker-compose-elk.yml 
 ```
 
-elasticsearch
+ 
 
 ```yml
 # elasticsearch数据存储  kibana数据可视化  logstash数据收集
@@ -83,7 +77,6 @@ vi  /tmp/syslog-pipeline.conf
 ```ruby
 input {
     syslog{
-        type => "system-syslog"
         tags => "test"
         port => 514
     }
@@ -104,7 +97,6 @@ logstash -f /tmp/syslog-pipeline.conf  --path.data=/tmp/logstash
 ```ruby
 input {
     syslog{
-        type => "system-syslog"
         port => 514
     }
 }
@@ -131,10 +123,10 @@ output {
     if [host] == "192.168.0.121"{
         elasticsearch {
             hosts => ["elasticsearch:9200"]
-            index => "test-syslog-%{+YYYY-MM-dd}"
+            index => "linux-syslog-%{+YYYY-MM-dd}"
         }
     }
-    if [host] == "192.168.0.121"{
+    if [host] == "192.168.0.121" {
         elasticsearch {
             hosts => ["elasticsearch:9200"]
             index => "weboa-syslog-%{+YYYY-MM-dd}"
@@ -162,17 +154,13 @@ filter {
 ```
 
 ```ruby
-output {
-  stdout {codec => rubydebug}
-    if "hw" in [tags] {
-      elasticsearch {
-        hosts => ["elasticsearch:9200"]
-        index => "tcshwnet-%{+YYYY-MM-dd}"
-        manage_template => false
-        sniffing => false
-    }
-  }
-}
+grok{
+    match => {"message" => "%{IP:ip_address}\ -\ -\ \[%{HTTPDATE:timestamp}\]\ %{QS:referrer}\ %{NUMBER:status}\ %{NUMBER:bytes}"}
+} 
+```
+
+```ruby
+%{SYSLOGTIMESTAMP:syslog_timestamp} %{SYSLOGHOST:syslog_hostname} %{DATA:syslog_program}(?:\[%{POSINT:syslog_pid}\])?: %{GREEDYDATA:syslog_message}
 ```
 
 
@@ -223,7 +211,6 @@ Jan 23 2008 13:27:53 3700 %%01SHELL/6/DISPLAY_CMDRECORD(l)[21]:Record command in
           "priority" => 0,
           "@version" => "1",
               "host" => "192.168.0.121",
-              "type" => "system-syslog",
               "tags" => [
         [0] "123",
         [1] "_grokparsefailure_sysloginput"
@@ -244,13 +231,13 @@ Jan 23 2008 13:27:53 3700 %%01SHELL/6/DISPLAY_CMDRECORD(l)[21]:Record command in
 ### Nginx日志接入
 
 ```
-access_log syslog:server=192.168.0.123:514,facility=weboa,tag=nginx_access_log,severity=info;
-error_log syslog:server=192.168.0.123:514,facility=weboa,tag=nginx_error_log,severity=info;
+access_log syslog:server=192.168.0.123:514,facility=web_access,tag=access_log,severity=info;
+error_log syslog:server=192.168.0.123:514,facility=web_error,tag=error_log,severity=info;
 ```
 
 识别设备标签 facility_label 通过这个判断  或  识别标签program
 
-```
+```ruby
 {
         "@timestamp" => 2024-03-27T03:12:58.000Z,
          "timestamp" => "Mar 27 03:12:58",
@@ -273,13 +260,39 @@ error_log syslog:server=192.168.0.123:514,facility=weboa,tag=nginx_error_log,sev
 ### linux日志外发
 
 ```
-# provides UDP syslog reception
-module(load="imudp")
-input(type="imudp" port="514")
-*.* @192.168.0.123:514
+vi /etc/rsyslog.conf
 ```
+
+
+
+```ruby
+ *.notice @192.168.0.123:514
+```
+
+
+
+
 
 ```
 sudo systemctl  restart rsyslog
+```
+
+```ruby
+{
+    "facility" => 3,
+    "facility_label" => "system",
+               "pid" => "973401",
+         "timestamp" => "Mar 27 15:02:31",
+           "program" => "snmpd",
+        "@timestamp" => 2024-03-27T15:02:31.000Z,
+          "priority" => 30,
+          "@version" => "1",
+              "type" => "system-syslogaaa",
+          "severity" => 6,
+    "severity_label" => "Informational",
+           "message" => "Cannot statfs /run/user/129/gvfs: Permission denied",
+              "host" => "192.168.0.121",
+         "logsource" => "vm"
+}
 ```
 
