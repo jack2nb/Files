@@ -142,22 +142,34 @@ output {
 
 （可在kibana开发工具中调试转换规则）
 
-
-
 #### nginx 过滤规则
 
 ```ruby
 filter {
   if [host] == "192.168.0.121" and [program] in ["web_access_log","web_error_log"]   {
       grok{
-          match => {"message" => "%{IPV4:remote_addr} - (%{USERNAME:user}|-) \[%{HTTPDATE:log_timestamp}\] "(%{WORD:request_method}|-) (%{URIPATH:uri}|-) HTTP/%{NUMBER:httpversion}" %{NUMBER:http_status} (?:%{BASE10NUM:body_bytes_sent}|-) \"(?:%{GREEDYDATA:http_referrer}|-)\" \"(%{GREEDYDATA:user_agent}|-)\""}
+          match => {"message" => "%{IPV4:remote_addr} - (%{USERNAME:user}|-) \[%{HTTPDATE:log_timestamp}\] \"(%{WORD:request_method}|-) (%{URIPATH:uri}|-) HTTP/%{NUMBER:httpversion}\" %{NUMBER:http_status} (?:%{BASE10NUM:body_bytes_sent}|-) \"(?:%{GREEDYDATA:http_referrer}|-)\" \"(%{GREEDYDATA:user_agent}|-)\""}
       }
-      date{
-		match => ["timestamp","yyyy-MMM-dd HH:mm:ss Z"]
-	}
+      geoip {
+          source => "remote_addr"
+          target => "geoip"
+          add_field => [ "country_name", "%{[geoip][country_name]}" ]
+          add_field => [ "city_name", "%{[geoip][city_name]}" ]
+          add_field => [ "country_name", "%{[geoip][country_code3][0]}" ]
+	    database => "/usr/share/logstash/vendor/bundle/jruby/2.5.0/gems/logstash-filter-geoip-6.0.3-java/vendor/GeoLite2-City.mmdb"
+      }
   }
 }
 ```
+
+```ruby
+    date {
+         match => [ "timestamp", "MMM d HH:mm", "MMM DD HH:mm", "ISO8601"]
+         target => "timestamp"　
+    }
+```
+
+
 
 #### ip解析库
 
