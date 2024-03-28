@@ -4,6 +4,8 @@
 
 ## 日志监控ELK Stack
 
+最好按类型入库可搜索 [program] == 'xxxxxxx'
+
 logstash 使用的默认514端口收集日志
 
 ```
@@ -120,16 +122,16 @@ output {
             index => "huawei-syslog-%{+YYYY-MM-dd}"
         }
     }
-    if [host] == "192.168.0.121"{
+    if [host] == "192.168.0.121" and [logsource] == "vm" {
         elasticsearch {
             hosts => ["elasticsearch:9200"]
             index => "linux-syslog-%{+YYYY-MM-dd}"
         }
     }
-    if [host] == "192.168.0.121" {
+    if [host] == "192.168.0.121" and [program] in ["web_access_log","web_error_log"] {
         elasticsearch {
             hosts => ["elasticsearch:9200"]
-            index => "weboa-syslog-%{+YYYY-MM-dd}"
+            index => "web-syslog-%{+YYYY-MM-dd}"
         }
     }
 }
@@ -140,30 +142,22 @@ output {
 
 （可在kibana开发工具中调试转换规则）
 
+
+
+#### nginx 过滤规则
+
 ```ruby
 filter {
-  if [host] == "192.168.0.2" {
-    grok{
-      match => {"message" => "%{SYSLOGTIMESTAMP:time} %{DATA:hostname} %{GREEDYDATA:info}"}
-    }
-	date{
+  if [host] == "192.168.0.121" and [program] in ["web_access_log","web_error_log"]   {
+      grok{
+          match => {"message" => "%{IPV4:remote_addr} - (%{USERNAME:user}|-) \[%{HTTPDATE:log_timestamp}\] "(%{WORD:request_method}|-) (%{URIPATH:uri}|-) HTTP/%{NUMBER:httpversion}" %{NUMBER:http_status} (?:%{BASE10NUM:body_bytes_sent}|-) \"(?:%{GREEDYDATA:http_referrer}|-)\" \"(%{GREEDYDATA:user_agent}|-)\""}
+      }
+      date{
 		match => ["timestamp","yyyy-MMM-dd HH:mm:ss Z"]
 	}
   }
-} 
+}
 ```
-
-```ruby
-grok{
-    match => {"message" => "%{IP:ip_address}\ -\ -\ \[%{HTTPDATE:timestamp}\]\ %{QS:referrer}\ %{NUMBER:status}\ %{NUMBER:bytes}"}
-} 
-```
-
-```ruby
-%{SYSLOGTIMESTAMP:syslog_timestamp} %{SYSLOGHOST:syslog_hostname} %{DATA:syslog_program}(?:\[%{POSINT:syslog_pid}\])?: %{GREEDYDATA:syslog_message}
-```
-
-
 
 #### ip解析库
 
@@ -230,10 +224,23 @@ Jan 23 2008 13:27:53 3700 %%01SHELL/6/DISPLAY_CMDRECORD(l)[21]:Record command in
 
 ### Nginx日志接入
 
+```ruby
+
+log_format combined '$remote_addr - $remote_user [$time_local] $http_host $request_method "$uri" "$query_string" '
+                  '$status $body_bytes_sent "$http_referer" $upstream_status $upstream_addr $request_time $upstream_response_time '
+                  '"$http_user_agent" "$http_x_forwarded_for"' ;
 ```
-access_log syslog:server=192.168.0.123:514,facility=web_access,tag=access_log,severity=info;
-error_log syslog:server=192.168.0.123:514,facility=web_error,tag=error_log,severity=info;
+
+
+
 ```
+access_log syslog:server=192.168.0.123:514,facility=local7,tag=web_access_log,severity=info;
+
+error_log syslog:server=192.168.0.123:514,facility=local7,tag=web_error_log,severity=info;
+
+```
+
+
 
 识别设备标签 facility_label 通过这个判断  或  识别标签program
 
