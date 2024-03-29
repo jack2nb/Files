@@ -119,19 +119,19 @@ output {
     if [host] == "192.168.0.2"{
         elasticsearch {
             hosts => ["elasticsearch:9200"]
-            index => "huawei-syslog-%{+YYYY-MM-dd}"
+            index => "huawei_syslog_%{+YYYY_MM_dd}"
         }
     }
     if [host] == "192.168.0.121" and [logsource] == "vm" {
         elasticsearch {
             hosts => ["elasticsearch:9200"]
-            index => "linux-syslog-%{+YYYY-MM-dd}"
+            index => "linux_syslog_%{+YYYY_MM_dd}"
         }
     }
     if [host] == "192.168.0.121" and [program] in ["web_access_log","web_error_log"] {
         elasticsearch {
             hosts => ["elasticsearch:9200"]
-            index => "web-syslog-%{+YYYY-MM-dd}"
+            index => "web_syslog_%{+YYYY_MM_dd}"
         }
     }
 }
@@ -314,4 +314,100 @@ sudo systemctl  restart rsyslog
          "logsource" => "vm"
 }
 ```
+
+## 开发工具
+
+
+
+
+
+
+
+#### 标准查询
+
+```ruby
+GET /linux_syslog_2024_03_29/_search
+{
+  "query": {
+    "match_all": {}
+  },
+  "size":  2
+}
+```
+
+### 条件查询
+
+```ruby
+GET /linux_syslog_2024*/_search
+{
+  "query": {
+    "term" : {
+      "facility_label.keyword" : {"value" : "user-level"}
+    }
+  },
+  "size":2
+}
+```
+
+
+
+
+
+## sql查询
+
+```sql
+POST /_sql/translate
+{
+    "query": " SELECT * FROM linux_syslog_2024_03_29 where facility_label='user-level' and severity_label='Warning'  LIMIT 2 "
+}
+```
+
+```json
+"includes" : [
+      "@version",
+      "facility",
+      "facility_label",
+      "host",
+      "logsource",
+      "message",
+      "pid",
+      "priority",
+      "program",
+      "severity",
+      "severity_label",
+      "timestamp"
+    ],
+```
+
+```sql
+
+```
+
+
+
+#### sql查询数据
+
+只支持简单sql要复制查询需要json
+
+```json
+
+{
+    "query": " SELECT host,logsource,message FROM linux_syslog_2024_03_29 LIMIT 2 "
+}
+```
+
+
+
+```sqlite
+POST /_sql?format=txt
+{
+    "query": " SELECT \"@timestamp\",host,severity_label,pid,message FROM linux_syslog_2024_03_29 LIMIT 2 "
+}
+```
+
+
+
+#### 
+
+
 
