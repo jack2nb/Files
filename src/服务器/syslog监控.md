@@ -21,6 +21,8 @@ version: '3'
 services:
   elasticsearch:
     image: docker.elastic.co/elasticsearch/elasticsearch:7.10.0
+    ports:
+      - "9200:9200"
     environment:
       - discovery.type=single-node
 
@@ -157,6 +159,17 @@ filter {
           add_field => [ "city_name", "%{[geoip][city_name]}" ]
           add_field => [ "country_name", "%{[geoip][country_code3][0]}" ]
 	    database => "/usr/share/logstash/vendor/bundle/jruby/2.5.0/gems/logstash-filter-geoip-6.0.3-java/vendor/GeoLite2-City.mmdb"
+      }
+      mutate{
+        remove_field => ["logsource"]
+        remove_field => ["tags"]
+        remove_field => ["severity"]
+        remove_field => ["facility_label"]
+        remove_field => ["facility"]
+        remove_field => ["@version"]
+        remove_field => ["@timestamp"] 
+        convert => ["country_name", "string"]
+        convert => ["city_name", "string"]
       }
   }
 }
@@ -315,15 +328,29 @@ sudo systemctl  restart rsyslog
 }
 ```
 
+### docker 日志外发
+
+```cmd
+ --log-driver syslog --log-opt syslog-address=udp://127.0.0.1:514 
+```
+
+
+
+```cmd
+docker run -itd  -p 80:80  --name nginx   --log-driver syslog --log-opt syslog-address=udp://127.0.0.1:514  nginx
+```
+
+
+
 ## 开发工具
 
+KQL 特有的elasticsearch查询语法
 
 
 
 
 
-
-#### 标准查询
+### 标准查询
 
 ```ruby
 GET /linux_syslog_2024_03_29/_search
@@ -385,7 +412,7 @@ POST /_sql/translate
 
 
 
-#### sql查询数据
+### sql查询数据
 
 只支持简单sql要复制查询需要json
 
@@ -407,7 +434,14 @@ POST /_sql?format=txt
 
 
 
-#### 
+```sql
+POST /_sql?format=txt
+{
+  "query": "SELECT state,COUNT(*),MAX(age),AVG(balance) FROM account GROUP BY state LIMIT 10"
+}
+```
+
+
 
 
 
