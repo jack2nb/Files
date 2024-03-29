@@ -43,6 +43,16 @@ services:
 docker compose  -f ./docker-compose-elk.yml   up -d
 ```
 
+### 改时区（发送端）
+
+```
+rm -f /etc/localtime 
+ln -s /usr/share/zoneinfo/Asia/Shanghai /etc/localtime
+date -R
+```
+
+
+
 ```
 vi /usr/share/elasticsearch/config/elasticsearch.yml  #elasticsearch配置文件
 ```
@@ -160,6 +170,15 @@ filter {
           add_field => [ "country_name", "%{[geoip][country_code3][0]}" ]
 	    database => "/usr/share/logstash/vendor/bundle/jruby/2.5.0/gems/logstash-filter-geoip-6.0.3-java/vendor/GeoLite2-City.mmdb"
       }
+    date {
+      match => ["log_timestamp", "dd/MMM/yyyy:HH:mm:ss Z"]  
+      target => "@timestamp"   
+    }
+    useragent {
+         target => "agent"    
+         source => "user_agent"    
+    }
+      
       mutate{
         remove_field => ["logsource"]
         remove_field => ["tags"]
@@ -167,9 +186,8 @@ filter {
         remove_field => ["facility_label"]
         remove_field => ["facility"]
         remove_field => ["@version"]
-        remove_field => ["@timestamp"] 
-        convert => ["country_name", "string"]
-        convert => ["city_name", "string"]
+        convert => ["[geoip][city_name]", "string"]
+        convert => ["[geoip][country_name]", "string"]
       }
   }
 }
