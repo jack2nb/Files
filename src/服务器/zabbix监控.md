@@ -21,15 +21,18 @@
 
 配置.主机组 -》配置.主机-》主机.监控项-》监测.最新数据
 
+### snmp测试
+
 ```shell
 snmpwalk -c public -v 2c   localhost  sysDescr     
+snmpwalk -c public -v 2c   localhost  1.3.6.1.2.1.1.1
 snmpwalk -c public -v 2c   localhost    sysName.0
 snmpwalk -c public -v 2c  localhost system
 ```
 
 
 
-### 测试命令
+### agent测试
 
 ```cmd
 
@@ -84,7 +87,7 @@ mac表oid   (但是端口不准)
 
 
 
-### 容器部署zabbix
+## 容器部署zabbix
 
 ```
  vi docker-compose.yml 
@@ -284,4 +287,47 @@ docker save -o ~/zabbix-server-mysql.tar zabbix/zabbix-server-mysql:6.0-centos-l
 ```
 
 
+
+## 客户开启snmp
+
+### linux 开启  
+
+ 配置文件
+
+```
+ vi /etc/snmp/snmpd.conf        
+```
+
+内容
+
+```
+view   systemonly  included  .1.3.6.1.2.1 
+view   systemonly  included  .1.3.6.1.4.1
+
+```
+
+
+
+### win10开启
+
+```
+管理员打开 PowerShell 
+
+Get-WindowsCapability -Online -Name "SNMP*"    
+
+Add-WindowsCapability -Online -Name "SNMP.Client~~~~0.0.1.0"
+
+Add-WindowsCapability -Online -Name "WMI-SNMP-Provider.Client~~~~0.0.1.0"
+
+
+```
+
+### win7 开启
+
+```
+dism /online /enable-feature /featurename:SNMP   #//安装snmp
+
+```
+
+### 
 

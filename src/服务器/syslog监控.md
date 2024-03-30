@@ -4,9 +4,17 @@
 
 ## 日志监控ELK Stack
 
-最好按类型入库可搜索 [program] == 'xxxxxxx'
 
-logstash 使用的默认514端口收集日志
+
+![](./imgs/elk-图表.png)
+
+
+
+http://192.168.0.123:5601/
+
+* 按类型入库可搜索 [program] == 'xxxxxxx' 
+
+* logstash 使用的默认514端口收集日志
 
 ```
  vi docker-compose-elk.yml 
@@ -131,19 +139,19 @@ output {
     if [host] == "192.168.0.2"{
         elasticsearch {
             hosts => ["elasticsearch:9200"]
-            index => "huawei_syslog_%{+YYYY_MM_dd}"
+            index => "huawei_tplv3_%{+YYYY_MM_dd}"
         }
     }
     if [host] == "192.168.0.121" and [logsource] == "vm" {
         elasticsearch {
             hosts => ["elasticsearch:9200"]
-            index => "linux_syslog_%{+YYYY_MM_dd}"
+            index => "linux_tplv3_%{+YYYY_MM_dd}"
         }
     }
     if [host] == "192.168.0.121" and [program] in ["web_access_log","web_error_log"] {
         elasticsearch {
             hosts => ["elasticsearch:9200"]
-            index => "web_syslog_%{+YYYY_MM_dd}"
+            index => "web_tplv3_%{+YYYY_MM_dd}"
         }
     }
 }
@@ -186,6 +194,7 @@ filter {
         remove_field => ["facility_label"]
         remove_field => ["facility"]
         remove_field => ["@version"]
+        remove_field => ["timestamp"]
         convert => ["[geoip][city_name]", "string"]
         convert => ["[geoip][country_name]", "string"]
       }
@@ -462,4 +471,13 @@ POST /_sql?format=txt
 
 
 
+
+## 数据分析
+
+ 
+
+```
+docker run -d -p 12345:3000 --name metabase metabase/metabase-enterprise
+
+```
 
