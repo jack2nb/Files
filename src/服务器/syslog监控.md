@@ -496,6 +496,19 @@ input {
 }
 ```
 
+### 输出配置
+
+```ruby
+output {
+   if "sflow9999" in [tags]   {
+        elasticsearch {
+            hosts => ["elasticsearch:9200"]
+            index => "sflow9999_%{+YYYY_MM_dd}"
+        }
+    }
+}
+```
+
 
 
 ## db数据分析
