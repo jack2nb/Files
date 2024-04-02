@@ -200,3 +200,10 @@ lxc.mount.entry = /dev/net/tun dev/net/tun none bind,create=file
 ```
 
 
+
+## 强制关机
+
+```
+qm stop 102
+```
+

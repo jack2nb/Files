@@ -40,6 +40,8 @@ services:
       - "9601:9601"
       - "5044:5044"
       - "514:514/udp"
+      - "9999:9999/udp"
+      - "2055:2055/udp"
 
   kibana:
     image: docker.elastic.co/kibana/kibana:7.10.0
@@ -470,9 +472,33 @@ POST /_sql?format=txt
 
 
 
+## sflow分析
+
+### logstash接收
+
+安装sflow插件
+
+```
+logstash-plugin install logstash-codec-sflow
+```
+
+### 接收配置
+
+```ruby
+input {
+  udp {
+    port => 9999
+     tags => "sflow9999"
+    codec => sflow {
+      # 可选的编解码器配置参数
+    }
+  }
+}
+```
 
 
-## 数据分析
+
+## db数据分析
 
  
 
