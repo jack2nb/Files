@@ -41,6 +41,8 @@ services:
       - "5044:5044"
       - "514:514/udp"
       - "9999:9999/udp"
+      - "9991:9991/udp"
+      - "6343:6343/udp"
       - "2055:2055/udp"
 
   kibana:
@@ -95,7 +97,7 @@ output {
 ### 测试配置
 
 ```
-vi  /tmp/syslog-pipeline.conf 
+vi  /tmp/test-pipeline.conf 
 ```
 
 ```ruby
@@ -472,6 +474,30 @@ POST /_sql?format=txt
 
 
 
+## 备份配置
+
+```
+docker cp  elk-logstash-1:/usr/share/logstash/pipeline/logstash.conf /opt/elk/logstash.conf
+docker cp  elk-logstash-1:/tmp/test-pipeline.conf  /opt/elk/test-pipeline.conf 
+
+```
+
+## 修改docker配置
+
+```
+docker port elk-logstash-1
+docker inspect elk-logstash-1
+
+docker inspect elk-logstash-1|grep Id
+
+cd /var/lib/docker/containers
+
+vi hostconfig.json
+vi config.v2.json
+```
+
+
+
 ## sflow分析
 
 ### logstash接收
@@ -509,7 +535,19 @@ output {
 }
 ```
 
+### sflow测试配置
 
+```
+vi  /tmp/test-sflow.conf 
+```
+
+```
+logstash -f /tmp/syslog-pipeline.conf  --path.data=/tmp/logstash
+```
+
+
+
+### 
 
 ## db数据分析
 
