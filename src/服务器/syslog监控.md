@@ -506,6 +506,7 @@ vi config.v2.json
 
 ```
 logstash-plugin install logstash-codec-sflow
+logstash-plugin install logstash-codec-netflow
 ```
 
 ### 接收配置
@@ -513,8 +514,13 @@ logstash-plugin install logstash-codec-sflow
 ```ruby
 input {
   udp {
+    port  => 2055
+    tags => "netflow2055"
+    codec => netflow
+  }
+  udp {
     port => 9999
-     tags => "sflow9999"
+    tags => "sflow9999"
     codec => sflow {
       # 可选的编解码器配置参数
     }
@@ -532,6 +538,14 @@ output {
             index => "sflow9999_%{+YYYY_MM_dd}"
         }
     }
+   if "netflow2055" in [tags]   {
+        elasticsearch {
+            hosts => ["elasticsearch:9200"]
+            index => "netflow2055_%{+YYYY_MM_dd}"
+        }
+    }
+    stdout { codec => rubydebug}
+ 
 }
 ```
 
@@ -542,12 +556,18 @@ vi  /tmp/test-sflow.conf
 ```
 
 ```
-logstash -f /tmp/syslog-pipeline.conf  --path.data=/tmp/logstash
+logstash -f /tmp/test-sflow.conf  --path.data=/tmp/logstash
 ```
 
 
 
-### 
+### 发送端
+
+```
+sudo softflowd -i eno1 -v 5 -n 192.168.0.123:2055 -D
+```
+
+
 
 ## db数据分析
 
