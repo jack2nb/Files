@@ -6,7 +6,7 @@
 
 
 
-![](./imgs/elk-图表.png)
+![](./日志监控-imgs/elk-图表.png)
 
 
 
@@ -42,8 +42,10 @@ services:
       - "514:514/udp"
       - "9999:9999/udp"
       - "9991:9991/udp"
+      - "9996:9996/udp"
       - "6343:6343/udp"
       - "2055:2055/udp"
+      
 
   kibana:
     image: docker.elastic.co/kibana/kibana:7.10.0
@@ -549,7 +551,7 @@ output {
 }
 ```
 
-### sflow测试配置
+### netflow/sflow测试配置
 
 ```
 vi  /tmp/test-sflow.conf 
@@ -567,7 +569,25 @@ logstash -f /tmp/test-sflow.conf  --path.data=/tmp/logstash
 sudo softflowd -i eno1 -v 5 -n 192.168.0.123:2055 -D
 ```
 
+netflow v9 支持组播广播
 
+```
+sudo softflowd -i eno1 -v 9 -n 192.168.0.123:2055 -L 64 -D
+```
+
+## 网络分析
+
+抓包离线分析
+
+```
+ tcpdump -i enp1s0 -w /home/jack/t10000.pak -c 10000
+```
+
+分析工具
+
+科来
+
+![](./日志监控-imgs/网络抓包分析01.png)
 
 ## db数据分析
 
