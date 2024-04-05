@@ -580,12 +580,28 @@ sudo softflowd -i eno1 -v 9 -n 192.168.0.123:2055 -L 64 -D
 抓包离线分析
 
 ```
- tcpdump -i enp1s0 -w /home/jack/t10000.pak -c 10000
+tcpdump -i enp1s0 -w /home/jack/t10000.cap -c 10000
 ```
 
-分析工具
+网段
 
-科来
+```
+tcpdump -i br-lan -w /root/t224-8.cap   -c 100  'net 224.0.0.0/8'
+
+tcpdump -i br-lan -w /root/multicast-8.cap   -c 100  ip multicast 
+```
+
+广播
+
+```
+tcpdump -i enp1s0 -w /home/jack/tbroadcast.pak   -c 100  broadcast
+```
+
+
+
+### 分析工具
+
+导入科来离线分析
 
 ![](./日志监控-imgs/网络抓包分析01.png)
 
