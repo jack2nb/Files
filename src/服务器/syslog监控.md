@@ -597,6 +597,12 @@ tcpdump -i br-lan -w /root/multicast-8.cap   -c 100  ip multicast
 tcpdump -i enp1s0 -w /home/jack/tbroadcast.pak   -c 100  broadcast
 ```
 
+综合
+
+```
+tcpdump -i br-lan -w /root/mball-8.cap   -c 5000  'ip multicast  or broadcast '
+```
+
 
 
 ### 分析工具
