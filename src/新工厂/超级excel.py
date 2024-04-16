@@ -19,6 +19,10 @@ def mylog(name='mylog'):
         logger.addHandler(file_handler)
         logger.addHandler(console_handler)
     return logger
+logger = mylog()
+
+logger.info('启动或载入')
+print('启动或载入')
 
 
 @xw.func
