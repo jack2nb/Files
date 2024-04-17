@@ -6,6 +6,8 @@ office 2019 / win10
 
 office 2016 / win7
 
+[参考](https://docs.xlwings.org/zh-cn/latest/quickstart.html)
+
 ## 基础配置
 
 ### 安装扩展
@@ -62,11 +64,11 @@ conda 4.9.0
 
 ### 嵌入式代码
 
-```
+```cmd
 xlwings code embed
 ```
 
-## 关键代码
+## 函数代码
 
 ```python
 @xw.func
@@ -103,7 +105,31 @@ def jkxArray(r,c):
 
 
 
+## 宏调用
 
+通过按钮执行py脚本
+
+```vbscript
+Sub SimulationLite()
+    RunPython ("import xlwings_app; xlwings_app.run_simulation()")
+End Sub
+
+```
+
+脚本通过caller得到当前excel
+
+```python
+def run_simulation():
+    sht = xw.Book.caller().sheets[0]
+```
+
+
+
+### 当前选中范围
+
+```
+wb.selection 
+```
 
 
 
