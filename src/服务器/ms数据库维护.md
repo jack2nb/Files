@@ -57,10 +57,16 @@ from sys.dm_tran_locks where resource_type='OBJECT'
 ## 缓存清理
 
 ```sql
-DBCC FREEPROCCACHE       --清除存储过程相关的缓存
-DBCC FREESESSIONCACHE    --会话缓存
-DBCC FREESYSTEMCACHE('All')    --系统缓存
-DBCC DROPCLEANBUFFERS       --所有缓存
+BEGIN
+ --清除存储过程缓存
+         DBCC FREEPROCCACHE 
+--清除会话缓存  
+        DBCC FREESESSIONCACHE 
+--清除系统缓存  
+        DBCC FREESYSTEMCACHE('All')
+--清除所有缓存  
+        DBCC DROPCLEANBUFFERS  
+END
 ```
 
 ### 正在执行的sql
