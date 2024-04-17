@@ -127,8 +127,18 @@ def run_simulation():
 
 ### 当前选中范围
 
+当前选中范围
+
 ```
-wb.selection 
+wb.selection
+wb.selection.row
+wb.selection.column
+```
+
+选中内容的值
+
+```
+wb.selection.value  
 ```
 
 
