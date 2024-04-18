@@ -50,6 +50,9 @@ def 获取物料信息通过代码(fnumber:str) ->pd.DataFrame:
         一行物料信息  ['名称','规格']
     """
     ret_df = pd.DataFrame()
+    if fnumber is None or fnumber.strip() == '':
+        return ret_df
+    
     vn = {
         "erp/T_BD_MATERIAL": {
             "FDOCUMENTSTATUS":"C",
@@ -106,9 +109,11 @@ def 获取物料代码通过型号名称(spec:str,name:str) -> (str, int):
     """
     ret_name = "无"
     ret_num = 0
+    if name is None or  name.strip() == ''   :
+        return  ret_name,ret_num
     vn = {
         "erp/T_BD_MATERIAL_L": {
-            "@limit": 2,
+            "@limit": 2048,
             "FLOCALEID": 2052,
             "F_QINL_SPECIFICATION":spec.strip(),
             "FNAME":name.strip(),

@@ -16,7 +16,7 @@ import pandas as pd
 
 @xw.func
 @xw.arg('data', pd.DataFrame,header=True)
-@xw.ret(expand='table',header=True)
+@xw.ret(expand='table',header=False,index=False)
 def jkxCopyDf(data):
     """ 拷贝df """
     return data
