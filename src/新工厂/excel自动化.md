@@ -12,13 +12,14 @@ ctrl+shift+enter  来实现多行返回
 @xw.ret(expand='table')
 """
 import xlwings as xw
-import numpy as np
+import pandas as pd
 
 @xw.func
-@xw.ret(expand='table')
-def jkxArray(r,c):
-    rev = np.random.randn(int(r),int(c)) 
-    return  rev
+@xw.arg('data', pd.DataFrame,header=True)
+@xw.ret(expand='table',header=True)
+def jkxCopyDf(data):
+    """ 拷贝df """
+    return data
 ```
 
 
