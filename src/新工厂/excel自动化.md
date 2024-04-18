@@ -1,10 +1,81 @@
 # 超级功能表格
 
+excel变成数据呈现客户端。
+
+### 第行返回
+
+ctrl+shift+enter  来实现多行返回
+
+```python
+""" 
+返回类型  一个二维表
+@xw.ret(expand='table')
+"""
+import xlwings as xw
+import numpy as np
+
+@xw.func
+@xw.ret(expand='table')
+def jkxArray(r,c):
+    rev = np.random.randn(int(r),int(c)) 
+    return  rev
+```
+
+
+
+
+
+
+
+
+
+## 宏调用
+
+通过按钮执行py脚本
+
+```vbscript
+Sub SimulationLite()
+    RunPython ("import xlwings_app; xlwings_app.run_simulation()")
+End Sub
+
+```
+
+脚本通过caller得到当前excel
+
+```python
+def run_simulation():
+    sht = xw.Book.caller().sheets[0]
+```
+
+
+
+### 当前选中范围
+
+当前选中范围
+
+```
+wb.selection
+wb.selection.row
+wb.selection.column
+```
+
+选中内容的值
+
+```
+wb.selection.value  
+```
+
+
+
+
+
+
+
 建议用office 2019 / Anaconda3-2020.11-Windows-x86_64.exe  /  xlwings version: 0.20.8
 
 office 2019 / win10
 
-office 2016 / win7
+office 2013/ win7
 
 [参考](https://docs.xlwings.org/zh-cn/latest/quickstart.html)
 
@@ -73,77 +144,6 @@ xlwings code embed
 ```python
 @xw.func
 ```
-
-
-
-
-
-### 第行返回
-
-ctrl+shift+enter  来实现多行返回
-
-```python
-""" 
-返回类型  一个二维表
-@xw.ret(expand='table')
-"""
-import xlwings as xw
-import numpy as np
-
-@xw.func
-@xw.ret(expand='table')
-def jkxArray(r,c):
-    rev = np.random.randn(int(r),int(c)) 
-    return  rev
-```
-
-
-
-
-
-
-
-
-
-## 宏调用
-
-通过按钮执行py脚本
-
-```vbscript
-Sub SimulationLite()
-    RunPython ("import xlwings_app; xlwings_app.run_simulation()")
-End Sub
-
-```
-
-脚本通过caller得到当前excel
-
-```python
-def run_simulation():
-    sht = xw.Book.caller().sheets[0]
-```
-
-
-
-### 当前选中范围
-
-当前选中范围
-
-```
-wb.selection
-wb.selection.row
-wb.selection.column
-```
-
-选中内容的值
-
-```
-wb.selection.value  
-```
-
-
-
-
 
 
 
