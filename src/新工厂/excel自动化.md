@@ -32,10 +32,10 @@ def jkxCopyDf(data):
 
 ## 宏调用
 
-通过按钮执行py脚本
+通过按钮执行py脚本  （插入/形状/指定宏）实现美观的按钮
 
 ```vbscript
-Sub SimulationLite()
+Sub 中文函数名()
     RunPython ("import xlwings_app; xlwings_app.run_simulation()")
 End Sub
 
@@ -68,7 +68,7 @@ wb.selection.value
 
 
 
-
+## 基础配置
 
 
 
@@ -79,8 +79,6 @@ office 2019 / win10
 office 2013/ win7
 
 [参考](https://docs.xlwings.org/zh-cn/latest/quickstart.html)
-
-## 基础配置
 
 ### 安装扩展
 

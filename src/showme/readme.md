@@ -47,7 +47,7 @@ h3 > a {
 
  - 期望城市：华南地区  
 
-
+逆向规划，正向执行（以终为始，小步快跑）
 
 
 # 经历
@@ -242,4 +242,24 @@ h3 > a {
 - 网络安全：iptables
 - 服务交付：docker,supervisor
 
- 
+
+
+
+#  开源项目和作品  
+## 开源项目
+
+
+  - [SqlOnJson](https://gitee.com/jack2nb/SqlOnJson/blob/master/readme.md)：让数据不在有孤岛，重心放在对数据与业务的连接
+  - [数据交换平台](http://github.com/yourname/projectname)：通过WebSocket 作为中心hub交换数据实现一对一，多对一，一对多的即时通信
+
+## 技术爱好
+业余时间给孩子们做的一点点小工具
+
+- [让小朋友磨磨耳朵(每说英语)](http://eng.17121.top/)
+- [小学生都能看懂的c++入门数（一点点上手c++）](https://jack2nb.github.io/studcpp/)  
+
+## 演讲和讲义
+  - 数字化转型：企业如何一步一步完字化变革 
+  - 架构师蜕变之路：架构师如何选型，管控软件开发复杂度
+    
+    
