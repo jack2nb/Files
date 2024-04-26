@@ -56,7 +56,7 @@ cscript ospp.vbs /act
 
 
 
-
+[泛微数据字典](http://dougge.top/%E6%95%B0%E6%8D%AE%E5%AD%97%E5%85%B8%E5%AE%8C%E6%95%B4%E5%8C%85/%E7%9F%A5%E8%AF%86%E7%AE%A1%E7%90%86/doc_reply(%E6%96%87%E6%A1%A3%E5%9B%9E%E5%A4%8D%E8%A1%A8).html)
 
 
 

@@ -148,3 +148,23 @@ xlwings code embed
 
 
 
+###  excel大屏
+
+Ctrl+Shift + f1  
+
+宏定时器  
+
+```
+Sub MyStartTimer()
+
+Sheet1.Cells(1, 2) = Sheet1.Cells(1, 2) + 1
+
+Application.OnTime Now + TimeValue("00:00:01"), "MyStartTimer"
+
+End Sub
+```
+
+
+
+
+

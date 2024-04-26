@@ -4,9 +4,9 @@
 
 [数据字典](http://192.168.20.199:2028/k3cloud.html)
 
+[官方数据表](https://open.kingdee.com/K3Cloud/CDPPortal/DataModel.aspx)
 
-
-
+[财务模型](https://open.kingdee.com/K3Cloud/PDM/FIN%E8%B4%A2%E5%8A%A1_files/FIN%E8%B4%A2%E5%8A%A1_toc.htm)
 
 ### 用户信息表
 
